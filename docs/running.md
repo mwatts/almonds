@@ -18,6 +18,22 @@ just configure
 
 `just configure` installs Cargo tools (`cargo-watch`, `cargo-sort`, `cargo-group-imports`, `sea-orm-cli`, `seaography-cli`) and creates the local database file.
 
+## System Dependencies
+
+### Linux (Debian / Ubuntu)
+
+Before building or running locally, install the required system libraries:
+
+```bash
+sudo apt update
+sudo apt install -y \
+  libwebkit2gtk-4.1-dev \
+  libappindicator3-dev \
+  librsvg2-dev \
+  patchelf \
+  libasound2-dev
+```
+
 ## Development
 
 ```bash
