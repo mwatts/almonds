@@ -3,11 +3,8 @@ import { createElement } from "react";
 import type { Root } from "react-dom/client";
 import { createRoot } from "react-dom/client";
 import { onMounted, onUnmounted, useTemplateRef } from "vue";
-import type {
-  ExcalidrawImperativeAPI} from "./ExcalidrawWrapper";
-import {
-  ExcalidrawWrapper
-} from "./ExcalidrawWrapper";
+import type { ExcalidrawImperativeAPI } from "./ExcalidrawWrapper";
+import { ExcalidrawWrapper } from "./ExcalidrawWrapper";
 import { exportToSvg } from "@excalidraw/excalidraw";
 
 const containerEl = useTemplateRef("container");
@@ -65,7 +62,7 @@ onUnmounted(() => {
     <div class="toolbar">
       <button class="export-btn" @click="exportSvg">Export SVG</button>
     </div>
-    <div ref="container" class="canvas-container"/>
+    <div ref="container" class="canvas-container" />
   </div>
 </template>
 
