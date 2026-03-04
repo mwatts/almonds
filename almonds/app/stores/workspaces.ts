@@ -19,6 +19,8 @@ export interface UpdateWorkspacePayload {
   description?: string;
 }
 
+
+
 export const useWorkspacesStore = defineStore("workspaces_store", {
   state: () => ({
     workspaces: [] as Workspace[],
@@ -54,6 +56,38 @@ export const useWorkspacesStore = defineStore("workspaces_store", {
       // Automatically set new workspace as active
       this.activeWorkspaceId = created.identifier;
       return created;
+    },
+
+    async updateWorkspace(payload: CreateWorkspacePayload): Promise<Workspace> {
+      const created = await invoke<Workspace>("create_workspace", {
+        workspace: payload,
+      });
+      this.workspaces.push(created);
+      // Automatically set new workspace as active
+      this.activeWorkspaceId = created.identifier;
+      return created;
+    },
+
+    async deleteWorkspace(identifier: String): Promise<void> {
+      const { notify } = useAppNotification();
+      try {
+        await invoke<Workspace>("delete_workspace", {
+          identifier,
+          meta: await getWorkspaceMeta(),
+        });
+        notify({
+          message: "Workspace deleted",
+          type: "success",
+        });
+
+        return;
+      } catch (error) {
+        notify({
+          message:
+            (error as unknown as Error).message || "Failed to delete workspace",
+          type: "error",
+        });
+      }
     },
 
     setActiveWorkspace(identifier: string) {

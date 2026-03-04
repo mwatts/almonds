@@ -1,5 +1,6 @@
 use almond_kernel::{
-    adapters::workspace::CreateWorkspace, repositories::workspace::WorkspaceRepositoryExt,
+    adapters::{meta::RequestMeta, workspace::CreateWorkspace},
+    repositories::workspace::WorkspaceRepositoryExt,
 };
 use tauri::State;
 
@@ -34,4 +35,21 @@ pub async fn get_workspace_by_id(
         .map_err(|_| AppError::Io(format!("Invalid UUID string: {}", id)))?;
     let workspace = state.workspace_repository.get_workspace_by_id(uuid).await?;
     Ok(workspace)
+}
+
+#[tauri::command]
+pub async fn delete_workspace(
+    state: State<'_, AppState>,
+    identifier: String,
+    meta: Option<RequestMeta>,
+) -> Result<(), AppError> {
+    let uuid = uuid::Uuid::parse_str(&identifier)
+        .map_err(|_| AppError::Io(format!("Invalid UUID string: {}", identifier)))?;
+
+    state
+        .workspace_repository
+        .delete_workspace(&uuid, &meta)
+        .await?;
+    
+    Ok(())
 }

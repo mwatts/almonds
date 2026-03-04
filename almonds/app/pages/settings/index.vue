@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from "#imports";
+
 definePageMeta({ layout: false });
 
 type Section =
@@ -8,20 +10,39 @@ type Section =
   | "ai"
   | "notifications"
   | "alarm"
-  | "about";
+  | "about"
+  | "workspaces";
 
-const activeSection = ref<Section>("profile");
+const route = useRoute();
+const router = useRouter();
 
 const navSections: { key: Section; label: string; icon: string }[] = [
   { key: "profile", label: "Profile", icon: "heroicons:user-circle" },
   { key: "appearance", label: "Appearance", icon: "heroicons:paint-brush" },
+  { key: "workspaces", label: "Workspaces", icon: "heroicons:briefcase" },
   { key: "backup", label: "Backup & Sync", icon: "heroicons:cloud-arrow-up" },
   { key: "ai", label: "AI & Ollama", icon: "heroicons:cpu-chip" },
   { key: "notifications", label: "Notifications", icon: "heroicons:inbox" },
   { key: "alarm", label: "Alarm", icon: "heroicons:bell-alert" },
   { key: "about", label: "About", icon: "heroicons:information-circle" },
 ];
+
+const isValidSection = (s: any): s is Section =>
+  navSections.some((n) => n.key === s);
+
+const activeSection = ref<Section>(
+  isValidSection(route.query.section) ? (route.query.section as Section) : "profile"
+);
+
+function setSection(section: Section) {
+  activeSection.value = section;
+
+  router.replace({
+    query: { ...route.query, section },
+  });
+}
 </script>
+
 
 <template>
   <NuxtLayout name="default">
@@ -35,6 +56,7 @@ const navSections: { key: Section; label: string; icon: string }[] = [
       />
       <SettingsAlarmSettings v-else-if="activeSection === 'alarm'" />
       <SettingsAboutSettings v-else-if="activeSection === 'about'" />
+      <SettingsWorkspaces v-else-if="activeSection === 'workspaces'" />
     </template>
 
     <template #side_content>
