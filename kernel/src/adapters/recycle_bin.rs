@@ -15,6 +15,7 @@ pub enum RecycleBinItemType {
     Reminder,
     Snippet,
     Bookmark,
+    Workspace,
 }
 
 impl fmt::Display for RecycleBinItemType {
@@ -25,6 +26,7 @@ impl fmt::Display for RecycleBinItemType {
             RecycleBinItemType::Reminder => write!(f, "reminder"),
             RecycleBinItemType::Snippet => write!(f, "snippet"),
             RecycleBinItemType::Bookmark => write!(f, "bookmark"),
+            RecycleBinItemType::Workspace => write!(f, "workspace"),
         }
     }
 }

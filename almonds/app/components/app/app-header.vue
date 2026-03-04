@@ -21,7 +21,7 @@ const workspaces = computed(() => {
       label: "Manage Workspaces",
       color: "neutral",
       icon: "ri:paint-brush-line",
-      onSelect: () => navigateTo("/settings"),
+      onSelect: () => navigateTo("/settings?section=workspaces"),
     },
 
     {

@@ -10,10 +10,7 @@ use almond_kernel::{
     repositories::prelude::RecycleBinRepositoryExt,
 };
 
-use fake::{
-    Fake,
-    faker::lorem::en::Paragraph,
-};
+use fake::{Fake, faker::lorem::en::Paragraph};
 
 use uuid::Uuid;
 
@@ -138,8 +135,7 @@ async fn test_purge_recycle_bin() -> Result<(), KernelError> {
 
     let created = repo.store(&payload, &Some(meta.clone())).await?;
 
-    repo.purge(&created.identifier, &Some(meta.clone()))
-        .await?;
+    repo.purge(&created.identifier, &Some(meta.clone())).await?;
 
     let found = repo
         .find_by_id(&created.identifier, &Some(meta.clone()))
