@@ -1,26 +1,11 @@
 <script setup lang="ts">
-import _ from "lodash";
-import { SNIPPET_LANGUAGES } from "~/data/languages";
 import { primaryRoutes, secondaryRoutes } from "~/data/routes";
 import { useUserPreferenceStore } from "~/stores/user-preference";
 
 const preferenceStore = useUserPreferenceStore();
-const workspaceStore = useWorkspacesStore();
-const submitting = ref(false);
-const workspaces = computed(() =>
-  workspaceStore.workspaces.map((w) => ({
-    label: w.name,
-    value: w.identifier,
-  })),
-);
-const workspace = ref({
-  label: workspaceStore.currentWorkspace?.name ?? "Select workspace",
-  value: workspaceStore.currentWorkspace?.identifier ?? "",
-});
 
 const route = useRoute();
 const colorMode = useColorMode();
-const currentWorkspace = ref("");
 
 const isDark = computed({
   get: () => colorMode.value === "dark",
