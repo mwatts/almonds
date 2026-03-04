@@ -1,25 +1,12 @@
 <script setup lang="ts">
 import _ from "lodash";
-import SideNavigation from "~/components/app/side-navigation.vue";
+
 import { primaryRoutes, secondaryRoutes } from "~/data/routes";
 import { useUserPreferenceStore } from "~/stores/user-preference";
 
 const preferenceStore = useUserPreferenceStore();
-const workspaceStore = useWorkspacesStore();
-
-const workspaces = computed(() =>
-  workspaceStore.workspaces.map((w) => ({
-    label: w.name,
-    value: w.identifier,
-  })),
-);
-const workspace = ref({
-  label: workspaceStore.currentWorkspace?.name ?? "Select workspace",
-  value: workspaceStore.currentWorkspace?.identifier ?? "",
-});
 
 const route = useRoute();
-const router = useRouter();
 const colorMode = useColorMode();
 
 const isDark = computed({
@@ -42,16 +29,8 @@ function isActive(path: string): boolean {
   return route.path.startsWith(path);
 }
 
-const sidebarCollapsed = ref(false);
 const asideOpen = ref(false);
 const mobileNavOpen = ref(false);
-
-const { searchConfig, searchQuery } = useAppSearch();
-
-function onSearchInput(val: string) {
-  searchQuery.value = val;
-  searchConfig.value?.searchFn?.(val);
-}
 
 const pageTitle = computed(() => {
   const raw = route.name?.toString().replaceAll("-", " ") ?? "";
@@ -65,89 +44,12 @@ const pageTitle = computed(() => {
 <template>
   <UDashboardGroup id="wild_almonds_app" as="div">
     <!-- Sidebar: icons-only strip when collapsed -->
-    <SideNavigation />
+    <AppSideNavigation />
 
     <!-- Right column: header + main content -->
     <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
       <!-- App header -->
-      <header
-        class="shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
-        style="padding-top: env(safe-area-inset-top)"
-      >
-        <div class="flex justify-between items-center gap-3 h-14 px-4">
-          <!-- Hamburger: mobile only -->
-          <UButton
-            class="flex md:hidden shrink-0"
-            size="sm"
-            color="neutral"
-            variant="ghost"
-            icon="heroicons:bars-3"
-            aria-label="Open navigation"
-            @click="mobileNavOpen = true"
-          />
-
-          <!-- Expand sidebar button (only shown when sidebar is collapsed) -->
-          <UDashboardSidebarCollapse
-            v-if="sidebarCollapsed"
-            size="sm"
-            color="neutral"
-            variant="ghost"
-            class="hidden md:flex shrink-0"
-          />
-
-          <div class="flex items-center gap-1">
-            <UButton
-              size="sm"
-              color="neutral"
-              variant="ghost"
-              icon="heroicons:chevron-left"
-              @click="router.back()"
-            />
-          </div>
-
-          <!-- Search bar -->
-          <div class="mx-auto w-6/12">
-            <input
-              :model-value="searchQuery"
-              :placeholder="searchConfig?.placeholder ?? 'Search...'"
-              :disabled="!searchConfig"
-              icon="heroicons:magnifying-glass"
-              variant="outline"
-              :ui="{ root: 'bg-transparent' }"
-              @update:model-value="onSearchInput"
-            >
-          </div>
-
-          <!-- Right actions -->
-          <div class="flex items-center gap-1 ml-auto">
-            <UButton
-              size="sm"
-              color="neutral"
-              variant="ghost"
-              :icon="themeIcon"
-              :aria-label="themeLabel"
-              @click="toggleTheme"
-            />
-            <UButton
-              size="sm"
-              color="neutral"
-              variant="ghost"
-              icon="heroicons:bell"
-              @click="navigateTo('/notifications')"
-            />
-            <UButton
-              class="flex md:hidden"
-              size="sm"
-              color="neutral"
-              variant="ghost"
-              icon="heroicons:bars-3-bottom-right"
-              aria-label="Open panel"
-              @click="asideOpen = true"
-            />
-          </div>
-        </div>
-      </header>
-
+      <AppHeader />
       <!-- Page content + inline aside (fullscreen mode) -->
       <div class="flex flex-1 overflow-hidden">
         <main class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-surface-950">
