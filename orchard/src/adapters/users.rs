@@ -13,7 +13,7 @@ pub struct UserProfile {
     pub username: Option<String>,
     pub country_identifier: Option<String>,
 }
-#[derive(Debug, Serialize, Deserialize, Validate,)]
+#[derive(Debug, Serialize, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct PartialUserProfile {
     pub email: Option<String>,
@@ -21,5 +21,3 @@ pub struct PartialUserProfile {
     pub last_name: Option<String>,
     pub username: Option<String>,
 }
-
-

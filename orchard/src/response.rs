@@ -1,10 +1,10 @@
 use std::fmt::Debug;
 
-use axum::Json;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use serde::Serialize;
+use axum::Json;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 
 use crate::errors::service_error::ServiceError;
 

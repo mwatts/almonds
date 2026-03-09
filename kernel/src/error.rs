@@ -9,5 +9,5 @@ pub enum KernelError {
     DbOperationError(String),
 
     #[error("Failed to extract env: {0}")]
-    EnvError(String)
+    EnvError(String),
 }

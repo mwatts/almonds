@@ -15,6 +15,7 @@ path = "src/lib.rs"
 almond_kernel = { version = "0.1.0", path = "../kernel" }
 async-graphql-axum = { version = "7.0" }
 axum = { version = "0.8" }
+axum_typed_multipart = { version = "0.16.3", features = ["tempfile_3"] }
 chrono = "0.4.44"
 clap = "4.5.60"
 console = "0.16.2"
@@ -24,6 +25,7 @@ jsonwebtoken = "10.3.0"
 log = "0.4.29"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.103"
+tempfile = "3.26.0"
 thiserror = "2.0.18"
 tokio = { version = "1.29.1", features = ["full"] }
 tower-http = { version = "0.6.8", features = [
@@ -37,8 +39,6 @@ tracing = { version = "0.1.37" }
 tracing-subscriber = { version = "0.3.17" }
 uuid = { version = "1.22.0", features = ["v4"] }
 validator = { version = "0.20.0", features = ["derive"] }
-axum_typed_multipart = { version = "0.16.3", features = ["tempfile_3"] }
-tempfile = "3.26.0"
 
 [dependencies.sea-orm]
 version = "~2.0.0-rc"
@@ -61,7 +61,6 @@ features = ["graphql-playground", "with-decimal", "with-chrono", "with-uuid"]
 
 [dev-dependencies]
 serde_json = { version = "1.0.103" }
-
 
 [profile.release]
 codegen-units = 1
