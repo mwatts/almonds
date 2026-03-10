@@ -13,3 +13,11 @@ pub use super::sync_queue::Entity as SyncQueue;
 pub use super::todo::Entity as Todo;
 pub use super::user_preference::Entity as UserPreference;
 pub use super::workspaces::Entity as Workspaces;
+
+
+pub use super::backup_emails::Entity as BackupEmails;
+pub use super::countries::Entity as Countries;
+pub use super::notifications::Entity as Notifications;
+pub use super::one_time_passwords::Entity as OneTimePasswords;
+pub use super::users::Entity as Users;
+pub use super::wait_list::Entity as WaitList;

@@ -1,12 +1,9 @@
 use std::sync::Arc;
 
-use aers_ably_client::AblyClient;
-use aers_utils::extract_env;
 use axum::{
     extract::ws::{Message, WebSocket},
     response::Response,
 };
-use futures_util::{sink::SinkExt, stream::StreamExt};
 use sea_orm::DatabaseConnection;
 use uuid::Uuid;
 
@@ -37,22 +34,24 @@ impl NotificationService {
         }
     }
     pub async fn handle_web_socket_connection(&self, socket: WebSocket) {
-        let (mut outgoing, mut incoming) = socket.split();
+        // let (mut outgoing, mut incoming) = socket.split();
 
-        // send messages to connected client
-        tokio::spawn(async move {
-            if let Err(err) = outgoing.send(Message::Text("sample message".into())).await {
-                log::error!("{err}");
-            }
-        });
+        // // send messages to connected client
+        // tokio::spawn(async move {
+        //     if let Err(err) = outgoing.send(Message::Text("sample message".into())).await {
+        //         log::error!("{err}");
+        //     }
+        // });
 
-        // get message from worker
-        tokio::spawn(async move {
-            while let Some(message) = incoming.next().await {
-                // send the message
-                log::info!("got incoming message {message:#?}");
-            }
-        });
+        // // get message from worker
+        // tokio::spawn(async move {
+        //     while let Some(message) = incoming.next().await {
+        //         // send the message
+        //         log::info!("got incoming message {message:#?}");
+        //     }
+        // });
+
+        unimplemented!()
     }
 
     //push message to client
@@ -96,28 +95,30 @@ impl NotificationServiceExt for NotificationService {
         &self,
         request: &CreateNotification,
     ) -> Result<Uuid, ServiceError> {
-        let notification = self.repository.create(request).await?;
+        // let notification = self.repository.create(request).await?;
 
-        let api_key = extract_env::<String>("ABLY_API_KEY").map_err(|err| {
-            log::error!("{}", err);
-            AppError::OperationFailed(err.to_string())
-        })?;
+        // let api_key = extract_env::<String>("ABLY_API_KEY").map_err(|err| {
+        //     log::error!("{}", err);
+        //     AppError::OperationFailed(err.to_string())
+        // })?;
 
-        let Some(user_identifier) = notification.user_identifier else {
-            return Err(ServiceError::OperationFailed);
-        };
+        // let Some(user_identifier) = notification.user_identifier else {
+        //     return Err(ServiceError::OperationFailed);
+        // };
 
-        let ably_client = AblyClient::new(&api_key);
-        let notification_channel = format!("notify:{user_identifier}");
+        // let ably_client = AblyClient::new(&api_key);
+        // let notification_channel = format!("notify:{user_identifier}");
 
-        log::info!("dispatching real time notification");
-        let notification_payload =
-            Notification::new("Conversion completed", "file converted successfully");
-        let _ = ably_client
-            .publish_message(&notification_channel, notification_payload)
-            .await;
+        // log::info!("dispatching real time notification");
+        // let notification_payload =
+        //     Notification::new("Conversion completed", "file converted successfully");
+        // let _ = ably_client
+        //     .publish_message(&notification_channel, notification_payload)
+        //     .await;
 
-        Ok(notification.identifier)
+        // Ok(notification.identifier)
+
+        unimplemented!()
     }
     async fn listen_for_new_notifications(&self) -> Response {
         todo!()

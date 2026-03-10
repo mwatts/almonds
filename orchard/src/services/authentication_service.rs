@@ -13,8 +13,8 @@ use crate::adapters::jwt::TWENTY_FIVE_MINUTES;
 use crate::adapters::repository::DatabaseInsertResult;
 use crate::errors::database_error::DatabaseError;
 use crate::errors::service_error::ServiceError;
-use crate::events::redis::RedisClient;
-use crate::events::redis::RedisClientExt;
+// use crate::events::redis::RedisClient;
+// use crate::events::redis::RedisClientExt;
 use crate::repositories::base::Repository;
 use crate::services::otp_service::OtpService;
 use crate::services::otp_service::OtpServiceExt;
@@ -187,9 +187,10 @@ impl AuthenticationServiceTrait for AuthenticationService {
             .validity(Duration::from_secs(7 * 60 * 60 /*7 hours */))
             .build()?;
 
+        //TODO:
         let refresh_token_out = refresh_token.generate_token()?;
-        let mut redis_client = RedisClient::new().await?;
-        redis_client.save_refresh_token(&refresh_token_out).await?;
+        // let mut redis_client = RedisClient::new().await?;
+        // redis_client.save_refresh_token(&refresh_token_out).await?;
 
         Ok(LoginResponse {
             access_token: access_token.generate_token()?,
@@ -288,8 +289,8 @@ impl AuthenticationServiceTrait for AuthenticationService {
             .build()?;
 
         let refresh_token_out = refresh_token.generate_token()?;
-        let mut redis_client = RedisClient::new().await?;
-        redis_client.save_refresh_token(&refresh_token_out).await?;
+        // let mut redis_client = RedisClient::new().await?;
+        // redis_client.save_refresh_token(&refresh_token_out).await?;
 
         Ok(LoginResponse {
             access_token: access_token.generate_token()?,

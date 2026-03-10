@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
-use ts_rs::TS;
 
-#[derive(Debug, Serialize, Deserialize, TS)]
-#[ts(export)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct RowCount {
     pub count: u64,
 }
