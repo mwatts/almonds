@@ -1,7 +1,7 @@
 ---
-title: "Why SeaORM over other Rust database options?"
+title: "Why SeaORM over JavaScript client database options?"
 description: ""
-date: 2026-03-08
+date: 2026-03-11
 author: "Adefemi Adeoye"
 tags: ["toolchain", "open-source", "rust", "engineering"]
 ---
@@ -12,35 +12,23 @@ tags: ["toolchain", "open-source", "rust", "engineering"]
 
 A few weeks ago, I made an announcement about [Wild Almonds](https://opeolluwa.github.io/almonds). This post reflects on some of the decisions that influenced the choice of technologies behind the project, starting with SeaORM.
 
-## Introduction
+In case you missed out on it, [Wild Almonds](https://opeolluwa.github.io/almonds) (or simply _**Almonds**_) is a developer productivity tool I'm building because it's tiring to track snippets with Github gist, while planning each day with Microsoft todo, while keeping reminders on phone, taking notes with Notion and more — I just want a single source.
 
-Needless to say, the choice of technology can greatly influence the performance and long-term viability of a product across several parameters, including size, speed, and security.
+That said, the choice of technology can greatly influence the performance and long-term viability of a product across several parameters, including size, speed, and security.ƒ
 
 Rust was an easy choice because it checks many of these boxes. Its performance, memory safety guarantees, and strong ecosystem make it a compelling foundation for building reliable applications.
 
-One of the earliest architectural concerns when planning Wild Almonds was **data replication**, while the sync server is still a WIP, it is imperative that things are done right from the ground up.
+In this article I'm reflecting on one of the earliest architectural concerns I had when planning Wild Almonds's **data replication**, across devices. While the sync server is still a WIP, it is imperative that things are done right from the ground up.
 
-There are quite a number of offline-first client databases available today, including PouchDB, RxDB, Dexi and many more. However, it was important for me to streamline both forward and backward compatibility of the data model from the beginning. Managing NoSQL databases can quickly become murky, especially when the data eventually needs to integrate with relational databases such as Oracle, MySQL, or Postgres.
+The plan is simple, save on local first then replicate to cloud, I explain what mad me choose Sea-orm amidst the myriads of alternatives.
 
-Amidst these considerations, SeaORM fits nicely into the architecture. It allows me to use SQLite locally for the client database while keeping a structured relational model. Combined with Seaography, this also makes it possible to replicate or expose the data to a cloud database in a consistent and maintainable way.
+## Introduction
 
-What is more important is SeaORM entities can be bootstrapped as GraphQl types, this makes it easier, considering it's all driven by codegen here and there.
+There are quite a number of offline-first client databases available today, including very ergonomic ones PouchDB, RxDB, and Dexi which I've interacted with at some point in the time past. However, it was important for me to streamline both forward and backward compatibility of the data model from the beginning. Managing NoSQL databases can quickly become murky, especially when the data eventually needs to integrate with relational databases such as Oracle, MySQL, or Postgres.
+
+Amidst these considerations, SeaORM fits nicely into the architecture. It allows me to use SQLite locally for the client database while keeping a structured relational model. Combined with Seaography and some other features which I'll talk about sooner, this also makes it possible to replicate or expose the data to a cloud database in a consistent and maintainable way.
 
 In the following section I'll highlight feature that resonated strongly with me starting with other database client in the Rust ecosystem
-
-## SeaORM vs SQLx vs Diesel
-
-One interesting detail is that SeaORM is built on top of the SQLx driver. In many ways, it inherits the performance and async capabilities that SQLx provides while adding a higher level of abstraction.
-
-Using SQLx directly is powerful, but it would require writing and maintaining a significant amount of manual query logic. While that approach works well for smaller systems, it can become tedious as the application grows and the data model becomes more complex.
-
-The main advantage of an ORM is abstraction. Instead of writing raw SQL for every interaction, the data model is expressed through entities and relationships. This allows the application logic to remain largely independent of the underlying database engine.
-
-For Wild Almonds, this flexibility is important. I do not want the application logic to depend heavily on whether the database is SQLite, MySQL, Postgres, or another supported backend. SeaORM provides a clean way to model the data while still allowing the project to remain portable across multiple database systems.
-
-Diesel was another option worth considering. However, Diesel’s synchronous design and heavier compile-time constraints can make it less convenient for applications that rely heavily on asynchronous workflows.
-
-SeaORM strikes a balance between these approaches: it provides the abstraction of an ORM while still leveraging the async capabilities and performance of SQLx under the hood.
 
 ### SeaORM migration
 
@@ -130,8 +118,14 @@ impl MigrationTrait for Migration {
 
 ```
 
+### Role based access control
+
 ### Testing
 
 ## Conclusion
 
-SeaORM helped unify a lot of code that would have otherwise become platform specific 
+Aside the The main advantage of an ORM is abstraction and the code generation. Instead of writing raw SQL for every interaction, the data model is expressed through entities and relationships. This allows the application logic to remain largely independent of the underlying database engine.
+
+For Wild Almonds, this flexibility is important. I do not want the application logic to depend heavily on whether the database is SQLite, MySQL, Postgres, or another supported backend. SeaORM provides a clean way to model the data while still allowing the project to remain portable across multiple database systems.
+
+SeaORM helped unify a lot of code that would have otherwise become platform specific
