@@ -1,8 +1,7 @@
 use std::path::Path;
 use std::sync::Arc;
 
-use aers_imagekit_client::ImagekitClient;
-use aers_utils::generate_file_name;
+use almond_kernel::utils::extract_env;
 use axum_typed_multipart::TypedMultipart;
 use sea_orm::DatabaseConnection;
 use uuid::Uuid;
@@ -16,7 +15,6 @@ use crate::errors::database_error::DatabaseError;
 use crate::errors::service_error::ServiceError;
 use crate::repositories::user::{UserRepository, UserRepositoryTrait};
 use crate::services::helper_service::{ServiceHelpers, ServiceHelpersTrait};
-use crate::shared::extract_env::extract_env;
 
 #[derive(Clone)]
 pub struct UserService {
@@ -63,13 +61,7 @@ pub(crate) trait UserServiceTrait {
     async fn toggle_2fa(&self, user_identifier: &Uuid) -> Result<users::Model, ServiceError>;
 
     async fn toggle_biometrics(&self, user_identifier: &Uuid)
-    -> Result<users::Model, ServiceError>;
-
-    async fn add_backup_email(
-        &self,
-        user_identifier: &Uuid,
-        backup_email: &str,
-    ) -> Result<(), ServiceError>;
+        -> Result<users::Model, ServiceError>;
 }
 
 impl UserServiceTrait for UserService {
@@ -104,13 +96,9 @@ impl UserServiceTrait for UserService {
         user_identifier: &Uuid,
     ) -> Result<(), ServiceError> {
         // tokio::task::spawn(async move {
-        let file_name = image
-            .metadata
-            .file_name
-            .clone()
-            .unwrap_or(generate_file_name());
+        let file_name = image.metadata.file_name.clone().unwrap(); //TODO: undo unwrap
 
-        let config = AppConfig::from_env()?;
+        let config = AppConfig::from_env().unwrap();
         let temp_dir = Path::new(&config.upload_path);
         let file_path = temp_dir.join(format!(
             "{time_stamp}_{file_name}",
@@ -123,27 +111,27 @@ impl UserServiceTrait for UserService {
             return Err(ServiceError::OperationFailed);
         }
 
-        let private_key: String =
-            extract_env("IMAGEKIT_PRIVATE_KEY").map_err(ServiceError::from)?;
-        let public_key: String = extract_env("IMAGEKIT_PUBLIC_KEY").map_err(ServiceError::from)?;
+        // let private_key: String =
+        //     extract_env("IMAGEKIT_PRIVATE_KEY").map_err(ServiceError::from).unwrap();
+        // let public_key: String = extract_env("IMAGEKIT_PUBLIC_KEY").map_err(ServiceError::from).unwrap();
 
-        let client = ImagekitClient::new(&public_key, &private_key).map_err(|err| {
-            log::error!("ImageKit client creation failed: {err}");
-            ServiceError::OperationFailed
-        })?;
+        // let client = ImagekitClient::new(&public_key, &private_key).map_err(|err| {
+        //     log::error!("ImageKit client creation failed: {err}");
+        //     ServiceError::OperationFailed
+        // })?;
 
-        let url = client
-            .upload_file(file_path, &file_name)
-            .await
-            .map_err(|err| {
-                log::error!("MP3 upload failed: {err}");
-                ServiceError::OperationFailed
-            })
-            .map(|res| res.url)?;
+        // let url = client
+        //     .upload_file(file_path, &file_name)
+        //     .await
+        //     .map_err(|err| {
+        //         log::error!("MP3 upload failed: {err}");
+        //         ServiceError::OperationFailed
+        //     })
+        //     .map(|res| res.url)?;
 
-        self.user_repository
-            .set_avatar_url(user_identifier, &url)
-            .await?;
+        // self.user_repository
+        //     .set_avatar_url(user_identifier, &url)
+        //     .await?;
 
         Ok(())
     }
@@ -177,17 +165,5 @@ impl UserServiceTrait for UserService {
             .await?;
 
         Ok(update)
-    }
-
-    async fn add_backup_email(
-        &self,
-        user_identifier: &Uuid,
-        backup_email: &str,
-    ) -> Result<(), ServiceError> {
-        self.user_repository
-            .add_backup_email(user_identifier, backup_email)
-            .await?;
-
-        Ok(())
     }
 }

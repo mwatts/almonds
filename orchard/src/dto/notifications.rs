@@ -2,25 +2,19 @@ use std::fmt;
 
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-use ts_rs::TS;
 use uuid::Uuid;
 
 use crate::entities::notifications;
 
-#[derive(Debug, Serialize, Deserialize, Default, TS)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
-#[ts(export)]
 pub struct Notification {
-    #[ts(type = "string")]
     pub identifier: Uuid,
     pub subject: String,
     pub body: String,
-    #[ts(type = "string")]
     pub created_at: DateTime<Local>,
-    #[ts(type = "string")]
     pub updated_at: Option<DateTime<Local>>,
     pub is_read: bool,
-    #[ts(type = "string")]
     pub user_identifier: Uuid,
 }
 

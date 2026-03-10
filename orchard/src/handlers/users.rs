@@ -1,14 +1,11 @@
-use axum::{Json, extract::State};
+use axum::extract::State;
 use axum_typed_multipart::TypedMultipart;
 
 use crate::services::user_service::UserServiceTrait;
 use crate::{
     adapters::{
-        authentication::SetNewPasswordRequest,
-        jwt::Claims,
-        profile::UploadProfilePictureRequest,
-        request::AuthenticatedRequest,
-        users::{BackupEmail, PartialUserProfile},
+        authentication::SetNewPasswordRequest, jwt::Claims, profile::UploadProfilePictureRequest,
+        request::AuthenticatedRequest, users::PartialUserProfile,
     },
     entities::users,
     errors::service_error::ServiceError,
@@ -106,19 +103,4 @@ pub async fn toggle_biometrics(
     };
 
     Ok(ApiResponseBuilder::new().data(()).message(message).build())
-}
-
-pub async fn add_backup_email(
-    State(user_service): State<UserService>,
-    claims: Claims,
-    Json(payload): Json<BackupEmail>,
-) -> Result<ApiResponse<()>, ServiceError> {
-    user_service
-        .add_backup_email(&claims.user_identifier, &payload.email)
-        .await?;
-
-    Ok(ApiResponseBuilder::new()
-        .data(())
-        .message("backup email added")
-        .build())
 }

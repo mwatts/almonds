@@ -80,5 +80,5 @@ release target:
 
 
 @server-dev:
-    {{ DOCKER_CMD }} up -d
+    {{ DOCKER_CMD }} up -d 
     @just server-logs

@@ -1,6 +1,7 @@
 use std::{
     env,
     net::{Ipv4Addr, SocketAddr, SocketAddrV4},
+    sync::Arc,
     time::Duration,
 };
 
@@ -18,7 +19,9 @@ use axum::{
     Router,
 };
 use dotenv::dotenv;
-use orchard_lib::{errors::app_error::AppError, shutdown::shutdown_signal};
+use orchard_lib::{
+    errors::app_error::AppError, routes::router::load_routes, shutdown::shutdown_signal,
+};
 use seaography::{async_graphql, lazy_static::lazy_static};
 use tokio::net::TcpListener;
 use tower_http::{
@@ -66,19 +69,25 @@ async fn main() -> Result<(), AppError> {
     kernel.run_migrations().await?;
 
     let db = kernel.connection().to_owned();
+    let db_conn = Arc::new(db.clone());
 
     let schema = orchard_lib::query_root::schema(db, *DEPTH_LIMIT, *COMPLEXITY_LIMIT)
         .map_err(|err| AppError::GraphQLError(err.to_string()))?;
 
-    let app = Router::new()
+    let http_routes = load_routes(&db_conn);
+
+    let graphql_router = Router::new()
         .route(&*ENDPOINT, get(graphql_playground).post(graphql_handler))
-        // .merge(http_routes)
+        .with_state(schema);
+
+    let app = Router::new()
+        .merge(graphql_router)
+        .merge(http_routes)
         .layer(cors)
         .layer(TimeoutLayer::with_status_code(
             StatusCode::REQUEST_TIMEOUT,
             Duration::from_secs(25),
-        ))
-        .with_state(schema);
+        ));
 
     let ip_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000));
     tracing::info!("Visit GraphQL Playground at http://{}", ip_address);

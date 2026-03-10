@@ -14,6 +14,13 @@ pub mod sync_queue;
 pub mod todo;
 pub mod user_preference;
 pub mod workspaces;
+// none graphql entities
+pub mod backup_emails;
+pub mod countries;
+pub mod notifications;
+pub mod one_time_passwords;
+pub mod users;
+pub mod wait_list;
 
 seaography::register_entity_modules!([
     bookmark,

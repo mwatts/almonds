@@ -3,7 +3,6 @@ use std::sync::Arc;
 use sea_orm::{
     ActiveModelTrait, ActiveValue::Set, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
 };
-use ulid::Ulid;
 use uuid::Uuid;
 
 use crate::{
@@ -12,7 +11,7 @@ use crate::{
         repository::DatabaseInsertResult,
         users::PartialUserProfile,
     },
-    entities::{backup_emails, users},
+    entities::users,
     errors::database_error::DatabaseError,
     repositories::base::Repository,
 };
@@ -73,12 +72,6 @@ pub(crate) trait UserRepositoryTrait {
         &self,
         user_identifier: &Uuid,
     ) -> Result<users::Model, DatabaseError>;
-
-    async fn add_backup_email(
-        &self,
-        user_identifier: &Uuid,
-        backup_email: &str,
-    ) -> Result<(), DatabaseError>;
 }
 
 impl UserRepositoryTrait for UserRepository {
@@ -278,21 +271,5 @@ impl UserRepositoryTrait for UserRepository {
         let update = user.update(self.db_conn.as_ref()).await?;
 
         Ok(update)
-    }
-
-    async fn add_backup_email(
-        &self,
-        user_identifier: &Uuid,
-        backup_email: &str,
-    ) -> Result<(), DatabaseError> {
-        let backup_email = backup_emails::ActiveModel {
-            identifier: Set(Ulid::new().to_string()),
-            email: Set(backup_email.to_string()),
-            user_identifier: Set(*user_identifier),
-            ..Default::default()
-        };
-
-        backup_email.insert(self.db_conn.as_ref()).await?;
-        Ok(())
     }
 }

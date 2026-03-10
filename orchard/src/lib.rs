@@ -1,8 +1,15 @@
 pub mod adapters;
 pub mod cli;
 pub mod config;
+pub mod dto;
 pub mod entities;
 pub mod errors;
+pub mod handlers;
+pub mod middlewares;
 pub mod query_root;
+pub mod repositories;
 pub mod response;
+pub mod routes;
+pub mod services;
 pub mod shutdown;
+pub mod states;

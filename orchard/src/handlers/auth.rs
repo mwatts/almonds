@@ -61,7 +61,7 @@ pub async fn forgotten_password(
 
     Ok(ApiResponseBuilder::new()
         .data(forgotten_password_response)
-        .message("account retrival instructions has been sent to the registered email address")
+        .message("account retrieval instructions has been sent to the registered email address")
         .build())
 }
 

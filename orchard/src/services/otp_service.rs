@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use aers_utils::generate_otp;
 use chrono::{Local, TimeDelta};
 use sea_orm::DatabaseConnection;
 use uuid::Uuid;
@@ -39,13 +38,14 @@ pub(crate) trait OtpServiceExt {
 
 impl OtpServiceExt for OtpService {
     async fn new_otp_for_user(&self, user_identifier: &str) -> Result<String, ServiceError> {
-        let otp = generate_otp();
-        self.otp_repository
-            .new_with_user(user_identifier, &otp)
-            .await
-            .map_err(ServiceError::from)?;
+        unimplemented!()
+        // let otp = generate_otp();
+        // self.otp_repository
+        //     .new_with_user(user_identifier, &otp)
+        //     .await
+        //     .map_err(ServiceError::from)?;
 
-        Ok(otp)
+        // Ok(otp)
     }
 
     async fn validate_otp_for_user(
