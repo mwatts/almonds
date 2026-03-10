@@ -25,10 +25,10 @@ RUN cargo install cargo-watch
 WORKDIR /app/orchard 
 
 # RUN "echo $ls"
-RUN cargo build --manifest-path orchard/Cargo.toml
+RUN cargo build 
 
 
 VOLUME ["/app", "/cargo-target", "/usr/local/cargo/registry"]
 
 
-CMD ["cargo", "run"]
+CMD ["cargo watch -qcx run --bin orchard"]
