@@ -15,8 +15,11 @@ export default defineNuxtConfig({
     storage: 'localStorage',
     storageKey: 'nuxt-color-mode',
   },
-
+nitro: {
+    preset: 'github-pages'
+  },
   app: {
+     baseURL: '/almonds/',
     head: {
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -28,7 +31,10 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  site: {
+    url: "https://opeolluwa.github.io/almonds",
+    name: "Wild almond",
+  },
   modules: [
     '@nuxt/content',
     '@nuxt/eslint',

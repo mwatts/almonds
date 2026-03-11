@@ -2,26 +2,73 @@
 edition = "2021"
 name = "orchard"
 version = "0.1.0"
+default-run = "orchard"
+
+[workspace]
+members = [".", "migration"]
+
+[lib]
+name = "orchard_lib"
+path = "src/lib.rs"
 
 [dependencies]
-axum = { version = "0.8" }
+almond_kernel = { version = "0.1.0", path = "../kernel" }
 async-graphql-axum = { version = "7.0" }
+async-trait = "0.1.89"
+axum = { version = "0.8", features = ["macros"] }
+axum-extra = { version = "0.10.1", features = ["typed-header"] }
+axum_typed_multipart = { version = "0.16.3", features = ["tempfile_3"] }
+bcrypt = "0.19.0"
+chrono = "0.4.44"
+clap = "4.5.60"
+console = "0.16.2"
+dialoguer = "0.12.0"
 dotenv = "0.15.0"
-tokio = { version = "1.29.1", features = ["macros", "rt-multi-thread"] }
+jsonwebtoken = "10.3.0"
+log = "0.4.29"
+orchard_migration = { version = "0.1.0", path = "migration" }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.103"
+tempfile = "3.26.0"
+thiserror = "2.0.18"
+tokio = { version = "1.29.1", features = ["full"] }
+tower-http = { version = "0.6.8", features = [
+    "limit",
+    "trace",
+    "cors",
+    "timeout",
+    "sensitive-headers",
+] }
 tracing = { version = "0.1.37" }
 tracing-subscriber = { version = "0.3.17" }
-almond_kernel = { version = "0.1.0", path = "../kernel" }
+ulid = { version = "1.2.1", features = ["serde"] }
+uuid = { version = "1.22.0", features = ["v4"] }
+validator = { version = "0.20.0", features = ["derive"] }
 
 [dependencies.sea-orm]
 version = "~2.0.0-rc"
-features = ["sqlx-sqlite", "runtime-tokio-native-tls", "seaography"]
+features = [
+    "sqlx-sqlite",
+    "sqlx-mysql",
+    "sqlx-postgres",
+    "macros",
+    "mock",
+    "debug-print",
+    "with-uuid",
+    "with-chrono",
+    "runtime-tokio-rustls",
+    "seaography",
+]
 
 [dependencies.seaography]
-version = "~2.0.0-rc.8" # seaography version
-features = ["graphql-playground", "with-decimal", "with-chrono"]
+version = "~2.0.0-rc.8"                                                       # seaography version
+features = ["graphql-playground", "with-decimal", "with-chrono", "with-uuid"]
 
 [dev-dependencies]
 serde_json = { version = "1.0.103" }
 
-[workspace]
-members = []
+[profile.release]
+codegen-units = 1
+lto = true
+panic = "abort"
+strip = "debuginfo"
