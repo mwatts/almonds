@@ -8,7 +8,11 @@ use almond_kernel::kernel;
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
-    Router, extract::State, http::{Method, StatusCode, header}, response::{self, IntoResponse}, routing::get
+    extract::State,
+    http::{header, Method, StatusCode},
+    response::{self, IntoResponse},
+    routing::get,
+    Router,
 };
 use dotenv::dotenv;
 use orchard_lib::{
