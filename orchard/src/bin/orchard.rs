@@ -1,52 +1,39 @@
 use std::{
-    env,
     net::{Ipv4Addr, SocketAddr, SocketAddrV4},
     sync::Arc,
     time::Duration,
 };
 
 use almond_kernel::kernel;
-use async_graphql::{
-    dynamic::Schema,
-    http::{playground_source, GraphQLPlaygroundConfig},
-};
+use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
-    extract::State,
-    http::StatusCode,
-    response::{self, IntoResponse},
-    routing::get,
-    Router,
+    Router, extract::State, http::{Method, StatusCode, header}, response::{self, IntoResponse}, routing::get
 };
 use dotenv::dotenv;
 use orchard_lib::{
-    errors::app_error::AppError, routes::router::load_routes, shutdown::shutdown_signal,
+    config::AppConfig, errors::app_error::AppError, routes::router::load_routes,
+    shutdown::shutdown_signal, states::GraphQlState,
 };
-use seaography::{async_graphql, lazy_static::lazy_static};
+use seaography::async_graphql;
 use tokio::net::TcpListener;
 use tower_http::{
     cors::{Any, CorsLayer},
     timeout::TimeoutLayer,
 };
 
-lazy_static! {
-    static ref ENDPOINT: String = env::var("ENDPOINT").unwrap_or("/orchard".into());
-    static ref DATABASE_URL: String =
-        env::var("DATABASE_URL").expect("DATABASE_URL environment variable not set");
-    static ref DEPTH_LIMIT: Option<usize> = env::var("DEPTH_LIMIT").map_or(None, |data| Some(
-        data.parse().expect("DEPTH_LIMIT is not a number")
-    ));
-    static ref COMPLEXITY_LIMIT: Option<usize> = env::var("COMPLEXITY_LIMIT")
-        .map_or(None, |data| {
-            Some(data.parse().expect("COMPLEXITY_LIMIT is not a number"))
-        });
+#[axum::debug_handler]
+async fn graphql_playground(
+    State(GraphQlState { endpoint, .. }): State<GraphQlState>,
+) -> impl IntoResponse {
+    response::Html(playground_source(GraphQLPlaygroundConfig::new(&endpoint)))
 }
 
-async fn graphql_playground() -> impl IntoResponse {
-    response::Html(playground_source(GraphQLPlaygroundConfig::new(&*ENDPOINT)))
-}
-
-async fn graphql_handler(State(schema): State<Schema>, req: GraphQLRequest) -> GraphQLResponse {
+#[axum::debug_handler]
+async fn graphql_handler(
+    State(GraphQlState { schema, .. }): State<GraphQlState>,
+    req: GraphQLRequest,
+) -> GraphQLResponse {
     let req = req.into_inner();
     schema.execute(req).await.into()
 }
@@ -54,31 +41,56 @@ async fn graphql_handler(State(schema): State<Schema>, req: GraphQLRequest) -> G
 #[tokio::main]
 async fn main() -> Result<(), AppError> {
     dotenv().ok();
+
+    let app_config = AppConfig::from_env()?;
+
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .with_test_writer()
         .init();
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods(Any)
-        .allow_headers(Any);
+    let cors = if app_config.environment == "production" {
+        CorsLayer::new()
+            .allow_origin(app_config.allowed_origins.clone())
+            .allow_methods([
+                Method::GET,
+                Method::POST,
+                Method::PUT,
+                Method::DELETE,
+                Method::OPTIONS,
+            ])
+            .allow_headers([header::CONTENT_TYPE, header::AUTHORIZATION])
+    } else {
+        CorsLayer::new()
+            .allow_origin(Any)
+            .allow_methods(Any)
+            .allow_headers(Any)
+    };
 
-    let kernel = kernel::Kernel::new(&*DATABASE_URL).await?;
+    let kernel = kernel::Kernel::new(&app_config.database_url).await?;
 
     kernel.run_migrations().await?;
 
     let db = kernel.connection().to_owned();
     let db_conn = Arc::new(db.clone());
 
-    let schema = orchard_lib::query_root::schema(db, *DEPTH_LIMIT, *COMPLEXITY_LIMIT)
-        .map_err(|err| AppError::GraphQLError(err.to_string()))?;
+    let schema =
+        orchard_lib::query_root::schema(db, app_config.depth_limit, app_config.complexity_limit)
+            .map_err(|err| AppError::GraphQLError(err.to_string()))?;
+
+    let graphql_state = GraphQlState {
+        schema,
+        endpoint: app_config.endpoint.clone(),
+    };
 
     let http_routes = load_routes(&db_conn);
 
     let graphql_router = Router::new()
-        .route(&*ENDPOINT, get(graphql_playground).post(graphql_handler))
-        .with_state(schema);
+        .route(
+            &app_config.endpoint,
+            get(graphql_playground).post(graphql_handler),
+        )
+        .with_state(graphql_state);
 
     let app = Router::new()
         .merge(graphql_router)
@@ -89,7 +101,7 @@ async fn main() -> Result<(), AppError> {
             Duration::from_secs(25),
         ));
 
-    let ip_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 8000));
+    let ip_address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, app_config.port));
     tracing::info!("Visit GraphQL Playground at http://{}", ip_address);
 
     axum::serve(TcpListener::bind(ip_address).await.unwrap(), app)
