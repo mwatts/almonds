@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onBeforeRouteLeave } from "vue-router";
+
 definePageMeta({ layout: false, name: "Create note", keepalive: true });
 
 const router = useRouter();
@@ -32,8 +34,17 @@ async function handleSave() {
   }
 }
 
-onBeforeUnmount(async () => {
-  await handleSave();
+onBeforeRouteLeave(async () => {
+  if (!title.value.trim() && !content.value.trim()) return;
+
+  try {
+    await noteStore.createNote({
+      title: title.value.trim() || "Untitled",
+      content: content.value,
+    });
+  } catch (e) {
+    console.error(e);
+  }
 });
 </script>
 
@@ -44,11 +55,10 @@ onBeforeUnmount(async () => {
       <UInput
         v-model="title"
         placeholder="Note title…"
-        size="xl"
         variant="none"
         class="mb-2 w-full"
         :ui="{
-          base: 'text-3xl font-bold placeholder:font-normal placeholder:text-muted',
+          base: 'text-xl font-bold placeholder:font-normal placeholder:text-muted',
         }"
         :disabled="submitting"
       />

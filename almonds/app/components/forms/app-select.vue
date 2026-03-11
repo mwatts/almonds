@@ -18,7 +18,6 @@ const model = defineModel<string>();
     :hint="hint"
     :name="name"
     :ui="{
-
       error: 'text-red-500 mt-1',
       label: 'text-xs font-medium text-gray-600 dark:text-gray-400',
       hint: 'mr-auto text-gray-400 dark:text-gray-600 font-normal ml-1',
@@ -30,9 +29,9 @@ const model = defineModel<string>();
       value-key="value"
       :disabled="disabled"
       :placeholder="placeholder"
-      :ui="{ base: 'py-4 pl-4 lowercase' }"
+      :ui="{ base: 'py-3 pl-4 lowercase' }"
       :class="[
-        'w-full transition-colors capitalize',
+        'w-full transition-colors first:capitalize',
         error
           ? 'border-red-500 focus:border-red-500'
           : 'border-gray-300 focus:border-black',

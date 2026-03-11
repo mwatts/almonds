@@ -389,8 +389,8 @@ const quickActions = [
           <div
             v-for="bm in recentBookmarks"
             :key="bm.identifier"
-            @click="openUrl(bm.url)"
             class="group bg-white dark:bg-gray-800 rounded-xl px-4 py-3 border border-gray-100 dark:border-gray-700 hover:shadow-sm hover:border-accent-200 dark:hover:border-accent-800 transition-all flex items-center gap-3"
+            @click="openUrl(bm.url)"
           >
             <UIcon
               name="heroicons:bookmark-solid"
@@ -455,7 +455,7 @@ const quickActions = [
         </div>
 
         <!-- Filter / Sort / Delete completed controls -->
-        <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+        <div class="flex items-center gap-1.5 mb-3 flex-wrap hidden">
           <div
             class="flex rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 text-xs"
           >

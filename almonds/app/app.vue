@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   isPermissionGranted,
-  requestPermission
+  requestPermission,
 } from "@tauri-apps/plugin-notification";
 import { useAlarmScheduler } from "~/composables/useAlarmScheduler";
 import { useWorkspaceSetup } from "./composables/useWorkspaceSetup";
@@ -24,6 +24,9 @@ onMounted(async () => {
   initDarkTheme();
   await checkSetup();
   await checkWorkspaceSetup();
+
+  const workspaceStore = useWorkspacesStore();
+  await workspaceStore.fetchWorkspaces();
 
   let permissionGranted = await isPermissionGranted();
 

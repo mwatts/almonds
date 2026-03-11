@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useBookmarkStore, type BookmarkTag } from "~/stores/bookmarks";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import { useBookmarkStore, type BookmarkTag } from "~/stores/bookmarks";
 
 definePageMeta({ layout: false });
 

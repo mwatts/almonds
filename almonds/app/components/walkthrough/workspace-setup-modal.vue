@@ -1,38 +1,4 @@
-<script setup lang="ts">
-import { useWorkspacesStore } from "~/stores/workspaces";
-
-const store = useWorkspacesStore();
-
-const form = reactive({
-  name: "",
-  description: "",
-});
-
-const loading = ref(false);
-const errors = reactive({
-  name: "",
-  description: "",
-});
-
-function validate(): boolean {
-  errors.name = form.name.trim() ? "" : "Name is required";
-  errors.description = form.description.trim() ? "" : "Description is required";
-  return !errors.name && !errors.description;
-}
-
-async function handleSubmit() {
-  if (!validate()) return;
-  loading.value = true;
-  try {
-    await store.createWorkspace({
-      name: form.name.trim(),
-      description: form.description.trim(),
-    });
-  } finally {
-    loading.value = false;
-  }
-}
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <UModal
@@ -55,49 +21,7 @@ async function handleSubmit() {
     </template>
 
     <template #body>
-      <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-        <div class="grid grid-cols-2 gap-3">
-          <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-gray-500 dark:text-gray-400"
-              >Name</label
-            >
-            <UInput
-              v-model="form.name"
-              placeholder="My Workspace"
-              :disabled="loading"
-              :ui="{ root: errors.name ? 'ring-1 ring-red-500' : '' }"
-            />
-            <p v-if="errors.name" class="text-xs text-red-500">
-              {{ errors.name }}
-            </p>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-gray-500 dark:text-gray-400"
-              >Description</label
-            >
-            <UInput
-              v-model="form.description"
-              placeholder="My Workspace Description"
-              :disabled="loading"
-              :ui="{ root: errors.description ? 'ring-1 ring-red-500' : '' }"
-            />
-            <p v-if="errors.description" class="text-xs text-red-500">
-              {{ errors.description }}
-            </p>
-          </div>
-        </div>
-
-        <div class="flex justify-end pt-1">
-          <UButton
-            type="submit"
-            color="primary"
-            :loading="loading"
-            :disabled="loading"
-          >
-            Save and continue
-          </UButton>
-        </div>
-      </form>
+      <AppCreateWorkspaceForm />
     </template>
   </UModal>
 </template>

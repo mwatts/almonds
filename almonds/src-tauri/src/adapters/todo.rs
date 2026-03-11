@@ -1,7 +1,5 @@
-use almond_kernel::adapters::todo::TodoPriority;
+use almond_kernel::adapters::{meta::RequestMeta, todo::TodoPriority};
 use serde::Deserialize;
-
-use crate::adapters::common::RequestMeta;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -11,9 +9,7 @@ pub struct CreateTodo {
     pub due_date: Option<String>,
     pub priority: String,
     pub meta: Option<RequestMeta>,
-
 }
-
 
 impl From<CreateTodo> for almond_kernel::adapters::todo::CreateTodo {
     fn from(t: CreateTodo) -> Self {
