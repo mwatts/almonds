@@ -15,7 +15,7 @@ path = "src/lib.rs"
 almond_kernel = { version = "0.1.0", path = "../kernel" }
 async-graphql-axum = { version = "7.0" }
 async-trait = "0.1.89"
-axum = { version = "0.8" }
+axum = { version = "0.8", features = ["macros"] }
 axum-extra = { version = "0.10.1", features = ["typed-header"] }
 axum_typed_multipart = { version = "0.16.3", features = ["tempfile_3"] }
 bcrypt = "0.19.0"

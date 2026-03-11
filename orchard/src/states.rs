@@ -1,4 +1,6 @@
+use async_graphql::dynamic::Schema;
 use axum::extract::FromRef;
+use seaography::async_graphql;
 
 use crate::services::{
     authentication_service::AuthenticationService, country_service::CountryService,
@@ -50,4 +52,10 @@ impl FromRef<ServicesState> for WaitListService {
     fn from_ref(services: &ServicesState) -> WaitListService {
         services.wait_list_service.clone()
     }
+}
+
+#[derive(Clone)]
+pub struct GraphQlState {
+    pub schema: Schema,
+    pub endpoint: String,
 }

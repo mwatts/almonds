@@ -17,10 +17,6 @@ use crate::{
     states::ServicesState,
 };
 
-
-
-
-
 pub fn load_routes(db_conn: &Arc<DatabaseConnection>) -> Router {
     let state = ServicesState {
         user_service: UserService::init(db_conn),
