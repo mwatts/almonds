@@ -8,3 +8,4 @@ pub mod utils;
 pub use sea_orm;
 
 pub use migration;
+pub use graphql_ws_client::*;
