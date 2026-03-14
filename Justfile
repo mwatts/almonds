@@ -83,6 +83,7 @@ release target:
     @just server-logs
 
 
-#[working-directory:'kernel']
+[working-directory:'kernel']
 gph-pull:
-	graphql-client generate  --schema-path .graphql/sync_queue_schema.graphql .graphql/sync_queue_query.graphql --output-directory src/contracts 
+	graphql-client generate  --schema-path .graphql/schema.graphql .graphql/sync_queue_query.graphql --output-directory src/contracts 
+

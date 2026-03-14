@@ -73,7 +73,7 @@ async fn main() -> Result<(), AppError> {
             .allow_headers(Any)
     };
 
-    let kernel = kernel::Kernel::new(&app_config.database_url).await?;
+    let kernel = kernel::Kernel::new("postgres://orchard:orchard@postgres/orchard").await?;
 
     kernel.run_migrations().await?;
 

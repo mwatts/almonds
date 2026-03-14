@@ -4,7 +4,7 @@ pub mod sync_queue_view {
     #![allow(dead_code)]
     use std::result::Result;
     pub const OPERATION_NAME: &str = "SyncQueueView";
-    pub const QUERY: &str = "query SyncQueueView {\n  syncQueue {\n    size\n    next {\n      id\n      table\n      recordId\n      operation\n      createdAt\n    }\n  }\n}";
+    pub const QUERY: &str = "query SyncQueueView {\n  syncQueue {\n    nodes {\n      identifier\n      tableName\n      recordIdentifier\n      createdAt\n      operation\n    }\n  }\n}\n\n# query syncQueue(\n# filters: SyncQueueFilterInput\n# having: SyncQueueHavingInput\n# orderBy: SyncQueueOrderInput\n# pagination: PaginationInput\n# ): SyncQueueConnection!\n\n# query syncQueueUpdate(\n# data: SyncQueueUpdateInput!\n# filter: SyncQueueFilterInput\n# ): [SyncQueueBasic!]!\n\n# query syncQueueDelete(\n# filter: SyncQueueFilterInput\n# ): Int!\n";
     use super::*;
     use ::serde::{Deserialize, Serialize};
     #[allow(dead_code)]
@@ -27,19 +27,19 @@ pub mod sync_queue_view {
     #[derive(Deserialize)]
     #[serde(crate = ":: serde")]
     pub struct SyncQueueViewSyncQueue {
-        pub size: Int,
-        pub next: Option<SyncQueueViewSyncQueueNext>,
+        pub nodes: Vec<SyncQueueViewSyncQueueNodes>,
     }
     #[derive(Deserialize)]
     #[serde(crate = ":: serde")]
-    pub struct SyncQueueViewSyncQueueNext {
-        pub id: String,
-        pub table: String,
-        #[serde(rename = "recordId")]
-        pub record_id: String,
-        pub operation: String,
+    pub struct SyncQueueViewSyncQueueNodes {
+        pub identifier: String,
+        #[serde(rename = "tableName")]
+        pub table_name: String,
+        #[serde(rename = "recordIdentifier")]
+        pub record_identifier: String,
         #[serde(rename = "createdAt")]
         pub created_at: String,
+        pub operation: String,
     }
 }
 impl graphql_client::GraphQLQuery for SyncQueueView {
