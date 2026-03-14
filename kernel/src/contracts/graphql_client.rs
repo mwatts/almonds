@@ -4,7 +4,7 @@ use graphql_client::GraphQLQuery;
 // Both json and the GraphQL schema language are supported as sources for the schema
 #[derive(GraphQLQuery)]
 #[graphql(
-    schema_path = ".graphql/sync_queue_schema.graphql",
+    schema_path = ".graphql/schema.graphql",
     query_path = ".graphql/sync_queue_query.graphql"
 )]
 pub struct SyncQueueView;
