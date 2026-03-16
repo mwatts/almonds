@@ -87,3 +87,10 @@ release target:
 gph-pull:
 	graphql-client generate  --schema-path .graphql/schema.graphql .graphql/sync_queue_query.graphql --output-directory src/contracts 
 
+
+
+sync:
+	sh scripts/sync.sh
+
+
+
