@@ -24,6 +24,7 @@ pub fn schema_builder(
 ) -> SchemaBuilder {
     let mut builder = Builder::new(context, database.clone());
     builder = register_entity_modules(builder);
+    builder = register_active_enums(builder);
     builder
         .set_depth_limit(depth)
         .set_complexity_limit(complexity)
