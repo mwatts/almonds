@@ -24,7 +24,9 @@ use tokio::net::TcpListener;
 use tower_http::{
     cors::{Any, CorsLayer},
     timeout::TimeoutLayer,
+    trace::{self, TraceLayer},
 };
+use tracing::Level;
 
 use orchard_migration::{Migrator, MigratorTrait};
 
@@ -50,9 +52,11 @@ async fn main() -> Result<(), AppError> {
 
     let app_config = AppConfig::from_env()?;
 
+    dbg!(&app_config);
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .with_test_writer()
+        .without_time()
         .init();
 
     let cors = if app_config.environment == "production" {
@@ -105,6 +109,11 @@ async fn main() -> Result<(), AppError> {
         .merge(graphql_router)
         .merge(http_routes)
         .layer(cors)
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
+        )
         .layer(TimeoutLayer::with_status_code(
             StatusCode::REQUEST_TIMEOUT,
             Duration::from_secs(25),
