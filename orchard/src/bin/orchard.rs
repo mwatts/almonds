@@ -26,9 +26,9 @@ use tower_http::{
     timeout::TimeoutLayer,
     trace::{self, TraceLayer},
 };
+use tracing::Level;
 
 use orchard_migration::{Migrator, MigratorTrait};
-use tracing::Level;
 
 #[axum::debug_handler]
 async fn graphql_playground(

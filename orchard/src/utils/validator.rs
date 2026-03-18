@@ -6,7 +6,9 @@ pub fn format_validation_errors(e: validator::ValidationErrors) -> Vec<String> {
                 format!(
                     "{}: {}",
                     field,
-                    err.message.clone().unwrap_or_else(|| "Invalid value".into())
+                    err.message
+                        .clone()
+                        .unwrap_or_else(|| "Invalid value".into())
                 )
             })
         })

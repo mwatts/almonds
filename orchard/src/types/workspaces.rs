@@ -1,4 +1,5 @@
 use chrono::Utc;
+use entities::workspaces::ActiveModel;
 use sea_orm::ActiveValue::Set;
 use seaography::{
     async_graphql::{self},
@@ -7,7 +8,6 @@ use seaography::{
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
-use entities::workspaces::ActiveModel;
 
 use crate::entities;
 

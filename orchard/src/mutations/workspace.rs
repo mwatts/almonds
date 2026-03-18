@@ -1,8 +1,3 @@
-use crate::{
-    entities, errors::app_error::AppError, types::workspaces::CreateWorkspaceInput,
-    utils::validator::format_validation_errors,
-};
-
 use entities::workspaces::{ActiveModel, Model};
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr};
 use seaography::{
@@ -10,9 +5,13 @@ use seaography::{
     itertools::Itertools,
     CustomFields,
 };
-
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+
+use crate::{
+    entities, errors::app_error::AppError, types::workspaces::CreateWorkspaceInput,
+    utils::validator::format_validation_errors,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

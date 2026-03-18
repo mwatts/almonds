@@ -1,10 +1,11 @@
-use axum::{body::Body, http::Request};
 use std::{
     future::Future,
     pin::Pin,
     task::{Context, Poll},
     time::Instant,
 };
+
+use axum::{body::Body, http::Request};
 use tower::{Layer, Service};
 
 #[derive(Clone)]

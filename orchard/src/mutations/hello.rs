@@ -1,5 +1,7 @@
-
-use seaography::{async_graphql::{Context, self}, CustomFields};
+use seaography::{
+    async_graphql::{self, Context},
+    CustomFields,
+};
 
 pub struct SayHello;
 
