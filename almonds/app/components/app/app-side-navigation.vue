@@ -49,7 +49,7 @@ const sidebarCollapsed = ref(false);
   >
     <!-- Sidebar header: user info + collapse button -->
     <template #header="{ collapsed }">
-      <div class="flex flex-col pt-4">
+      <!-- <div class="flex flex-col pt-4">
         <div
           class="flex items-center px-4 pb-3 gap-2"
           :class="collapsed ? 'justify-center flex-col' : 'justify-between'"
@@ -76,7 +76,7 @@ const sidebarCollapsed = ref(false);
         </div>
 
         <USeparator class="mx-3" />
-      </div>
+      </div> -->
     </template>
 
     <!-- Sidebar body: primary nav -->
