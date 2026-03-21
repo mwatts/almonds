@@ -109,7 +109,7 @@ const isMacOS = computed(() => {
             <span class="btn maximize" @click="appWindow.toggleMaximize()" />
           </UTooltip>
         </div>
-        
+
         <!-- Windows controls -->
         <div v-else class="controls ml-12">
           <UTooltip text="Minimize">
@@ -122,7 +122,7 @@ const isMacOS = computed(() => {
               @click="appWindow.minimize()"
             />
           </UTooltip>
-          
+
           <UTooltip text="Maximize">
             <UButton
               size="sm"
@@ -186,17 +186,16 @@ const isMacOS = computed(() => {
 
         <!-- Right actions -->
         <div class="flex items-center gap-1 ml-auto">
-            <UTooltip text="Syncing data">
-              <UButton
-                size="sm"
-                :loading="syncing"
-                :color="internetStatusColor"
-                variant="ghost"
-                icon="heroicons:cloud-arrow-up"
-                aria-label="Switch workspace"
-              />
-            </UTooltip>
-   
+          <UTooltip text="Syncing data">
+            <UButton
+              size="sm"
+              :loading="syncing"
+              :color="internetStatusColor"
+              variant="ghost"
+              icon="heroicons:cloud-arrow-up"
+              aria-label="Switch workspace"
+            />
+          </UTooltip>
 
           <UTooltip :text="themeLabel">
             <UButton
@@ -208,8 +207,6 @@ const isMacOS = computed(() => {
               @click="isDark = !isDark"
             />
           </UTooltip>
-
-
 
           <UTooltip text="Notifications">
             <UButton
@@ -233,8 +230,6 @@ const isMacOS = computed(() => {
             />
           </UTooltip>
         </div>
-
-       
       </div>
     </UApp>
   </Body>

@@ -38,7 +38,7 @@ const sidebarCollapsed = ref(false);
     :min-size="18"
     :max-size="42"
     :ui="{
-      root: 'bg-white dark:bg-gray-900 overflow-scroll transition-[width] duration-300 border-e border-gray-200 dark:border-gray-800',
+      root: 'bg-white dark:bg-gray-900 overflow-y-scroll transition-[width] duration-300 border-e border-gray-200 dark:border-gray-800',
       header: 'shrink-0 h-auto p-0',
       body: 'flex-1 overflow-y-scroll scrollbar-config p-0 gap-0 ',
       footer: 'shrink-0 h-auto p-0',
@@ -46,7 +46,7 @@ const sidebarCollapsed = ref(false);
   >
     <!-- Sidebar body: primary nav -->
     <template #default="{ collapsed }">
-      <div class="flex flex-col gap-0.5 px-2 py-2">
+      <div class="flex flex-col gap-0.5 px-2 py-2 overflow-y-scroll">
         <NuxtLink
           v-for="r in primaryRoutes"
           :key="r.name"
@@ -70,7 +70,7 @@ const sidebarCollapsed = ref(false);
 
     <!-- Sidebar footer: theme + secondary nav -->
     <template #footer="{ collapsed }">
-      <div class="flex flex-col gap-0.5 px-2 pb-4 w-full">
+      <div class="flex flex-col gap-0.5 px-2 pb-4 w-full mb-12">
         <USeparator class="mx-1 mb-2" />
 
         <button
