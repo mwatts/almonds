@@ -27,7 +27,6 @@ function isActive(path: string): boolean {
 
 const sidebarCollapsed = ref(false);
 
-
 const form = reactive({ name: "", description: "" });
 const loading = ref(false);
 const errors = reactive({ name: "", description: "" });
@@ -88,7 +87,6 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
 ]);
 
 const activeId = computed(() => workspaceStore.currentWorkspace?.identifier);
-
 </script>
 
 <template>
@@ -110,19 +108,16 @@ const activeId = computed(() => workspaceStore.currentWorkspace?.identifier);
   >
     <!-- Sidebar body: primary nav -->
     <template #default="{ collapsed }">
-    
+      <AppSelect
+        v-model="activeId"
+        :items="workspaces"
+        label="Workspace"
+        name="workspace"
+        size="sm"
+        class="px-3 mt-8 mb-16 bg-transparent"
+        :ui="{ content: 'w-48 ' }"
+      />
 
-    <AppSelect
-      v-model="activeId"
-      :items="workspaces"
-      label="Workspace"
-      name="workspace"
-      size="sm"
-      class=" px-3 mt-8 mb-16 bg-transparent "
-      :ui="{ content: 'w-48 ',  }"
-    />
-    
-    
       <div class="flex flex-col gap-0.5 px-2 py-2 overflow-y-scroll">
         <NuxtLink
           v-for="r in primaryRoutes"
@@ -179,9 +174,6 @@ const activeId = computed(() => workspaceStore.currentWorkspace?.identifier);
         </NuxtLink>
       </div>
     </template>
-    
-    
-   
   </UDashboardSidebar>
   <UModal v-model:open="showCreateModal">
     <template #content>
