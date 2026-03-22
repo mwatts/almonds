@@ -242,14 +242,11 @@ impl TransferRecord for NotesRepository {
             ));
         }
 
-     
         if !self
             .record_exists_in_workspace(record_identifier, previous_workspace_identifier)
             .await?
         {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         }
 
         let Some(record) = notes::Entity::find()
@@ -258,9 +255,7 @@ impl TransferRecord for NotesRepository {
             .await
             .map_err(|err| KernelError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut active_model = record.into_active_model();
@@ -274,7 +269,6 @@ impl TransferRecord for NotesRepository {
             .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
 
         Ok(())
-    
     }
 }
 
@@ -331,9 +325,7 @@ impl DuplicateRecord for NotesRepository {
             .await
             .map_err(|err| KernelError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut new_record = record.into_active_model();

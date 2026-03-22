@@ -8,16 +8,15 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
-use crate::{
-    adapters::user_preference::{CreateUserPreference, UpdateUserPreference},
-    entities::user_preference,
-    error::KernelError,
-};
-
 use crate::repositories::{
     prelude::WorkspaceRepositoryExt,
     workspace::WorkspaceRepository,
     workspace_manager::{DuplicateRecord, RecordExistInWorkspace, TransferRecord},
+};
+use crate::{
+    adapters::user_preference::{CreateUserPreference, UpdateUserPreference},
+    entities::user_preference,
+    error::KernelError,
 };
 
 pub struct UserPreferenceRepository {
@@ -222,7 +221,7 @@ impl DuplicateRecord for UserPreferenceRepository {
         let mut new_record = record.into_active_model();
 
         new_record.identifier = Set(Uuid::new_v4());
-        // new_record.workspace_identifier = Set(Some(*target_workspace_identifier));//TODO: use workspace in user_preference table 
+        // new_record.workspace_identifier = Set(Some(*target_workspace_identifier));//TODO: use workspace in user_preference table
         new_record.created_at = Set(Utc::now().fixed_offset());
         new_record.updated_at = Set(Utc::now().fixed_offset());
 

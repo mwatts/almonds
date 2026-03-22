@@ -18,9 +18,8 @@ use crate::{
     error::KernelError,
     repositories::{
         prelude::WorkspaceRepositoryExt,
-           workspace::WorkspaceRepository,
         recycle_bin::{RecycleBinRepository, RecycleBinRepositoryExt},
-     
+        workspace::WorkspaceRepository,
         workspace_manager::{DuplicateRecord, RecordExistInWorkspace, TransferRecord},
     },
     utils::extract_req_meta,
@@ -283,14 +282,11 @@ impl TransferRecord for BookmarkRepository {
             ));
         }
 
-     
         if !self
             .record_exists_in_workspace(record_identifier, previous_workspace_identifier)
             .await?
         {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         }
 
         let Some(record) = bookmark::Entity::find()
@@ -299,9 +295,7 @@ impl TransferRecord for BookmarkRepository {
             .await
             .map_err(|err| KernelError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut active_model = record.into_active_model();
@@ -371,9 +365,7 @@ impl DuplicateRecord for BookmarkRepository {
             .await
             .map_err(|err| KernelError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(
-                record_identifier.to_string(),
-            ));
+            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut new_record = record.into_active_model();
