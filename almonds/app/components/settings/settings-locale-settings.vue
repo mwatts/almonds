@@ -6,24 +6,18 @@
       <h2 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
         Locale
       </h2>
-      
-      
-      
-      
-      
-      
-      
 
-      
-        <ULocaleSelect v-model="locale" :locales="Object.values(locales)" class="w-48" />
-      
+      <ULocaleSelect
+        v-model="locale"
+        :locales="Object.values(locales)"
+        class="w-48"
+      />
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
-import * as locales from '@nuxt/ui/locale'
+import * as locales from "@nuxt/ui/locale";
 
-const locale = ref('en')
+const locale = ref("en");
 </script>
