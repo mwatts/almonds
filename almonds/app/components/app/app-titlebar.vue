@@ -132,7 +132,7 @@ const isMacOS = computed(() => {
           :disabled="!searchConfig"
           class="w-full bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400"
           @input="onSearchInput(($event.target as HTMLInputElement).value)"
-        />
+        >
       </UTooltip>
     </div>
 
@@ -189,11 +189,9 @@ const isMacOS = computed(() => {
   </div>
 </template>
 
-
 <style scoped>
-
 .titlebar > * {
- cursor: pointer; 
+  cursor: pointer;
 }
 
 .traffic-lights {
