@@ -126,6 +126,25 @@ const codeThemeClass = computed(() =>
     ? "bg-gray-900 text-gray-100"
     : "bg-gray-50 text-gray-800 border border-gray-200",
 );
+
+const workspaceStore = useWorkspacesStore();
+const currentWorkspaceId = computed(() => workspaceStore.activeWorkspaceId);
+
+const handleDuplicate = async (targetWorkspaceId: string) => {
+  await snippetStore.duplicateSnippet(
+    props.identifier,
+    currentWorkspaceId.value,
+    targetWorkspaceId,
+  );
+};
+
+const handleTransfer = async (targetWorkspaceId: string) => {
+  await snippetStore.transferSnippet(
+    props.identifier,
+    currentWorkspaceId.value,
+    targetWorkspaceId,
+  );
+};
 </script>
 
 <template>
@@ -201,8 +220,12 @@ const codeThemeClass = computed(() =>
         </button>
         <MetaControls
           item-name="snippet"
-          @duplicate-record="snippetStore.duplicateSnippet"
-          @transfer-record="snippetStore.transferSnippet"
+          @duplicate-record="
+            (targetWorkspaceId) => handleDuplicate(targetWorkspaceId)
+          "
+          @transfer-record="
+            (targetWorkspaceId) => handleTransfer(targetWorkspaceId)
+          "
         />
       </div>
     </div>
