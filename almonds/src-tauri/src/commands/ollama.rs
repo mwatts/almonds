@@ -1,8 +1,8 @@
-use ollama_rs::generation::chat::{ChatMessage, request::ChatMessageRequest};
+use ollama_rs::generation::chat::{request::ChatMessageRequest, ChatMessage};
 use ollama_rs::history::ChatHistory;
 use ollama_rs::{
+    generation::completion::{request::GenerationRequest, GenerationContext},
     Ollama,
-    generation::completion::{GenerationContext, request::GenerationRequest},
 };
 use tauri::AppHandle;
 use tauri::Emitter;
