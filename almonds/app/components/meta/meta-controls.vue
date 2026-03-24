@@ -110,7 +110,7 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
           Duplicate {{ itemName }}
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Create a duplicate of this in another workspace.
+          Create a duplicate of this {{ itemName }} in another workspace.
         </p>
 
         <AppSelect
@@ -137,7 +137,7 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
           Transfer {{ itemName }}
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Transfer this workspace to another user.
+          Transfer this {{ itemName }} to another workspace?
         </p>
 
         <AppSelect
