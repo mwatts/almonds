@@ -92,8 +92,7 @@ export const useNoteStore = defineStore("notes_store", {
       this.notes = this.notes.filter((n) => n.identifier !== identifier);
       this.recent = this.recent.filter((n) => n.identifier !== identifier);
     },
-    
-    
+
     async duplicateNote(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -105,10 +104,10 @@ export const useNoteStore = defineStore("notes_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
+
       await this.fetchNotes();
     },
-    
+
     async transferNote(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -120,11 +119,9 @@ export const useNoteStore = defineStore("notes_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
-      this.notes = this.notes.filter(
-        (n) => n.identifier !== recordIdentifier,
-      );
-    
+
+      this.notes = this.notes.filter((n) => n.identifier !== recordIdentifier);
+
       this.recent = this.recent.filter(
         (n) => n.identifier !== recordIdentifier,
       );

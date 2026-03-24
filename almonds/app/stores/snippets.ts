@@ -97,7 +97,7 @@ export const useSnippetStore = defineStore("snippets_store", {
 
       await this.fetchSnippets();
     },
-    
+
     async duplicateSnippet(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -109,10 +109,10 @@ export const useSnippetStore = defineStore("snippets_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
+
       await this.fetchSnippets();
     },
-    
+
     async transferSnippet(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -124,11 +124,10 @@ export const useSnippetStore = defineStore("snippets_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
+
       this.snippets = this.snippets.filter(
         (s) => s.identifier !== recordIdentifier,
       );
     },
-    
   },
 });

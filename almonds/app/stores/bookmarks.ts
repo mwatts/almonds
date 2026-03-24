@@ -100,7 +100,7 @@ export const useBookmarkStore = defineStore("bookmark_store", {
         (b) => b.identifier !== identifier,
       );
     },
-    
+
     async duplicateBookmark(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -112,10 +112,10 @@ export const useBookmarkStore = defineStore("bookmark_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
+
       await this.fetchBookmarks();
     },
-    
+
     async transferBookmark(
       recordIdentifier: string,
       previousWorkspaceIdentifier: string,
@@ -127,11 +127,10 @@ export const useBookmarkStore = defineStore("bookmark_store", {
         targetWorkspaceIdentifier,
         meta: await getWorkspaceMeta(),
       });
-    
+
       this.bookmarks = this.bookmarks.filter(
         (b) => b.identifier !== recordIdentifier,
       );
     },
   },
-  
 });
