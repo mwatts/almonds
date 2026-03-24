@@ -99,6 +99,11 @@ function downloadMarkdown() {
         >
           <UIcon name="heroicons:arrow-down-tray" class="size-3.5" />
         </button>
+        <MetaControls
+          item-name="note"
+          @duplicate-record="noteStore.duplicateNote"
+          @transfer-record="noteStore.transferNote"
+        />
       </div>
     </div>
 

@@ -2,6 +2,7 @@
 import type { Bookmark } from "~/stores/bookmarks";
 import MetaControls from "~/components/meta/meta-controls.vue";
 
+const bookmarksStore = useBookmarkStore();
 defineProps<{ bookmark: Bookmark }>();
 
 const emit = defineEmits<{
@@ -59,7 +60,11 @@ function formatDate(iso: string) {
       >
         <UIcon name="heroicons:trash" class="size-4" />
       </button>
-      <MetaControls />
+      <MetaControls
+        item-name="bookmark"
+        @duplicate-record="bookmarksStore.duplicateBookmark"
+        @transfer-record="bookmarksStore.transferBookmark"
+      />
     </div>
   </div>
 </template>

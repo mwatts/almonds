@@ -3,10 +3,6 @@ import hljs from "highlight.js/lib/common";
 import "highlight.js/styles/github.css"; // light
 import "highlight.js/styles/github-dark.css"; // dark
 
-const highlightTheme = computed(() =>
-  colorMode.value === "dark" ? "github-dark" : "github",
-);
-
 const hlLanguageMap: Record<string, string> = {
   C: "c",
   "C++": "cpp",
@@ -203,6 +199,11 @@ const codeThemeClass = computed(() =>
         >
           Delete
         </button>
+        <MetaControls
+          item-name="snippet"
+          @duplicate-record="snippetStore.duplicateSnippet"
+          @transfer-record="snippetStore.transferSnippet"
+        />
       </div>
     </div>
 
