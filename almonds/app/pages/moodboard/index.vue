@@ -1,30 +1,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: false });
 
-const boards = [
-  { title: "UI Inspiration", items: 8, color: "violet" },
-  { title: "Color Palettes", items: 12, color: "rose" },
-  { title: "Typography", items: 5, color: "amber" },
-  { title: "Illustrations", items: 3, color: "emerald" },
-];
-
-const images = [
-  { src: "https://picsum.photos/seed/a/400/300", title: "Dashboard layout" },
-  { src: "https://picsum.photos/seed/b/400/400", title: "Card design" },
-  { src: "https://picsum.photos/seed/c/400/250", title: "Navigation pattern" },
-  { src: "https://picsum.photos/seed/d/400/350", title: "Color palette" },
-  { src: "https://picsum.photos/seed/e/400/300", title: "Typography scale" },
-  { src: "https://picsum.photos/seed/f/400/450", title: "Icon set" },
-];
-
-const colorMap: Record<string, string> = {
-  violet:
-    "bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300",
-  rose: "bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300",
-  amber: "bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300",
-  emerald:
-    "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300",
-};
+const boards: { title: string; items: number; color: string }[] = [];
+const images: { src: string; title: string }[] = [];
 </script>
 
 <template>
@@ -49,7 +27,14 @@ const colorMap: Record<string, string> = {
     </template>
 
     <template #main_content>
-      <div class="columns-2 gap-3 space-y-3">
+      <div v-if="images.length === 0" class="flex flex-col items-center justify-center h-full py-24 text-center">
+        <div class="size-16 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+          <UIcon name="heroicons:photo" class="size-8 text-gray-400 dark:text-gray-500" />
+        </div>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">No images yet</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500">Add images to start building your moodboard.</p>
+      </div>
+      <div v-else class="columns-2 gap-3 space-y-3">
         <div
           v-for="image in images"
           :key="image.title"
@@ -79,16 +64,17 @@ const colorMap: Record<string, string> = {
       <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
         Boards
       </h2>
-      <div class="flex flex-col gap-2 mb-6">
+      <div v-if="boards.length === 0" class="flex flex-col items-center justify-center py-6 text-center mb-6">
+        <UIcon name="heroicons:squares-2x2" class="size-6 text-gray-300 dark:text-gray-600 mb-2" />
+        <p class="text-xs text-gray-400 dark:text-gray-500">No boards yet</p>
+      </div>
+      <div v-else class="flex flex-col gap-2 mb-6">
         <div
           v-for="board in boards"
           :key="board.title"
           class="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
         >
-          <div
-            class="size-8 rounded-lg flex items-center justify-center"
-            :class="colorMap[board.color]"
-          >
+          <div class="size-8 rounded-lg flex items-center justify-center">
             <UIcon name="heroicons:squares-2x2" class="size-4" />
           </div>
           <div class="flex-1">
@@ -105,28 +91,7 @@ const colorMap: Record<string, string> = {
       <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
         Tags
       </h2>
-      <div class="flex flex-wrap gap-2">
-        <span
-          class="px-2.5 py-1 rounded-full bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-300 text-xs"
-          >UI Design</span
-        >
-        <span
-          class="px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-300 text-xs"
-          >Colors</span
-        >
-        <span
-          class="px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-xs"
-          >Typography</span
-        >
-        <span
-          class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-xs"
-          >Layout</span
-        >
-        <span
-          class="px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-300 text-xs"
-          >Icons</span
-        >
-      </div>
+      <p class="text-xs text-gray-400 dark:text-gray-500">No tags yet</p>
     </template>
   </NuxtLayout>
 </template>
