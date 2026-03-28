@@ -9,6 +9,7 @@
     "beforeBuildCommand": "npm run generate"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "Wild almonds",
@@ -17,7 +18,8 @@
         "resizable": true,
         "fullscreen": false,
         "decorations": false,
-        "shadow": true
+        "shadow": false,
+        "transparent": true
       }
     ],
     "withGlobalTauri": true,
