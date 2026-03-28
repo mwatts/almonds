@@ -14,7 +14,10 @@ use crate::repositories::{
     workspace_manager::{DuplicateRecord, RecordExistInWorkspace, TransferRecord},
 };
 use crate::{
-    adapters::{meta::RequestMeta, user_preference::{CreateUserPreference, UpdateUserPreference}},
+    adapters::{
+        meta::RequestMeta,
+        user_preference::{CreateUserPreference, UpdateUserPreference},
+    },
     entities::user_preference,
     error::KernelError,
     utils::extract_req_meta,
