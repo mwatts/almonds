@@ -11,7 +11,6 @@ const props = defineProps<{
 const router = useRouter();
 const noteStore = useNoteStore();
 
-
 const preview = computed(() => {
   const stripped = props.content
     .replace(/#{1,6}\s+/g, "")
@@ -113,6 +112,5 @@ const handleTransfer = async (targetWorkspaceId: string) => {
         />
       </div>
     </div>
-
   </div>
 </template>

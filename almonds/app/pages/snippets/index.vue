@@ -15,25 +15,41 @@ const sortItems = computed(() => [
   [
     {
       label: "Name A–Z",
-      icon: sortBy.value === "name-asc" ? "heroicons:check" : "heroicons:bars-arrow-up",
-      onSelect: () => { sortBy.value = "name-asc"; },
+      icon:
+        sortBy.value === "name-asc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-up",
+      onSelect: () => {
+        sortBy.value = "name-asc";
+      },
     },
     {
       label: "Name Z–A",
-      icon: sortBy.value === "name-desc" ? "heroicons:check" : "heroicons:bars-arrow-down",
-      onSelect: () => { sortBy.value = "name-desc"; },
+      icon:
+        sortBy.value === "name-desc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-down",
+      onSelect: () => {
+        sortBy.value = "name-desc";
+      },
     },
   ],
   [
     {
       label: "Newest first",
-      icon: sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-newest"; },
+      icon:
+        sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-newest";
+      },
     },
     {
       label: "Oldest first",
-      icon: sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-oldest"; },
+      icon:
+        sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-oldest";
+      },
     },
   ],
 ]);
@@ -58,10 +74,18 @@ const filteredSnippets = computed(() => {
 
   return [...list].sort((a, b) => {
     switch (sortBy.value) {
-      case "name-asc": return (a.title ?? "").localeCompare(b.title ?? "");
-      case "name-desc": return (b.title ?? "").localeCompare(a.title ?? "");
-      case "date-newest": return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case "date-oldest": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "name-asc":
+        return (a.title ?? "").localeCompare(b.title ?? "");
+      case "name-desc":
+        return (b.title ?? "").localeCompare(a.title ?? "");
+      case "date-newest":
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "date-oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
     }
   });
 });
@@ -121,25 +145,26 @@ onUnmounted(() => clearSearch());
         class="flex items-center gap-2 mb-4 flex-wrap"
       >
         <div class="flex gap-2 flex-wrap flex-1">
-        <button
-          v-for="lang in allLanguages"
-          :key="lang"
-          class="px-3 py-1 rounded-full text-xs font-medium transition-colors"
-          :class="
-            activeLanguage === lang
-              ? 'bg-accent-500 text-white'
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-          "
-          @click="activeLanguage = lang"
-        >
-          {{ lang }}
-        </button>
+          <button
+            v-for="lang in allLanguages"
+            :key="lang"
+            class="px-3 py-1 rounded-full text-xs font-medium transition-colors"
+            :class="
+              activeLanguage === lang
+                ? 'bg-accent-500 text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+            "
+            @click="activeLanguage = lang"
+          >
+            {{ lang }}
+          </button>
         </div>
         <UDropdownMenu
           :items="sortItems"
           size="sm"
           :ui="{
-            content: 'min-w-40 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
+            content:
+              'min-w-40 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
             item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
             separator: 'my-1 mx-2',
           }"

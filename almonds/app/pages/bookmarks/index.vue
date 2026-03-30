@@ -27,30 +27,45 @@ const showAddModal = ref(false);
 type BookmarkSort = "name-asc" | "name-desc" | "date-newest" | "date-oldest";
 const sortBy = ref<BookmarkSort>("date-newest");
 
-
 const sortItems = computed(() => [
   [
     {
       label: "Name A–Z",
-      icon: sortBy.value === "name-asc" ? "heroicons:check" : "heroicons:bars-arrow-up",
-      onSelect: () => { sortBy.value = "name-asc"; },
+      icon:
+        sortBy.value === "name-asc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-up",
+      onSelect: () => {
+        sortBy.value = "name-asc";
+      },
     },
     {
       label: "Name Z–A",
-      icon: sortBy.value === "name-desc" ? "heroicons:check" : "heroicons:bars-arrow-down",
-      onSelect: () => { sortBy.value = "name-desc"; },
+      icon:
+        sortBy.value === "name-desc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-down",
+      onSelect: () => {
+        sortBy.value = "name-desc";
+      },
     },
   ],
   [
     {
       label: "Newest first",
-      icon: sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-newest"; },
+      icon:
+        sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-newest";
+      },
     },
     {
       label: "Oldest first",
-      icon: sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-oldest"; },
+      icon:
+        sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-oldest";
+      },
     },
   ],
 ]);
@@ -73,10 +88,18 @@ const filtered = computed(() => {
 
   return [...list].sort((a, b) => {
     switch (sortBy.value) {
-      case "name-asc": return a.title.localeCompare(b.title);
-      case "name-desc": return b.title.localeCompare(a.title);
-      case "date-newest": return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case "date-oldest": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "name-asc":
+        return a.title.localeCompare(b.title);
+      case "name-desc":
+        return b.title.localeCompare(a.title);
+      case "date-newest":
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "date-oldest":
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
     }
   });
 });
@@ -128,7 +151,8 @@ async function handleCreate(payload: {
           :items="sortItems"
           size="sm"
           :ui="{
-            content: 'min-w-40 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
+            content:
+              'min-w-40 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
             item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
             separator: 'my-1 mx-2',
           }"

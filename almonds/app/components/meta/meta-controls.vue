@@ -13,7 +13,12 @@ const targetWorkspaceId = ref("");
 const isSubmitting = ref(false);
 
 const currentWorkspaceId = computed(() => workspaceStore.activeWorkspaceId);
-const emit = defineEmits(["transferRecord", "duplicateRecord", "editRecord", "deleteRecord"]);
+const emit = defineEmits([
+  "transferRecord",
+  "duplicateRecord",
+  "editRecord",
+  "deleteRecord",
+]);
 const props = defineProps({
   itemName: {
     type: String,
@@ -134,7 +139,8 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
     :items="controls"
     size="sm"
     :ui="{
-      content: 'min-w-44 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
+      content:
+        'min-w-44 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
       item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
       separator: 'my-1 mx-2',
     }"
@@ -213,11 +219,7 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
     </template>
     <template #footer>
       <div class="flex justify-end gap-2">
-        <UButton
-          size="xs"
-          variant="ghost"
-          @click="showDeleteConfirm = false"
-        >
+        <UButton size="xs" variant="ghost" @click="showDeleteConfirm = false">
           Cancel
         </UButton>
         <UButton size="xs" color="error" @click="handleDelete">

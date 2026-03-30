@@ -12,44 +12,69 @@ const sortItems = computed(() => [
   [
     {
       label: "Name A–Z",
-      icon: sortBy.value === "name-asc" ? "heroicons:check" : "heroicons:bars-arrow-up",
-      onSelect: () => { sortBy.value = "name-asc"; },
+      icon:
+        sortBy.value === "name-asc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-up",
+      onSelect: () => {
+        sortBy.value = "name-asc";
+      },
     },
     {
       label: "Name Z–A",
-      icon: sortBy.value === "name-desc" ? "heroicons:check" : "heroicons:bars-arrow-down",
-      onSelect: () => { sortBy.value = "name-desc"; },
+      icon:
+        sortBy.value === "name-desc"
+          ? "heroicons:check"
+          : "heroicons:bars-arrow-down",
+      onSelect: () => {
+        sortBy.value = "name-desc";
+      },
     },
   ],
   [
     {
       label: "Last modified (newest)",
-      icon: sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-newest"; },
+      icon:
+        sortBy.value === "date-newest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-newest";
+      },
     },
     {
       label: "Last modified (oldest)",
-      icon: sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
-      onSelect: () => { sortBy.value = "date-oldest"; },
+      icon:
+        sortBy.value === "date-oldest" ? "heroicons:check" : "heroicons:clock",
+      onSelect: () => {
+        sortBy.value = "date-oldest";
+      },
     },
   ],
 ]);
 
 const filteredNotes = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
-  let list = q
+  const list = q
     ? noteStore.notes.filter(
         (n) =>
-          n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q),
+          n.title.toLowerCase().includes(q) ||
+          n.content.toLowerCase().includes(q),
       )
     : noteStore.notes;
 
   return [...list].sort((a, b) => {
     switch (sortBy.value) {
-      case "name-asc": return a.title.localeCompare(b.title);
-      case "name-desc": return b.title.localeCompare(a.title);
-      case "date-newest": return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-      case "date-oldest": return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+      case "name-asc":
+        return a.title.localeCompare(b.title);
+      case "name-desc":
+        return b.title.localeCompare(a.title);
+      case "date-newest":
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      case "date-oldest":
+        return (
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
     }
   });
 });
@@ -83,12 +108,16 @@ onUnmounted(() => clearSearch());
 
     <template #main_content>
       <!-- Sort control -->
-      <div v-if="!noteStore.loading && noteStore.notes.length > 0" class="flex justify-end mb-3">
+      <div
+        v-if="!noteStore.loading && noteStore.notes.length > 0"
+        class="flex justify-end mb-3"
+      >
         <UDropdownMenu
           :items="sortItems"
           size="sm"
           :ui="{
-            content: 'min-w-48 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
+            content:
+              'min-w-48 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 py-1',
             item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
             separator: 'my-1 mx-2',
           }"
