@@ -56,7 +56,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
 <template>
   <div class="titlebar grid grid-cls-12">
-      <div data-tauri-drag-region></div>
+    <div data-tauri-drag-region/>
     <!-- mac os controls-->
     <div v-if="isMacOS" class="traffic-lights col-span-1">
       <UTooltip text="Close">
@@ -148,11 +148,16 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     <div class="col-span-4 mx-auto w-full max-w-sm">
       <div
         class="flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors"
-        :class="searchConfig
-          ? 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500'
-          : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200/60 dark:border-gray-700/40 opacity-50'"
+        :class="
+          searchConfig
+            ? 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500'
+            : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200/60 dark:border-gray-700/40 opacity-50'
+        "
       >
-        <UIcon name="heroicons:magnifying-glass" class="size-3.5 shrink-0 text-gray-400 dark:text-gray-500" />
+        <UIcon
+          name="heroicons:magnifying-glass"
+          class="size-3.5 shrink-0 text-gray-400 dark:text-gray-500"
+        />
         <input
           ref="searchInputRef"
           :value="searchQuery"
@@ -166,13 +171,17 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           v-if="searchConfig && !searchQuery"
           class="hidden sm:inline-flex items-center gap-0.5 text-[10px] text-gray-400 dark:text-gray-500 font-mono select-none"
         >
-          <span>{{ isMacOS ? '⌘' : 'Ctrl' }}</span><span>F</span>
+          <span>{{ isMacOS ? "⌘" : "Ctrl" }}</span
+          ><span>F</span>
         </kbd>
         <button
           v-if="searchQuery"
           class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           aria-label="Clear search"
-          @click="onSearchInput(''); searchInputRef?.focus()"
+          @click="
+            onSearchInput('');
+            searchInputRef?.focus();
+          "
         >
           <UIcon name="heroicons:x-mark" class="size-3.5" />
         </button>
