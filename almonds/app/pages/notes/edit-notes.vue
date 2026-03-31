@@ -224,7 +224,10 @@ onMounted(async () => {
       </div>
 
       <!-- Loading -->
-      <div v-else-if="noteStore.loading && !original" class="max-w-2xl mx-auto flex flex-col gap-4">
+      <div
+        v-else-if="noteStore.loading && !original"
+        class="max-w-2xl mx-auto flex flex-col gap-4"
+      >
         <USkeleton class="h-10 rounded-lg w-64" />
         <USkeleton class="h-4 rounded-lg w-32" />
         <USkeleton class="h-96 rounded-lg" />
@@ -375,14 +378,20 @@ onMounted(async () => {
               class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
               @click="downloadMarkdown"
             >
-              <UIcon name="heroicons:document-text" class="size-3.5 shrink-0 text-gray-400" />
+              <UIcon
+                name="heroicons:document-text"
+                class="size-3.5 shrink-0 text-gray-400"
+              />
               Download as Markdown
             </button>
             <button
               class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
               @click="downloadPdf"
             >
-              <UIcon name="heroicons:arrow-down-tray" class="size-3.5 shrink-0 text-gray-400" />
+              <UIcon
+                name="heroicons:arrow-down-tray"
+                class="size-3.5 shrink-0 text-gray-400"
+              />
               Download as PDF
             </button>
           </div>

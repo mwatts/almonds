@@ -65,7 +65,9 @@ const workspaceItems = computed(() => [
       const isActive = w.identifier === activeId.value;
       return {
         label: w.name,
-        icon: isActive ? "heroicons:check-circle-solid" : "heroicons:check-circle",
+        icon: isActive
+          ? "heroicons:check-circle-solid"
+          : "heroicons:check-circle",
         class: isActive
           ? "font-semibold text-accent-500 dark:text-accent-400"
           : "text-gray-700 dark:text-gray-300",
@@ -116,7 +118,8 @@ const activeWorkspaceName = computed(
       <UDropdownMenu
         :items="workspaceItems"
         :ui="{
-          content: 'min-w-52 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-1.5',
+          content:
+            'min-w-52 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-1.5',
           item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
           separator: 'my-1 mx-2',
         }"
