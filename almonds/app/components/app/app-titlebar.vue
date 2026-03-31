@@ -161,7 +161,10 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           spellcheck="false"
           class="flex-1 min-w-0 bg-transparent outline-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
           @input="onSearchInput(($event.target as HTMLInputElement).value)"
-          @keydown.escape="isOpen = false; searchInputRef?.blur()"
+          @keydown.escape="
+            isOpen = false;
+            searchInputRef?.blur();
+          "
         >
         <kbd
           v-if="!searchQuery"
@@ -183,7 +186,13 @@ useEventListener("keydown", (e: KeyboardEvent) => {
         </button>
       </div>
 
-      <AppGlobalSearch v-if="isOpen" @close="isOpen = false; searchQuery = ''" />
+      <AppGlobalSearch
+        v-if="isOpen"
+        @close="
+          isOpen = false;
+          searchQuery = '';
+        "
+      />
     </div>
 
     <!-- Right actions -->

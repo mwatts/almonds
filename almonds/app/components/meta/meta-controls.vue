@@ -252,11 +252,7 @@ const workspaces = computed<DropdownMenuItem[]>(() => [
 
         <!-- Actions -->
         <div class="flex justify-end gap-2">
-          <UButton
-            size="sm"
-            variant="ghost"
-            @click="showDeleteConfirm = false"
-          >
+          <UButton size="sm" variant="ghost" @click="showDeleteConfirm = false">
             Cancel
           </UButton>
           <UButton size="sm" color="error" @click="handleDelete">

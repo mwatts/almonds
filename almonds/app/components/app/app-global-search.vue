@@ -17,13 +17,19 @@ const activeIndex = ref(-1);
 
 // Lazily fetch stores that haven't loaded yet
 onMounted(async () => {
-  await Promise.all([
-    noteStore.notes.length === 0 ? noteStore.fetchNotes() : null,
-    bookmarkStore.bookmarks.length === 0 ? bookmarkStore.fetchBookmarks() : null,
-    snippetStore.snippets.length === 0 ? snippetStore.fetchSnippets() : null,
-    todoStore.todos.length === 0 ? todoStore.fetchTodos() : null,
-    reminderStore.reminders.length === 0 ? reminderStore.fetchReminders() : null,
-  ].filter(Boolean));
+  await Promise.all(
+    [
+      noteStore.notes.length === 0 ? noteStore.fetchNotes() : null,
+      bookmarkStore.bookmarks.length === 0
+        ? bookmarkStore.fetchBookmarks()
+        : null,
+      snippetStore.snippets.length === 0 ? snippetStore.fetchSnippets() : null,
+      todoStore.todos.length === 0 ? todoStore.fetchTodos() : null,
+      reminderStore.reminders.length === 0
+        ? reminderStore.fetchReminders()
+        : null,
+    ].filter(Boolean),
+  );
 });
 
 onClickOutside(dropdownRef, () => emit("close"));
@@ -240,9 +246,7 @@ const flatIndexByItem = computed(() => {
         class="mb-1 last:mb-0"
       >
         <!-- Section header -->
-        <div
-          class="flex items-center gap-2 px-4 py-1.5"
-        >
+        <div class="flex items-center gap-2 px-4 py-1.5">
           <span
             class="inline-flex items-center justify-center size-4 rounded"
             :class="typeConfig[section.type].bg"
@@ -253,7 +257,9 @@ const flatIndexByItem = computed(() => {
               :class="typeConfig[section.type].color"
             />
           </span>
-          <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <span
+            class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500"
+          >
             {{ section.label }}
           </span>
         </div>
@@ -282,10 +288,14 @@ const flatIndexByItem = computed(() => {
             />
           </span>
           <span class="flex-1 min-w-0">
-            <span class="block text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+            <span
+              class="block text-sm font-medium text-gray-800 dark:text-gray-100 truncate"
+            >
               {{ item.title }}
             </span>
-            <span class="block text-xs text-gray-400 dark:text-gray-500 truncate">
+            <span
+              class="block text-xs text-gray-400 dark:text-gray-500 truncate"
+            >
               {{ item.sub }}
             </span>
           </span>
