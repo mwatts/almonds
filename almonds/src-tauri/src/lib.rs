@@ -174,6 +174,8 @@ pub async fn run() {
             commands::moodboard::list_moodboard_images,
             commands::moodboard::delete_moodboard_image,
             commands::ollama::is_ollama_installed,
+            commands::ollama::check_ai_model,
+            commands::ollama::pull_ai_model,
             commands::ollama::generate_stream,
         ])
         .run(tauri::generate_context!())
