@@ -25,21 +25,22 @@ onMounted(async () => {
     modelReady.value = await invoke<boolean>("check_ai_model");
   }
 
-  unlisten = await listen<{ status: string; total?: number; completed?: number }>(
-    "ai://pull-progress",
-    (event) => {
-      downloadStatus.value = event.payload.status;
-      if (event.payload.total && event.payload.completed) {
-        downloadProgress.value = Math.round(
-          (event.payload.completed / event.payload.total) * 100,
-        );
-      }
-      if (event.payload.status === "success") {
-        downloading.value = false;
-        modelReady.value = true;
-      }
-    },
-  );
+  unlisten = await listen<{
+    status: string;
+    total?: number;
+    completed?: number;
+  }>("ai://pull-progress", (event) => {
+    downloadStatus.value = event.payload.status;
+    if (event.payload.total && event.payload.completed) {
+      downloadProgress.value = Math.round(
+        (event.payload.completed / event.payload.total) * 100,
+      );
+    }
+    if (event.payload.status === "success") {
+      downloading.value = false;
+      modelReady.value = true;
+    }
+  });
 });
 
 onUnmounted(() => {
@@ -242,9 +243,7 @@ async function handleDelete(filename: string) {
           name="heroicons:check-circle"
           class="size-4 text-green-500 shrink-0"
         />
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-          AI model ready
-        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">AI model ready</p>
       </div>
 
       <!-- Downloading -->
@@ -252,7 +251,9 @@ async function handleDelete(filename: string) {
         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
           {{ downloadStatus }}
         </p>
-        <div class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div
+          class="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden"
+        >
           <div
             class="h-full bg-accent-500 rounded-full transition-all duration-300"
             :style="{ width: `${downloadProgress}%` }"

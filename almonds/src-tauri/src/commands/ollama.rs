@@ -1,10 +1,4 @@
-use ollama_rs::generation::chat::{request::ChatMessageRequest, ChatMessage};
-use ollama_rs::history::ChatHistory;
-use ollama_rs::models::pull::PullModelRequest;
-use ollama_rs::{
-    generation::completion::{request::GenerationRequest, GenerationContext},
-    Ollama,
-};
+use ollama_rs::generation::completion::request::GenerationRequest;
 use tauri::AppHandle;
 use tauri::Emitter;
 use tauri::State;
@@ -27,30 +21,26 @@ pub fn is_ollama_installed(state: State<'_, AppState>) -> bool {
 }
 
 #[tauri::command]
-pub async fn check_ai_model(state: State<'_, AppState>) -> bool {
+pub async fn check_ai_model(state: State<'_, AppState>) -> Result<bool, String> {
     let client = match &state.ollama.ollama_client {
         Some(c) => c,
-        None => return false,
+        None => return Ok(false),
     };
     match client.list_local_models().await {
-        Ok(models) => models.iter().any(|m| m.name.starts_with(AI_MODEL)),
-        Err(_) => false,
+        Ok(models) => Ok(models.iter().any(|m| m.name.starts_with(AI_MODEL))),
+        Err(_) => Ok(false),
     }
 }
 
 #[tauri::command]
-pub async fn pull_ai_model(
-    app: AppHandle,
-    state: State<'_, AppState>,
-) -> Result<(), String> {
+pub async fn pull_ai_model(app: AppHandle, state: State<'_, AppState>) -> Result<(), String> {
     let client = match &state.ollama.ollama_client {
         Some(c) => c,
         None => return Err("AI service is not available".into()),
     };
 
-    let request = PullModelRequest::new(AI_MODEL.to_string(), false);
     let mut stream = client
-        .pull_model_stream(request)
+        .pull_model_stream(AI_MODEL.to_string(), false)
         .await
         .map_err(|e| e.to_string())?;
 
@@ -59,7 +49,7 @@ pub async fn pull_ai_model(
         let _ = app.emit(
             "ai://pull-progress",
             PullProgress {
-                status: status.status,
+                status: status.message,
                 total: status.total,
                 completed: status.completed,
             },
