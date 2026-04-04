@@ -103,7 +103,13 @@ pub async fn update_snippet(
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let payload = UpdateSnippet { title, language, code, description, is_pinned };
+    let payload = UpdateSnippet {
+        title,
+        language,
+        code,
+        description,
+        is_pinned,
+    };
 
     let snippet = app_state()
         .snippets
@@ -121,7 +127,11 @@ pub async fn delete_snippet(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().snippets.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .snippets
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]

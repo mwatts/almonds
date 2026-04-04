@@ -100,7 +100,14 @@ pub async fn update_reminder(
         .map(|s| DateTime::parse_from_rfc3339(s).map_err(|e| format!("invalid remind_at: {e}")))
         .transpose()?;
 
-    let payload = UpdateReminder { title, description, remind_at, recurring, recurrence_rule, alarm_sound };
+    let payload = UpdateReminder {
+        title,
+        description,
+        remind_at,
+        recurring,
+        recurrence_rule,
+        alarm_sound,
+    };
 
     let reminder = app_state()
         .reminders
@@ -118,7 +125,11 @@ pub async fn delete_reminder(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().reminders.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .reminders
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]

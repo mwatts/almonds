@@ -7,12 +7,8 @@ use crate::error::{make_meta, parse_uuid};
 use crate::state::app_state;
 
 #[flutter_rust_bridge::frb]
-pub async fn create_workspace(
-    name: String,
-    description: Option<String>,
-    is_default: Option<bool>,
-) -> Result<String, String> {
-    let payload = CreateWorkspace { name, description, is_default: is_default.unwrap_or(false) };
+pub async fn create_workspace(name: String, description: String) -> Result<String, String> {
+    let payload = CreateWorkspace { name, description };
     let workspace = app_state()
         .workspaces
         .create_workspace(payload)
@@ -54,7 +50,12 @@ pub async fn update_workspace(
     is_hidden: Option<bool>,
 ) -> Result<String, String> {
     let uuid = parse_uuid(&identifier).map_err(|e| e.to_string())?;
-    let payload = UpdateWorkspace { name, description, is_default, is_hidden };
+    let payload = UpdateWorkspace {
+        name,
+        description,
+        is_default,
+        is_hidden,
+    };
 
     let workspace = app_state()
         .workspaces

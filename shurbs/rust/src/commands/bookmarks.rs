@@ -23,18 +23,14 @@ fn parse_tag(tag: &str) -> BookmarkTag {
 pub async fn create_bookmark(
     title: String,
     url: String,
-    tag: String,
+    tag: BookmarkTag,
     workspace_identifier: Option<String>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let ws_id = workspace_identifier
-        .as_deref()
-        .map(parse_uuid)
-        .transpose()
-        .map_err(|e: AppError| e.to_string())?;
 
-    let payload = CreateBookmark { title, url, tag: parse_tag(&tag).to_string(), workspace_identifier: ws_id };
+
+    let payload = CreateBookmark { title, url, tag };
     let bookmark = app_state()
         .bookmarks
         .create(&payload, &meta)
@@ -109,12 +105,12 @@ pub async fn update_bookmark(
     identifier: String,
     title: Option<String>,
     url: Option<String>,
-    tag: Option<String>,
+    tag: Option<BookmarkTag>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let payload = UpdateBookmark { title, url, tag: tag.as_deref().map(parse_tag).map(|t| t.to_string()) };
+    let payload = UpdateBookmark { title, url, tag };
 
     let bookmark = app_state()
         .bookmarks
@@ -132,7 +128,11 @@ pub async fn delete_bookmark(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().bookmarks.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .bookmarks
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]

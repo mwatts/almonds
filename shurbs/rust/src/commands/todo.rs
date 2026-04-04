@@ -42,7 +42,6 @@ pub async fn create_todo(
         description,
         priority: parse_priority(&priority),
         due_date: date,
-        workspace_identifier: ws_id,
     };
 
     let todo = app_state()
@@ -104,8 +103,6 @@ pub async fn update_todo(
     let payload = UpdateTodo {
         title,
         description,
-        priority: priority.as_deref().map(parse_priority),
-        due_date: date,
     };
 
     let todo = app_state()
@@ -124,7 +121,11 @@ pub async fn delete_todo(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().todos.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .todos
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]

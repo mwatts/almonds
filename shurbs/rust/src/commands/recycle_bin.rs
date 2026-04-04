@@ -32,6 +32,7 @@ pub async fn create_recycle_bin_entry(
         item_type: parse_item_type(&item_type)?,
         payload: serde_json::from_str(&payload)
             .map_err(|e| format!("invalid payload JSON: {e}"))?,
+        workspace_identifier: None,
     };
 
     let result = app_state()
@@ -102,7 +103,11 @@ pub async fn purge_recycle_bin_entry(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().recycle_bin.purge(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .recycle_bin
+        .purge(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]
@@ -110,5 +115,9 @@ pub async fn purge_all_recycle_bin_entries(
     meta_workspace_id: Option<String>,
 ) -> Result<(), String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().recycle_bin.purge_all(&meta).await.map_err(|e| e.to_string())
+    app_state()
+        .recycle_bin
+        .purge_all(&meta)
+        .await
+        .map_err(|e| e.to_string())
 }

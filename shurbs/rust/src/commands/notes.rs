@@ -24,7 +24,12 @@ pub async fn create_note(
         .transpose()
         .map_err(|e: AppError| e.to_string())?;
 
-    let payload = CreateNote { title, content, categories, workspace_identifier: ws_id };
+    let payload = CreateNote {
+        title,
+        content,
+        categories,
+        workspace_identifier: ws_id,
+    };
     let note = app_state()
         .notes
         .create(&payload, &meta)
@@ -67,9 +72,7 @@ pub async fn get_all_notes(meta_workspace_id: Option<String>) -> Result<String, 
 }
 
 #[flutter_rust_bridge::frb]
-pub async fn get_recently_added_notes(
-    meta_workspace_id: Option<String>,
-) -> Result<String, String> {
+pub async fn get_recently_added_notes(meta_workspace_id: Option<String>) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
     let notes = app_state()
         .notes
@@ -92,7 +95,11 @@ pub async fn update_note(
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let payload = UpdateNote { title, content, categories };
+    let payload = UpdateNote {
+        title,
+        content,
+        categories,
+    };
 
     let note = app_state()
         .notes
@@ -112,7 +119,11 @@ pub async fn delete_note(
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().notes.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .notes
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 // ── Workspace operations ──────────────────────────────────────────────────────

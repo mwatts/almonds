@@ -1,20 +1,14 @@
 use std::sync::Arc;
 
 use almond_kernel::{
+    kernel::Kernel,
     repositories::{
-        bookmarks::BookmarkRepository,
-        notes::NotesRepository,
-        prelude::*,
-        recycle_bin::RecycleBinRepository,
-        reminder::ReminderRepository,
-        snippets::SnippetRepository,
-        sync_queue::SyncQueueRepository,
-        todo::TodoRepository,
-        user_preference::UserPreferenceRepository,
-        workspace::WorkspaceRepository,
+        bookmarks::BookmarkRepository, notes::NotesRepository, prelude::*,
+        recycle_bin::RecycleBinRepository, reminder::ReminderRepository,
+        snippets::SnippetRepository, sync_queue::SyncQueueRepository, todo::TodoRepository,
+        user_preference::UserPreferenceRepository, workspace::WorkspaceRepository,
     },
     sea_orm::DatabaseConnection,
-    Kernel,
 };
 use once_cell::sync::OnceCell;
 
@@ -23,7 +17,9 @@ use once_cell::sync::OnceCell;
 static APP_STATE: OnceCell<AppState> = OnceCell::new();
 
 pub fn app_state() -> &'static AppState {
-    APP_STATE.get().expect("kernel not initialized — call init_kernel() first")
+    APP_STATE
+        .get()
+        .expect("kernel not initialized — call init_kernel() first")
 }
 
 // ── Initialiser (called from Flutter on app start) ────────────────────────────
