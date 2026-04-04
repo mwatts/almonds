@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:heroicons/heroicons.dart';
 
 class BookmarksPage extends StatefulWidget {
   const BookmarksPage({super.key});
@@ -109,18 +110,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(pinned: true, title: Text('Bookmarks')),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    SearchBar(
-                      hintText: 'Search bookmarks…',
-                      leading: const Icon(Icons.search),
-                      onChanged: (v) => setState(() => _search = v),
-                    ),
-                    const SizedBox(height: 12),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -153,7 +147,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.bookmark_border, size: 64, color: colorScheme.outlineVariant),
+                          HeroIcon(HeroIcons.bookmark, size: 64, color: colorScheme.outlineVariant),
                           const SizedBox(height: 12),
                           const Text('No bookmarks found'),
                         ],
@@ -177,7 +171,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addBookmark,
-        child: const Icon(Icons.add),
+        child: const HeroIcon(HeroIcons.plus),
       ),
     );
   }
@@ -227,7 +221,7 @@ class _BookmarkTile extends StatelessWidget {
                 child: Text(bookmark.tag!, style: TextStyle(fontSize: 11, color: theme.colorScheme.onPrimaryContainer)),
               ),
             IconButton(
-              icon: const Icon(Icons.copy, size: 18),
+              icon: const HeroIcon(HeroIcons.documentDuplicate, size: 20),
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: bookmark.url));
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -236,7 +230,7 @@ class _BookmarkTile extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
+              icon: const HeroIcon(HeroIcons.trash, size: 20),
               onPressed: onDelete,
             ),
           ],
