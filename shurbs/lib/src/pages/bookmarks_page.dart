@@ -110,7 +110,6 @@ class _BookmarksPageState extends State<BookmarksPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(pinned: true, title: Text('Bookmarks')),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(

@@ -6,6 +6,7 @@ import 'pages/todo_page.dart';
 import 'pages/alarms_page.dart';
 import 'pages/bookmarks_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/notifications_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -74,18 +75,62 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      drawer: _AppDrawer(
+        currentIndex: _currentIndex,
+        onNavigate: (index) => setState(() => _currentIndex = index),
+      ),
       body: Column(
         children: [
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: SearchAnchor.bar(
-                searchController: _searchController,
-                barHintText: 'Search todos, alarms, bookmarks…',
-                barLeading: const HeroIcon(HeroIcons.magnifyingGlass, size: 20),
-                suggestionsBuilder: _buildSuggestions,
+              padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
+              child: Row(
+                children: [
+                  Builder(
+                    builder: (ctx) => IconButton(
+                      icon: const HeroIcon(HeroIcons.bars3),
+                      onPressed: () => Scaffold.of(ctx).openDrawer(),
+                    ),
+                  ),
+                  Expanded(
+                    child: SearchAnchor.bar(
+                      searchController: _searchController,
+                      barHintText: 'Search todos, alarms, bookmarks…',
+                      barLeading: const HeroIcon(HeroIcons.magnifyingGlass, size: 20),
+                      suggestionsBuilder: _buildSuggestions,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const HeroIcon(HeroIcons.bell),
+                    tooltip: 'Notifications',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const NotificationsPage()),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _currentIndex = 4),
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: colorScheme.primaryContainer,
+                        child: Text(
+                          'A',
+                          style: TextStyle(
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -115,6 +160,100 @@ class _AppShellState extends State<AppShell> {
             )
             .toList(),
       ),
+    );
+  }
+}
+
+class _AppDrawer extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onNavigate;
+
+  const _AppDrawer({required this.currentIndex, required this.onNavigate});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    void go(int index) {
+      Navigator.pop(context);
+      onNavigate(index);
+    }
+
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: colorScheme.primaryContainer,
+                    child: Text(
+                      'A',
+                      style: TextStyle(
+                        color: colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Adeoye', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      Text('adeoye@example.com', style: Theme.of(context).textTheme.bodySmall),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            const SizedBox(height: 8),
+            _DrawerItem(icon: HeroIcons.home, label: 'Home', selected: currentIndex == 0, onTap: () => go(0)),
+            _DrawerItem(icon: HeroIcons.checkCircle, label: 'Todos', selected: currentIndex == 1, onTap: () => go(1)),
+            _DrawerItem(icon: HeroIcons.clock, label: 'Alarms', selected: currentIndex == 2, onTap: () => go(2)),
+            _DrawerItem(icon: HeroIcons.bookmark, label: 'Bookmarks', selected: currentIndex == 3, onTap: () => go(3)),
+            _DrawerItem(
+              icon: HeroIcons.bell,
+              label: 'Notifications',
+              selected: false,
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsPage()));
+              },
+            ),
+            const Spacer(),
+            const Divider(height: 1),
+            _DrawerItem(icon: HeroIcons.cog6Tooth, label: 'Settings', selected: currentIndex == 4, onTap: () => go(4)),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final HeroIcons icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _DrawerItem({required this.icon, required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: HeroIcon(icon, size: 22),
+      title: Text(label),
+      onTap: onTap,
+      selected: selected,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      horizontalTitleGap: 8,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 }

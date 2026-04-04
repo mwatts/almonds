@@ -16,16 +16,31 @@ class _TodoPageState extends State<TodoPage> {
   ];
 
   String _filter = 'all';
+  String _search = '';
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   List<_Todo> get _filtered {
+    List<_Todo> list;
     switch (_filter) {
       case 'active':
-        return _todos.where((t) => !t.completed).toList();
+        list = _todos.where((t) => !t.completed).toList();
+        break;
       case 'completed':
-        return _todos.where((t) => t.completed).toList();
+        list = _todos.where((t) => t.completed).toList();
+        break;
       default:
-        return _todos;
+        list = _todos;
     }
+    if (_search.trim().isNotEmpty) {
+      list = list.where((t) => t.title.toLowerCase().contains(_search.toLowerCase())).toList();
+    }
+    return list;
   }
 
   void _addTodo() {
@@ -98,59 +113,55 @@ class _TodoPageState extends State<TodoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar(
-              pinned: true,
-              title: Text('Todo'),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: SliverToBoxAdapter(
-                child: SegmentedButton<String>(
-                  segments: const [
-                    ButtonSegment(value: 'all', label: Text('All')),
-                    ButtonSegment(value: 'active', label: Text('Active')),
-                    ButtonSegment(value: 'completed', label: Text('Done')),
-                  ],
-                  selected: {_filter},
-                  onSelectionChanged: (val) => setState(() => _filter = val.first),
-                ),
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'all', label: Text('All')),
+                  ButtonSegment(value: 'active', label: Text('Active')),
+                  ButtonSegment(value: 'completed', label: Text('Done')),
+                ],
+                selected: {_filter},
+                onSelectionChanged: (val) => setState(() => _filter = val.first),
               ),
             ),
-            const SliverPadding(padding: EdgeInsets.only(top: 12)),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              sliver: _filtered.isEmpty
-                  ? SliverToBoxAdapter(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 80),
-                          child: Column(
-                            children: [
-                              HeroIcon(HeroIcons.checkCircle, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
-                              const SizedBox(height: 12),
-                              Text('No todos here', style: Theme.of(context).textTheme.bodyLarge),
-                            ],
-                          ),
+          ),
+          const SliverPadding(padding: EdgeInsets.only(top: 12)),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: _filtered.isEmpty
+                ? SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 80),
+                        child: Column(
+                          children: [
+                            HeroIcon(HeroIcons.checkCircle, size: 64, color: colorScheme.outlineVariant),
+                            const SizedBox(height: 12),
+                            Text('No todos here', style: Theme.of(context).textTheme.bodyLarge),
+                          ],
                         ),
-                      ),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (ctx, i) => _TodoTile(
-                          todo: _filtered[i],
-                          onToggle: () => setState(() => _filtered[i].completed = !_filtered[i].completed),
-                          onDelete: () => setState(() => _todos.remove(_filtered[i])),
-                        ),
-                        childCount: _filtered.length,
                       ),
                     ),
-            ),
-          ],
-        ),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (ctx, i) => _TodoTile(
+                        todo: _filtered[i],
+                        onToggle: () => setState(() => _filtered[i].completed = !_filtered[i].completed),
+                        onDelete: () => setState(() => _todos.remove(_filtered[i])),
+                      ),
+                      childCount: _filtered.length,
+                    ),
+                  ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addTodo,

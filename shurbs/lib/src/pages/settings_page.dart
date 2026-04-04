@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(pinned: true, title: Text('Settings')),
+           
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList(
