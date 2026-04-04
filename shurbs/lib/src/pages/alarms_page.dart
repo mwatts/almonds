@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heroicons/heroicons.dart';
 
 class AlarmsPage extends StatefulWidget {
   const AlarmsPage({super.key});
@@ -50,7 +51,7 @@ class _AlarmsPageState extends State<AlarmsPage> {
                   final time = await showTimePicker(context: ctx, initialTime: selectedTime);
                   if (time != null) setModalState(() => selectedTime = time);
                 },
-                icon: const Icon(Icons.access_time),
+                icon: const HeroIcon(HeroIcons.clock),
                 label: Text(selectedTime.format(ctx)),
               ),
               const SizedBox(height: 12),
@@ -98,14 +99,13 @@ class _AlarmsPageState extends State<AlarmsPage> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(pinned: true, title: Text('Alarms')),
             _alarms.isEmpty
                 ? SliverFillRemaining(
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.alarm_off, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
+                          HeroIcon(HeroIcons.clock, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
                           const SizedBox(height: 12),
                           const Text('No alarms set'),
                         ],
@@ -130,7 +130,7 @@ class _AlarmsPageState extends State<AlarmsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addAlarm,
-        child: const Icon(Icons.add),
+        child: const HeroIcon(HeroIcons.plus),
       ),
     );
   }
@@ -184,8 +184,11 @@ class _AlarmTile extends StatelessWidget {
                 ],
               ),
             ),
-            Switch(value: alarm.enabled, onChanged: (_) => onToggle()),
-            IconButton(icon: const Icon(Icons.delete_outline, size: 18), onPressed: onDelete),
+            Transform.scale(
+              scale: 0.75,
+              child: Switch(value: alarm.enabled, onChanged: (_) => onToggle()),
+            ),
+            IconButton(icon: const HeroIcon(HeroIcons.trash, size: 18), onPressed: onDelete),
           ],
         ),
       ),

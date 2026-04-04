@@ -38,8 +38,8 @@ dependencies:
   rust_lib_shurbs:
     path: rust_builder
   flutter_rust_bridge: 2.11.1
-  path_provider: ^2.1.5
-#  heroicons: ^3.0.0
+  heroicons: ^0.11.0
+
 
 dev_dependencies:
   flutter_test:

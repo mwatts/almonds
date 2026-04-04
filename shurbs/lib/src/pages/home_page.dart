@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heroicons/heroicons.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -12,7 +13,6 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar.large(title: Text('Wild Almonds')),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList(
@@ -87,7 +87,11 @@ class _GreetingCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.wb_sunny_outlined, size: 48, color: colorScheme.onPrimaryContainer.withValues(alpha: 0.5)),
+          HeroIcon(
+            HeroIcons.sun,
+            size: 48,
+            color: colorScheme.onPrimaryContainer.withValues(alpha: 0.5),
+          ),
         ],
       ),
     );
@@ -102,10 +106,10 @@ class _StatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = [
-      _StatItem(label: 'Todos', count: 3, icon: Icons.check_box_outlined, color: Colors.blue),
-      _StatItem(label: 'Alarms', count: 1, icon: Icons.alarm_outlined, color: Colors.orange),
-      _StatItem(label: 'Bookmarks', count: 12, icon: Icons.bookmark_outline, color: Colors.purple),
-      _StatItem(label: 'Notes', count: 5, icon: Icons.note_outlined, color: Colors.green),
+      _StatItem(label: 'Todos', count: 3, icon: HeroIcons.checkCircle, color: Colors.blue),
+      _StatItem(label: 'Alarms', count: 1, icon: HeroIcons.clock, color: Colors.orange),
+      _StatItem(label: 'Bookmarks', count: 12, icon: HeroIcons.bookmark, color: Colors.purple),
+      _StatItem(label: 'Notes', count: 5, icon: HeroIcons.documentText, color: Colors.green),
     ];
 
     return GridView.count(
@@ -123,7 +127,7 @@ class _StatsGrid extends StatelessWidget {
 class _StatItem {
   final String label;
   final int count;
-  final IconData icon;
+  final HeroIcons icon;
   final Color color;
 
   const _StatItem({
@@ -152,7 +156,7 @@ class _StatCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(stat.icon, color: stat.color, size: 28),
+          HeroIcon(stat.icon, color: stat.color, size: 28),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,9 +184,9 @@ class _RecentActivityList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      _ActivityItem(title: 'Buy groceries', type: 'Todo', time: '2h ago', icon: Icons.check_box_outlined),
-      _ActivityItem(title: 'Morning standup', type: 'Alarm', time: '5h ago', icon: Icons.alarm),
-      _ActivityItem(title: 'Flutter docs', type: 'Bookmark', time: 'Yesterday', icon: Icons.bookmark_outline),
+      _ActivityItem(title: 'Buy groceries', type: 'Todo', time: '2h ago', icon: HeroIcons.checkCircle),
+      _ActivityItem(title: 'Morning standup', type: 'Alarm', time: '5h ago', icon: HeroIcons.clock),
+      _ActivityItem(title: 'Flutter docs', type: 'Bookmark', time: 'Yesterday', icon: HeroIcons.bookmark),
     ];
 
     return Column(
@@ -192,7 +196,11 @@ class _RecentActivityList extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: CircleAvatar(
                 backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                child: Icon(item.icon, size: 20, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                child: HeroIcon(
+                  item.icon,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
               ),
               title: Text(item.title),
               subtitle: Text(item.type),
@@ -208,7 +216,7 @@ class _ActivityItem {
   final String title;
   final String type;
   final String time;
-  final IconData icon;
+  final HeroIcons icon;
 
   const _ActivityItem({
     required this.title,

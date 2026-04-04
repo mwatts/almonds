@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heroicons/heroicons.dart';
 
 import '../theme_notifier.dart';
 
@@ -37,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           CircleAvatar(
                             radius: 32,
                             backgroundColor: colorScheme.primaryContainer,
-                            child: Icon(Icons.person, size: 32, color: colorScheme.onPrimaryContainer),
+                            child: HeroIcon(HeroIcons.user, size: 32, color: colorScheme.onPrimaryContainer),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -61,13 +62,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   Card(
                     child: Column(
                       children: [
-                        SwitchListTile(
+                        ListTile(
+                          leading: const HeroIcon(HeroIcons.moon),
                           title: const Text('Dark Mode'),
-                          secondary: const Icon(Icons.dark_mode_outlined),
-                          value: _darkMode,
-                          onChanged: (v) => setState(() {
-                            themeModeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
-                          }),
+                          trailing: Transform.scale(
+                            scale: 0.75,
+                            child: Switch(
+                              value: _darkMode,
+                              onChanged: (v) => setState(() {
+                                themeModeNotifier.value = v ? ThemeMode.dark : ThemeMode.light;
+                              }),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -79,18 +85,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   Card(
                     child: Column(
                       children: [
-                        SwitchListTile(
+                        ListTile(
+                          leading: const HeroIcon(HeroIcons.bell),
                           title: const Text('Push Notifications'),
-                          secondary: const Icon(Icons.notifications_outlined),
-                          value: _notifications,
-                          onChanged: (v) => setState(() => _notifications = v),
+                          trailing: Transform.scale(
+                            scale: 0.75,
+                            child: Switch(
+                              value: _notifications,
+                              onChanged: (v) => setState(() => _notifications = v),
+                            ),
+                          ),
                         ),
                         const Divider(height: 1),
-                        SwitchListTile(
+                        ListTile(
+                          leading: const HeroIcon(HeroIcons.speakerWave),
                           title: const Text('Alarm Sound'),
-                          secondary: const Icon(Icons.volume_up_outlined),
-                          value: _alarmSound,
-                          onChanged: (v) => setState(() => _alarmSound = v),
+                          trailing: Transform.scale(
+                            scale: 0.75,
+                            child: Switch(
+                              value: _alarmSound,
+                              onChanged: (v) => setState(() => _alarmSound = v),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -103,21 +119,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.upload_outlined),
+                          leading: const HeroIcon(HeroIcons.arrowUpTray),
                           title: const Text('Export Data'),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: const HeroIcon(HeroIcons.chevronRight),
                           onTap: () {},
                         ),
                         const Divider(height: 1),
                         ListTile(
-                          leading: const Icon(Icons.download_outlined),
+                          leading: const HeroIcon(HeroIcons.arrowDownTray),
                           title: const Text('Import Data'),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: const HeroIcon(HeroIcons.chevronRight),
                           onTap: () {},
                         ),
                         const Divider(height: 1),
                         ListTile(
-                          leading: Icon(Icons.delete_forever_outlined, color: colorScheme.error),
+                          leading: HeroIcon(HeroIcons.trash, color: colorScheme.error),
                           title: Text('Clear All Data', style: TextStyle(color: colorScheme.error)),
                           onTap: () => _confirmClearData(context),
                         ),
@@ -132,15 +148,15 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.info_outline),
+                          leading: const HeroIcon(HeroIcons.informationCircle),
                           title: const Text('Version'),
                           trailing: Text('1.0.0', style: theme.textTheme.bodySmall),
                         ),
                         const Divider(height: 1),
                         ListTile(
-                          leading: const Icon(Icons.code),
+                          leading: const HeroIcon(HeroIcons.codeBracket),
                           title: const Text('Wild Almonds'),
-                          trailing: const Icon(Icons.chevron_right),
+                          trailing: const HeroIcon(HeroIcons.chevronRight),
                           onTap: () {},
                         ),
                       ],

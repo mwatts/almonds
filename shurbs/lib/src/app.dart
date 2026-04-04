@@ -17,30 +17,35 @@ const _rosePrimaryContainer = Color(0xFFa11d3f);
 const _roseOnPrimaryContainer = Color(0xFFf9d0d9);
 const _roseSecondary = Color(0xFFed7694);
 
+TextTheme _poppins([TextTheme? base]) {
+  return GoogleFonts.poppinsTextTheme(base).copyWith(
+    bodyMedium: GoogleFonts.poppins(
+      fontSize: 15,
+      textStyle: base?.bodyMedium,
+    ),
+  );
+}
+
 class ShurbsApp extends StatelessWidget {
   const ShurbsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.transparent,
+      value: const SystemUiOverlayStyle(
+        statusBarColor: _rosePrimaryContainer,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
       ),
       child: ValueListenableBuilder<ThemeMode>(
         valueListenable: themeModeNotifier,
         builder: (context, mode, child) => MaterialApp(
-          title: 'Wild Almonds',
+          // title: 'Wild Almonds',
           debugShowCheckedModeBanner: false,
           themeMode: mode,
           theme: _lightTheme(),
           darkTheme: _darkTheme(),
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: const TextScaler.linear(0.9),
-            ),
-            child: child!,
-          ),
           home: const AppShell(),
         ),
       ),
@@ -54,8 +59,21 @@ ThemeData _lightTheme() {
       seedColor: _rosePrimary,
       brightness: Brightness.light,
     ),
-    textTheme: GoogleFonts.poppinsTextTheme(),
+    textTheme: _poppins(),
     useMaterial3: true,
+    cardTheme: CardThemeData(
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: _rosePrimary,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+    ),
   );
 }
 
@@ -93,12 +111,13 @@ ThemeData _darkTheme() {
 
   return ThemeData(
     colorScheme: colorScheme,
-    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+    textTheme: _poppins(ThemeData.dark().textTheme),
     useMaterial3: true,
     scaffoldBackgroundColor: _onyxBackground,
     cardTheme: CardThemeData(
       color: _onyxSurface,
       elevation: 0,
+      shadowColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: const BorderSide(color: Color(0xFF1a2540), width: 1),
@@ -121,8 +140,8 @@ ThemeData _darkTheme() {
       }),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: _onyxBackground,
-      foregroundColor: Color(0xFFe0e6f2),
+      backgroundColor: _rosePrimary,
+      foregroundColor: Colors.white,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       systemOverlayStyle: SystemUiOverlayStyle(
