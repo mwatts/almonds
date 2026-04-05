@@ -40,11 +40,13 @@ dependencies:
   flutter_rust_bridge: 2.11.1
   heroicons: ^0.11.0
   flutter_markdown: ^0.7.0
+  path_provider: ^2.1.5
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  ffigen: ^20.1.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

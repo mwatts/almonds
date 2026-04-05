@@ -16,6 +16,7 @@ uuid = { version = "1.23.0", features = ["v4"] }
 tokio = { version = "1", features = ["full"] }
 once_cell = "1"
 almond_kernel = { path = "../../kernel" }
+chrono = "0.4.44"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

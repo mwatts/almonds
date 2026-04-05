@@ -1,23 +1,19 @@
 use almond_kernel::{
-    adapters::reminder::{CreateReminder, UpdateReminder},
-    repositories::reminder::ReminderRepositoryExt,
+    adapters::notes::{CreateNote, UpdateNote},
+    repositories::notes::NotesRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };
-use chrono::DateTime;
 
 use crate::error::{make_meta, parse_uuid, AppError};
 use crate::state::app_state;
 
-/// `remind_at` — RFC 3339 / ISO 8601 datetime string with timezone,
-/// e.g. `"2026-04-10T09:00:00+01:00"`.
+// ── Create ────────────────────────────────────────────────────────────────────
+
 #[flutter_rust_bridge::frb]
-pub async fn create_reminder(
+pub async fn create_note(
     title: String,
-    description: Option<String>,
-    remind_at: String,
-    recurring: bool,
-    recurrence_rule: Option<String>,
-    alarm_sound: Option<String>,
+    content: String,
+    categories: Option<Vec<String>>,
     workspace_identifier: Option<String>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
@@ -28,101 +24,112 @@ pub async fn create_reminder(
         .transpose()
         .map_err(|e: AppError| e.to_string())?;
 
-    let remind_at = DateTime::parse_from_rfc3339(&remind_at)
-        .map_err(|e| format!("invalid remind_at datetime: {e}"))?;
-
-    let payload = CreateReminder {
+    let payload = CreateNote {
         title,
-        description,
-        remind_at,
-        recurring,
-        recurrence_rule,
-        alarm_sound,
+        content,
+        categories,
         workspace_identifier: ws_id,
     };
-
-    let reminder = app_state()
-        .reminders
+    let note = app_state()
+        .notes
         .create(&payload, &meta)
         .await
         .map_err(|e| e.to_string())?;
 
-    serde_json::to_string(&reminder).map_err(|e| e.to_string())
+    serde_json::to_string(&note).map_err(|e| e.to_string())
 }
 
+// ── Read ──────────────────────────────────────────────────────────────────────
+
 #[flutter_rust_bridge::frb]
-pub async fn get_reminder(
+pub async fn get_note(
     identifier: String,
     meta_workspace_id: Option<String>,
 ) -> Result<Option<String>, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
 
-    let reminder = app_state()
-        .reminders
+    let note = app_state()
+        .notes
         .find_by_id(&id, &meta)
         .await
         .map_err(|e| e.to_string())?;
 
-    reminder
-        .map(|r| serde_json::to_string(&r).map_err(|e| e.to_string()))
+    note.map(|n| serde_json::to_string(&n).map_err(|e| e.to_string()))
         .transpose()
 }
 
 #[flutter_rust_bridge::frb]
-pub async fn get_all_reminders(meta_workspace_id: Option<String>) -> Result<String, String> {
+pub async fn get_all_notes(meta_workspace_id: Option<String>) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let reminders = app_state()
-        .reminders
+    let notes = app_state()
+        .notes
         .find_all(&meta)
         .await
         .map_err(|e| e.to_string())?;
 
-    serde_json::to_string(&reminders).map_err(|e| e.to_string())
+    serde_json::to_string(&notes).map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]
-pub async fn update_reminder(
+pub async fn get_recently_added_notes(meta_workspace_id: Option<String>) -> Result<String, String> {
+    let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
+    let notes = app_state()
+        .notes
+        .recently_added(&meta)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    serde_json::to_string(&notes).map_err(|e| e.to_string())
+}
+
+// ── Update ────────────────────────────────────────────────────────────────────
+
+#[flutter_rust_bridge::frb]
+pub async fn update_note(
     identifier: String,
     title: Option<String>,
-    description: Option<String>,
-    remind_at: Option<String>,
-    recurring: Option<bool>,
-    recurrence_rule: Option<String>,
-    alarm_sound: Option<String>,
+    content: Option<String>,
+    categories: Option<Vec<String>>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
+    let payload = UpdateNote {
+        title,
+        content,
+        categories,
+    };
 
-    let remind_at = remind_at
-        .as_deref()
-        .map(|s| DateTime::parse_from_rfc3339(s).map_err(|e| format!("invalid remind_at: {e}")))
-        .transpose()?;
-
-    let payload = UpdateReminder { title, description, remind_at, recurring, recurrence_rule, alarm_sound };
-
-    let reminder = app_state()
-        .reminders
+    let note = app_state()
+        .notes
         .update(&id, &payload, &meta)
         .await
         .map_err(|e| e.to_string())?;
 
-    serde_json::to_string(&reminder).map_err(|e| e.to_string())
+    serde_json::to_string(&note).map_err(|e| e.to_string())
 }
 
+// ── Delete ────────────────────────────────────────────────────────────────────
+
 #[flutter_rust_bridge::frb]
-pub async fn delete_reminder(
+pub async fn delete_note(
     identifier: String,
     meta_workspace_id: Option<String>,
 ) -> Result<(), String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    app_state().reminders.delete(&id, &meta).await.map_err(|e| e.to_string())
+    app_state()
+        .notes
+        .delete(&id, &meta)
+        .await
+        .map_err(|e| e.to_string())
 }
 
+// ── Workspace operations ──────────────────────────────────────────────────────
+
 #[flutter_rust_bridge::frb]
-pub async fn duplicate_reminder(
+pub async fn duplicate_note(
     record_identifier: String,
     previous_workspace_identifier: String,
     target_workspace_identifier: String,
@@ -132,14 +139,14 @@ pub async fn duplicate_reminder(
     let target = parse_uuid(&target_workspace_identifier).map_err(|e| e.to_string())?;
 
     app_state()
-        .reminders
+        .notes
         .duplicate_record(&record, &prev, &target)
         .await
         .map_err(|e| e.to_string())
 }
 
 #[flutter_rust_bridge::frb]
-pub async fn transfer_reminder(
+pub async fn transfer_note(
     record_identifier: String,
     previous_workspace_identifier: String,
     target_workspace_identifier: String,
@@ -149,7 +156,7 @@ pub async fn transfer_reminder(
     let target = parse_uuid(&target_workspace_identifier).map_err(|e| e.to_string())?;
 
     app_state()
-        .reminders
+        .notes
         .transfer_record(&record, &prev, &target)
         .await
         .map_err(|e| e.to_string())

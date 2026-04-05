@@ -8,7 +8,9 @@ use crate::error::{make_meta, parse_uuid};
 use crate::state::app_state;
 
 #[flutter_rust_bridge::frb]
-pub async fn get_user_preference(meta_workspace_id: Option<String>) -> Result<Option<String>, String> {
+pub async fn get_user_preference(
+    meta_workspace_id: Option<String>,
+) -> Result<Option<String>, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
     let pref = app_state()
         .user_preferences
@@ -25,17 +27,16 @@ pub async fn create_user_preference(
     first_name: String,
     last_name: String,
     email: String,
-    workspace_identifier: Option<String>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let ws_id = workspace_identifier
-        .as_deref()
-        .map(parse_uuid)
-        .transpose()
-        .map_err(|e: crate::error::AppError| e.to_string())?;
 
-    let payload = CreateUserPreference { first_name, last_name, email, workspace_identifier: ws_id };
+
+    let payload = CreateUserPreference {
+        first_name,
+        last_name,
+        email,
+    };
     let pref = app_state()
         .user_preferences
         .create(&payload, &meta)
@@ -55,7 +56,11 @@ pub async fn update_user_preference(
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let payload = UpdateUserPreference { first_name, last_name, email };
+    let payload = UpdateUserPreference {
+        first_name,
+        last_name,
+        email,
+    };
 
     let pref = app_state()
         .user_preferences
