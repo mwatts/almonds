@@ -46,6 +46,38 @@ impl MigrationTrait for Migration {
             return Ok(());
         }
 
+        // MySQL stores UUID as VARCHAR(36)
+        if db_backend == DbBackend::MySql {
+            db_connection
+                .execute_unprepared(&format!(
+                    r#"
+        INSERT INTO workspaces (identifier, name, description, created_at, updated_at)
+        SELECT '{0}', 'default', 'Default workspace', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        WHERE NOT EXISTS (
+            SELECT 1 FROM workspaces WHERE name = 'default'
+        );
+        "#,
+                    workspace_identifier
+                ))
+                .await?;
+
+            db_connection
+                .execute_unprepared(&format!(
+                    r#"
+        UPDATE todo SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        UPDATE notes SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        UPDATE bookmark SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        UPDATE recycle_bin SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        UPDATE reminder SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        UPDATE snippets SET workspace_identifier = '{0}' WHERE workspace_identifier IS NULL;
+        "#,
+                    workspace_identifier
+                ))
+                .await?;
+
+            return Ok(());
+        }
+
         db_connection
             .execute_unprepared(&format!(
                 r#"

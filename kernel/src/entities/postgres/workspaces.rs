@@ -7,17 +7,17 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "workspaces")]
 #[serde(rename_all = "camelCase")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub identifier: Uuid,
     pub name: String,
     pub description: String,
+    pub created_at: DateTimeWithTimeZone,
+    pub updated_at: DateTimeWithTimeZone,
+    #[sea_orm(primary_key, auto_increment = false)]
+    pub identifier: Uuid,
     pub is_default: bool,
     pub is_hidden: bool,
     pub is_secured: bool,
-    #[serde(skip)]
+    #[sea_orm(column_type = "Text", nullable)]
     pub password_hash: Option<String>,
-    pub created_at: DateTimeWithTimeZone,
-    pub updated_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -34,6 +34,8 @@ pub enum Relation {
     Snippets,
     #[sea_orm(has_many = "super::todo::Entity")]
     Todo,
+    #[sea_orm(has_many = "super::user_preference::Entity")]
+    UserPreference,
 }
 
 impl Related<super::bookmark::Entity> for Entity {
@@ -69,6 +71,12 @@ impl Related<super::snippets::Entity> for Entity {
 impl Related<super::todo::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Todo.def()
+    }
+}
+
+impl Related<super::user_preference::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UserPreference.def()
     }
 }
 
