@@ -1,6 +1,5 @@
-
-use graphql_client::GraphQLQuery;
 use async_trait::async_trait;
+use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -11,11 +10,9 @@ use async_trait::async_trait;
 )]
 pub struct SyncQueueView;
 
-
 // pub struct SyncEngine {
 //     graphql_client: GraphQLClient,
 // }
-
 
 #[async_trait]
 pub trait SyncEngineTrait {
