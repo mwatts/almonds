@@ -6,6 +6,12 @@ edition = "2024"
 [workspace]
 members = [".", "migration"]
 
+[features]
+default = ["sqlite"]
+sqlite = ["sea-orm/sqlx-sqlite"]
+postgres = ["sea-orm/sqlx-postgres"]
+mysql = ["sea-orm/sqlx-mysql"]
+
 [dependencies]
 argon2 = "0.5"
 async-trait = "0.1.89"
@@ -36,9 +42,3 @@ validator = { version = "0.20.0", features = ["derive"] }
 fake = "4.4.0"
 lazy_static = "1.5.0"
 tokio = { version = "1.50.0", features = ["full"] }
-
-[features]
-default = ["sqlite"]
-sqlite = ["sea-orm/sqlx-sqlite"]
-postgres = ["sea-orm/sqlx-postgres"]
-mysql = ["sea-orm/sqlx-mysql"]
