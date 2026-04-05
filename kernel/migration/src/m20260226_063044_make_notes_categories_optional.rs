@@ -51,6 +51,16 @@ impl MigrationTrait for Migration {
                 .await?;
             return Ok(());
         }
+        if db_backend == DbBackend::MySql {
+            return manager
+                .alter_table(
+                    Table::alter()
+                        .table(Notes::Table)
+                        .modify_column(ColumnDef::new(Notes::Categories).json().null())
+                        .to_owned(),
+                )
+                .await;
+        }
         manager
             .alter_table(
                 Table::alter()
@@ -101,6 +111,16 @@ impl MigrationTrait for Migration {
                 )
                 .await?;
             return Ok(());
+        }
+        if db_backend == DbBackend::MySql {
+            return manager
+                .alter_table(
+                    Table::alter()
+                        .table(Notes::Table)
+                        .modify_column(ColumnDef::new(Notes::Categories).json().not_null())
+                        .to_owned(),
+                )
+                .await;
         }
         manager
             .alter_table(

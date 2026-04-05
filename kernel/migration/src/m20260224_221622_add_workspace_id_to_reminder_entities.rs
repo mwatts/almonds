@@ -56,11 +56,18 @@ impl MigrationTrait for Migration {
             return Ok(());
         }
 
+        let workspace_col = if db_backend == DbBackend::MySql {
+            ColumnDef::new("workspace_identifier")
+                .string_len(36)
+                .to_owned()
+        } else {
+            ColumnDef::new("workspace_identifier").uuid().to_owned()
+        };
         manager
             .alter_table(
                 Table::alter()
                     .table(Reminder::Table)
-                    .add_column(ColumnDef::new("workspace_identifier").uuid())
+                    .add_column(workspace_col)
                     .to_owned(),
             )
             .await?;
