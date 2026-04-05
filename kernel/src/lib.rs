@@ -7,6 +7,8 @@ pub mod repositories;
 pub mod sync_engine;
 pub mod utils;
 
+pub use kernel::DataEngine;
+
 pub use graphql_ws_client::*;
 pub use sea_orm;
 
