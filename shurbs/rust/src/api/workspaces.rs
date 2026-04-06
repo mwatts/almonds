@@ -48,6 +48,9 @@ pub async fn update_workspace(
     description: Option<String>,
     is_default: Option<bool>,
     is_hidden: Option<bool>,
+    is_secured: Option<bool>,
+    password: Option<String>,
+
 ) -> Result<String, String> {
     let uuid = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let payload = UpdateWorkspace {
@@ -55,6 +58,8 @@ pub async fn update_workspace(
         description,
         is_default,
         is_hidden,
+        is_secured,
+        password,
     };
 
     let workspace = app_state()

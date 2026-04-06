@@ -1,8 +1,3 @@
-#[flutter_rust_bridge::frb(sync)] // Synchronous mode for simplicity of the demo
-pub fn greet(name: String) -> String {
-    format!("Hello, {name}!")
-}
-
 #[flutter_rust_bridge::frb(init)]
 pub fn init_app() {
     // Default utilities - feel free to customize
@@ -16,5 +11,5 @@ pub fn init_app() {
 ///   - In-memory   : `"sqlite::memory:"`
 #[flutter_rust_bridge::frb]
 pub async fn init_kernel(database_url: String) -> Result<(), String> {
-    crate::state::init_kernel(database_url).await
+    crate::state::init_data_engine(database_url).await
 }

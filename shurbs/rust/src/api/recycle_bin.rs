@@ -1,7 +1,9 @@
 use almond_kernel::{
-    adapters::recycle_bin::{CreateRecycleBinEntry, RecycleBinItemType},
+    adapters::recycle_bin::{CreateRecycleBinEntry},
     repositories::recycle_bin::RecycleBinRepositoryExt,
 };
+
+use almond_kernel::enums::ItemType as RecycleBinItemType;
 
 use crate::error::{make_meta, parse_uuid};
 use crate::state::app_state;
@@ -13,7 +15,7 @@ fn parse_item_type(s: &str) -> Result<RecycleBinItemType, String> {
         "reminder" => Ok(RecycleBinItemType::Reminder),
         "snippet" => Ok(RecycleBinItemType::Snippet),
         "bookmark" => Ok(RecycleBinItemType::Bookmark),
-        "workspace" => Ok(RecycleBinItemType::Workspace),
+       // "workspace" => Ok(RecycleBinItemType::Workspace),
         other => Err(format!("unknown recycle bin item type: '{other}'")),
     }
 }

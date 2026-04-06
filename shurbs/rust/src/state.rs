@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use almond_kernel::{
-    kernel::Kernel,
+    kernel::DataEngine,
     repositories::{
         bookmarks::BookmarkRepository, notes::NotesRepository, prelude::*,
         recycle_bin::RecycleBinRepository, reminder::ReminderRepository,
@@ -28,18 +28,18 @@ pub fn app_state() -> &'static AppState {
 /// `database_url` examples:
 ///   - SQLite : `"sqlite:///data/user/0/app.shurbs/databases/shurbs.db?mode=rwc"`
 ///   - In-memory: `"sqlite::memory:"`
-pub async fn init_kernel(database_url: String) -> Result<(), String> {
+pub async fn init_data_engine(database_url: String) -> Result<(), String> {
     if APP_STATE.get().is_some() {
         return Ok(()); // already initialised — idempotent
     }
 
-    let kernel = Kernel::new(&database_url)
+    let data_engine = DataEngine::new(&database_url)
         .await
         .map_err(|e| e.to_string())?;
 
-    kernel.run_migrations().await.map_err(|e| e.to_string())?;
+    data_engine.run_migrations().await.map_err(|e| e.to_string())?;
 
-    let conn = Arc::new(kernel.connection().clone());
+    let conn = Arc::new(data_engine.connection().clone());
     let state = AppState::new(conn).await;
 
     APP_STATE.set(state).ok();
