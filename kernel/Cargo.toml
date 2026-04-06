@@ -7,7 +7,7 @@ edition = "2024"
 members = [".", "migration"]
 
 [features]
-default = ["sqlite"]
+default = ["sqlite", "utils"]
 sqlite = ["sea-orm/sqlx-sqlite"]
 postgres = ["sea-orm/sqlx-postgres"]
 mysql = ["sea-orm/sqlx-mysql"]
