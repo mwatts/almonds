@@ -1,92 +1,44 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
-import '../rust/api/reminders.dart';
+import '../controllers/reminder_controller.dart';
+import '../models/reminder_model.dart';
 
-class _Reminder {
-  final String id;
-  String title;
-  String? description;
-  DateTime remindAt;
-  bool recurring;
-  String? recurrenceRule;
+class AlarmsPage extends StatelessWidget {
+  final ReminderController controller;
 
-  _Reminder({
-    required this.id,
-    required this.title,
-    this.description,
-    required this.remindAt,
-    this.recurring = false,
-    this.recurrenceRule,
-  });
+  const AlarmsPage({super.key, required this.controller});
 
-  factory _Reminder.fromJson(Map<String, dynamic> j) => _Reminder(
-        id: j['identifier'] as String,
-        title: j['title'] as String,
-        description: j['description'] as String?,
-        remindAt: DateTime.parse(j['remindAt'] as String),
-        recurring: j['recurring'] as bool? ?? false,
-        recurrenceRule: j['recurrenceRule'] as String?,
-      );
-
-  TimeOfDay get time => TimeOfDay(hour: remindAt.hour, minute: remindAt.minute);
-
-  List<String> get days {
-    if (recurrenceRule == null || recurrenceRule!.isEmpty) return [];
-    return recurrenceRule!.split(',').where((d) => d.isNotEmpty).toList();
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        if (controller.loading) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        return _AlarmsView(controller: controller);
+      },
+    );
   }
 }
 
-class AlarmsPage extends StatefulWidget {
-  const AlarmsPage({super.key});
+class _AlarmsView extends StatelessWidget {
+  final ReminderController controller;
 
-  @override
-  State<AlarmsPage> createState() => _AlarmsPageState();
-}
+  const _AlarmsView({required this.controller});
 
-class _AlarmsPageState extends State<AlarmsPage> {
-  List<_Reminder> _reminders = [];
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadReminders();
+  static String _toRfc3339(DateTime dt) {
+    final offset = dt.timeZoneOffset;
+    final sign = offset.isNegative ? '-' : '+';
+    final hh = offset.inHours.abs().toString().padLeft(2, '0');
+    final mm = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    final base = dt.toIso8601String().split('.').first;
+    return '$base$sign$hh:$mm';
   }
 
-  Future<void> _loadReminders() async {
-    try {
-      final raw = await getAllReminders();
-      final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-      setState(() {
-        _reminders = list.map(_Reminder.fromJson).toList();
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _deleteReminder(_Reminder r) async {
-    try {
-      await deleteReminder(identifier: r.id);
-      setState(() => _reminders.removeWhere((x) => x.id == r.id));
-    } catch (_) {}
-  }
-
-  Future<void> _toggleReminder(_Reminder r) async {
-    // Toggle recurring flag as a proxy for enabled/disabled
-    try {
-      final newRecurring = !r.recurring;
-      await updateReminder(identifier: r.id, recurring: newRecurring);
-      setState(() => r.recurring = newRecurring);
-    } catch (_) {}
-  }
-
-  void _addReminder() {
-    final controller = TextEditingController();
+  void _showAddSheet(BuildContext context) {
+    final labelController = TextEditingController();
     TimeOfDay selectedTime = TimeOfDay.now();
     final selectedDays = <String>{};
 
@@ -108,7 +60,7 @@ class _AlarmsPageState extends State<AlarmsPage> {
               Text('New Reminder', style: Theme.of(ctx).textTheme.titleLarge),
               const SizedBox(height: 16),
               TextField(
-                controller: controller,
+                controller: labelController,
                 autofocus: true,
                 decoration: const InputDecoration(
                   hintText: 'Reminder label',
@@ -132,7 +84,9 @@ class _AlarmsPageState extends State<AlarmsPage> {
                   return FilterChip(
                     label: Text(day),
                     selected: active,
-                    onSelected: (v) => setModalState(() => v ? selectedDays.add(day) : selectedDays.remove(day)),
+                    onSelected: (v) => setModalState(
+                      () => v ? selectedDays.add(day) : selectedDays.remove(day),
+                    ),
                   );
                 }).toList(),
               ),
@@ -141,22 +95,24 @@ class _AlarmsPageState extends State<AlarmsPage> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () async {
-                    if (controller.text.trim().isNotEmpty) {
+                    final label = labelController.text.trim();
+                    if (label.isNotEmpty) {
                       Navigator.pop(ctx);
-                      try {
-                        final now = DateTime.now();
-                        final dt = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
-                        final remindAt = dt.toIso8601String();
-                        final rule = selectedDays.join(',');
-                        final raw = await createReminder(
-                          title: controller.text.trim(),
-                          remindAt: remindAt,
-                          recurring: selectedDays.isNotEmpty,
-                          recurrenceRule: rule.isEmpty ? null : rule,
-                        );
-                        final json = jsonDecode(raw) as Map<String, dynamic>;
-                        setState(() => _reminders.add(_Reminder.fromJson(json)));
-                      } catch (_) {}
+                      final now = DateTime.now();
+                      final dt = DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        selectedTime.hour,
+                        selectedTime.minute,
+                      );
+                      final rule = selectedDays.join(',');
+                      await controller.create(
+                        title: label,
+                        remindAt: _toRfc3339(dt),
+                        recurring: selectedDays.isNotEmpty,
+                        recurrenceRule: rule.isEmpty ? null : rule,
+                      );
                     }
                   },
                   child: const Text('Save Reminder'),
@@ -171,21 +127,23 @@ class _AlarmsPageState extends State<AlarmsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final c = controller;
 
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            _reminders.isEmpty
+            c.reminders.isEmpty
                 ? SliverFillRemaining(
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          HeroIcon(HeroIcons.clock, size: 64, color: Theme.of(context).colorScheme.outlineVariant),
+                          HeroIcon(
+                            HeroIcons.clock,
+                            size: 64,
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
                           const SizedBox(height: 12),
                           const Text('No reminders set'),
                         ],
@@ -197,11 +155,11 @@ class _AlarmsPageState extends State<AlarmsPage> {
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (ctx, i) => _ReminderTile(
-                          reminder: _reminders[i],
-                          onToggle: () => _toggleReminder(_reminders[i]),
-                          onDelete: () => _deleteReminder(_reminders[i]),
+                          reminder: c.reminders[i],
+                          onToggle: () => c.toggleRecurring(c.reminders[i]),
+                          onDelete: () => c.delete(c.reminders[i]),
                         ),
-                        childCount: _reminders.length,
+                        childCount: c.reminders.length,
                       ),
                     ),
                   ),
@@ -209,7 +167,7 @@ class _AlarmsPageState extends State<AlarmsPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addReminder,
+        onPressed: () => _showAddSheet(context),
         child: const HeroIcon(HeroIcons.plus),
       ),
     );
@@ -217,7 +175,7 @@ class _AlarmsPageState extends State<AlarmsPage> {
 }
 
 class _ReminderTile extends StatelessWidget {
-  final _Reminder reminder;
+  final Reminder reminder;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
 
@@ -261,7 +219,10 @@ class _ReminderTile extends StatelessWidget {
               scale: 0.75,
               child: Switch(value: enabled, onChanged: (_) => onToggle()),
             ),
-            IconButton(icon: const HeroIcon(HeroIcons.trash, size: 20), onPressed: onDelete),
+            IconButton(
+              icon: const HeroIcon(HeroIcons.trash, size: 20),
+              onPressed: onDelete,
+            ),
           ],
         ),
       ),
