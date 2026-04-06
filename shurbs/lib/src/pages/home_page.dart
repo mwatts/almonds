@@ -1,38 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
+import '../controllers/home_controller.dart';
+import '../models/todo_model.dart';
+
+
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final HomeController controller;
+
+  const HomePage({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  const SizedBox(height: 8),
-                  const _HeroBanner(),
-                  const SizedBox(height: 28),
-                  const _SectionLabel(text: 'At a Glance'),
-                  const SizedBox(height: 12),
-                  const _StatsRow(),
-                  const SizedBox(height: 28),
-                  const _SectionLabel(text: "Today's Focus"),
-                  const SizedBox(height: 12),
-                  const _FocusCard(),
-                  const SizedBox(height: 28),
-                  const _SectionLabel(text: 'Recent Activity'),
-                  const SizedBox(height: 12),
-                  const _ActivityTimeline(),
-                  const SizedBox(height: 40),
-                ]),
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) => Scaffold(
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    const SizedBox(height: 8),
+                    _HeroBanner(activeTodoCount: controller.activeTodoCount),
+                    const SizedBox(height: 28),
+                    const _SectionLabel(text: 'At a Glance'),
+                    const SizedBox(height: 12),
+                    _StatsRow(
+                      todoCount: controller.todoCount,
+                      reminderCount: controller.reminderCount,
+                      bookmarkCount: controller.bookmarkCount,
+                      noteCount: controller.noteCount,
+                    ),
+                    const SizedBox(height: 28),
+                    _FocusSectionHeader(count: controller.activeTodoCount),
+                    const SizedBox(height: 12),
+                    _FocusCarousel(todos: controller.activeTodos),
+                    const SizedBox(height: 28),
+                    const _SectionLabel(text: 'Recent Activity'),
+                    const SizedBox(height: 12),
+                    _ActivityTimeline(items: controller.recentActivity),
+                    const SizedBox(height: 40),
+                  ]),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -50,7 +64,11 @@ class _SectionLabel extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Container(width: 3, height: 14, decoration: BoxDecoration(color: cs.primary, borderRadius: BorderRadius.circular(2))),
+        Container(
+          width: 3,
+          height: 14,
+          decoration: BoxDecoration(color: cs.primary, borderRadius: BorderRadius.circular(2)),
+        ),
         const SizedBox(width: 8),
         Text(
           text,
@@ -67,7 +85,9 @@ class _SectionLabel extends StatelessWidget {
 // ─── Hero banner ──────────────────────────────────────────────────────────────
 
 class _HeroBanner extends StatelessWidget {
-  const _HeroBanner();
+  final int activeTodoCount;
+
+  const _HeroBanner({required this.activeTodoCount});
 
   String get _greeting {
     final h = DateTime.now().hour;
@@ -103,7 +123,6 @@ class _HeroBanner extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Decorative circles
           Positioned(
             right: -20,
             top: -20,
@@ -128,14 +147,15 @@ class _HeroBanner extends StatelessWidget {
               ),
             ),
           ),
-          // Content
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 _date,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isDark ? cs.onSurface.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.75),
+                      color: isDark
+                          ? cs.onSurface.withValues(alpha: 0.5)
+                          : Colors.white.withValues(alpha: 0.75),
                       letterSpacing: 0.5,
                     ),
               ),
@@ -170,7 +190,9 @@ class _HeroBanner extends StatelessWidget {
                     Icon(Icons.circle, size: 7, color: isDark ? cs.primary : Colors.white),
                     const SizedBox(width: 6),
                     Text(
-                      '3 tasks pending today',
+                      activeTodoCount == 0
+                          ? 'All caught up!'
+                          : '$activeTodoCount task${activeTodoCount == 1 ? '' : 's'} pending today',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: isDark ? cs.onSurface.withValues(alpha: 0.8) : Colors.white,
                             fontWeight: FontWeight.w500,
@@ -190,23 +212,35 @@ class _HeroBanner extends StatelessWidget {
 // ─── Stats row ────────────────────────────────────────────────────────────────
 
 class _StatsRow extends StatelessWidget {
-  const _StatsRow();
+  final int todoCount;
+  final int reminderCount;
+  final int bookmarkCount;
+  final int noteCount;
+
+  const _StatsRow({
+    required this.todoCount,
+    required this.reminderCount,
+    required this.bookmarkCount,
+    required this.noteCount,
+  });
 
   @override
   Widget build(BuildContext context) {
     final stats = [
-      _Stat('Todos', '3', HeroIcons.checkCircle, const Color(0xFF6366F1)),
-      _Stat('Alarms', '1', HeroIcons.clock, const Color(0xFFF59E0B)),
-      _Stat('Bookmarks', '12', HeroIcons.bookmark, const Color(0xFF8B5CF6)),
-      _Stat('Notes', '5', HeroIcons.documentText, const Color(0xFF10B981)),
+      _Stat('Todos', '$todoCount', HeroIcons.checkCircle, const Color(0xFF6366F1)),
+      _Stat('Alarms', '$reminderCount', HeroIcons.clock, const Color(0xFFF59E0B)),
+      _Stat('Bookmarks', '$bookmarkCount', HeroIcons.bookmark, const Color(0xFF8B5CF6)),
+      _Stat('Notes', '$noteCount', HeroIcons.documentText, const Color(0xFF10B981)),
     ];
 
     return Row(
       children: stats
-          .map((s) => Expanded(child: Padding(
-                padding: EdgeInsets.only(right: s == stats.last ? 0 : 10),
-                child: _StatCard(stat: s),
-              )))
+          .map((s) => Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: s == stats.last ? 0 : 10),
+                  child: _StatCard(stat: s),
+                ),
+              ))
           .toList(),
     );
   }
@@ -251,9 +285,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             stat.label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                ),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
           Container(
@@ -278,15 +310,162 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// ─── Today's focus card ───────────────────────────────────────────────────────
+// ─── Today's focus — section header with "View All" ──────────────────────────
 
-class _FocusCard extends StatelessWidget {
-  const _FocusCard();
+class _FocusSectionHeader extends StatelessWidget {
+  final int count;
+  const _FocusSectionHeader({required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 14,
+          decoration: BoxDecoration(color: cs.primary, borderRadius: BorderRadius.circular(2)),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          "Today's Focus",
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: cs.onSurfaceVariant,
+                letterSpacing: 0.8,
+              ),
+        ),
+        const Spacer(),
+        if (count > 0)
+          GestureDetector(
+            onTap: () {
+              // Bubble up to shell — navigate to todo tab (index 1)
+              final scaffold = Scaffold.maybeOf(context);
+              if (scaffold != null) {
+                // Use a custom notification to tell the shell to navigate
+                NavigateToTabNotification(1).dispatch(context);
+              }
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'View all ($count)',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: cs.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(width: 4),
+                HeroIcon(HeroIcons.arrowRight, size: 14, color: cs.primary),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class NavigateToTabNotification extends Notification {
+  final int tabIndex;
+  const NavigateToTabNotification(this.tabIndex);
+}
+
+// ─── Today's focus carousel ───────────────────────────────────────────────────
+
+class _FocusCarousel extends StatefulWidget {
+  final List<Todo> todos;
+  const _FocusCarousel({required this.todos});
+
+  @override
+  State<_FocusCarousel> createState() => _FocusCarouselState();
+}
+
+class _FocusCarouselState extends State<_FocusCarousel> {
+  int _page = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    if (widget.todos.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          children: [
+            HeroIcon(HeroIcons.checkBadge, size: 28, color: cs.primary),
+            const SizedBox(width: 14),
+            Text(
+              'Nothing pending — great work!',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 140,
+          child: PageView.builder(
+            controller: PageController(viewportFraction: 0.92),
+            itemCount: widget.todos.length,
+            onPageChanged: (i) => setState(() => _page = i),
+            itemBuilder: (_, i) => Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: _FocusTodoCard(todo: widget.todos[i]),
+            ),
+          ),
+        ),
+        if (widget.todos.length > 1) ...[
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(widget.todos.length, (i) {
+              final active = i == _page;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: active ? 16 : 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: active ? cs.primary : cs.outlineVariant,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              );
+            }),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _FocusTodoCard extends StatelessWidget {
+  final Todo todo;
+  const _FocusTodoCard({required this.todo});
+
+  Color _priorityColor() {
+    switch (todo.priority) {
+      case 'high':
+        return Colors.red.shade400;
+      case 'medium':
+        return Colors.orange.shade400;
+      default:
+        return Colors.green.shade400;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
+    final priorityColor = _priorityColor();
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -316,51 +495,51 @@ class _FocusCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const HeroIcon(HeroIcons.checkCircle, size: 20, color: Color(0xFF6366F1)),
+                    const HeroIcon(HeroIcons.checkCircle, size: 16, color: Color(0xFF6366F1)),
                     const SizedBox(width: 4),
-                    Text('Top todo', style: theme.textTheme.labelSmall?.copyWith(color: const Color(0xFF6366F1), fontWeight: FontWeight.w600)),
+                    Text(
+                      'Todo',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: const Color(0xFF6366F1),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ),
               const Spacer(),
-              Text('High priority', style: theme.textTheme.labelSmall?.copyWith(color: Colors.red.shade400)),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            'Review pull request',
-            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, letterSpacing: -0.3),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Due today · Assigned to you',
-            style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('Dismiss'),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: priorityColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {},
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Text(
+                  '${todo.priority[0].toUpperCase()}${todo.priority.substring(1)}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: priorityColor,
+                    fontWeight: FontWeight.w600,
                   ),
-                  child: const Text('Mark Done'),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            todo.title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const Spacer(),
+          Text(
+            'Swipe to see more',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
           ),
         ],
       ),
@@ -371,36 +550,70 @@ class _FocusCard extends StatelessWidget {
 // ─── Activity timeline ────────────────────────────────────────────────────────
 
 class _ActivityTimeline extends StatelessWidget {
-  const _ActivityTimeline();
+  final List<ActivityItem> items;
+
+  const _ActivityTimeline({required this.items});
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      _Activity('Buy groceries', 'Todo completed', '2h ago', HeroIcons.checkCircle, const Color(0xFF10B981)),
-      _Activity('Morning standup', 'Alarm triggered', '5h ago', HeroIcons.clock, const Color(0xFFF59E0B)),
-      _Activity('Flutter docs', 'Bookmark added', 'Yesterday', HeroIcons.bookmark, const Color(0xFF8B5CF6)),
-    ];
+    if (items.isEmpty) {
+      return Text(
+        'No recent activity',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+      );
+    }
 
     return Column(
-      children: List.generate(items.length, (i) => _TimelineTile(item: items[i], isLast: i == items.length - 1)),
+      children: List.generate(
+        items.length,
+        (i) => _TimelineTile(item: items[i], isLast: i == items.length - 1),
+      ),
     );
   }
 }
 
-class _Activity {
-  final String title;
-  final String subtitle;
-  final String time;
-  final HeroIcons icon;
-  final Color color;
-  const _Activity(this.title, this.subtitle, this.time, this.icon, this.color);
-}
-
 class _TimelineTile extends StatelessWidget {
-  final _Activity item;
+  final ActivityItem item;
   final bool isLast;
 
   const _TimelineTile({required this.item, required this.isLast});
+
+  HeroIcons get _icon {
+    switch (item.type) {
+      case ActivityType.note:
+        return HeroIcons.documentText;
+      case ActivityType.bookmark:
+        return HeroIcons.bookmark;
+      case ActivityType.reminder:
+        return HeroIcons.clock;
+      case ActivityType.todo:
+        return HeroIcons.checkCircle;
+    }
+  }
+
+  Color get _color {
+    switch (item.type) {
+      case ActivityType.note:
+        return const Color(0xFF10B981);
+      case ActivityType.bookmark:
+        return const Color(0xFF8B5CF6);
+      case ActivityType.reminder:
+        return const Color(0xFFF59E0B);
+      case ActivityType.todo:
+        return const Color(0xFF6366F1);
+    }
+  }
+
+  String _relativeTime(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +624,6 @@ class _TimelineTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Timeline line + dot
           SizedBox(
             width: 36,
             child: Column(
@@ -420,25 +632,21 @@ class _TimelineTile extends StatelessWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: item.color.withValues(alpha: 0.12),
+                    color: _color.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: Center(child: HeroIcon(item.icon, size: 20, color: item.color)),
+                  child: Center(child: HeroIcon(_icon, size: 20, color: _color)),
                 ),
                 if (!isLast)
                   Expanded(
                     child: Center(
-                      child: Container(
-                        width: 1,
-                        color: cs.outlineVariant.withValues(alpha: 0.4),
-                      ),
+                      child: Container(width: 1, color: cs.outlineVariant.withValues(alpha: 0.4)),
                     ),
                   ),
               ],
             ),
           ),
           const SizedBox(width: 14),
-          // Content
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
@@ -449,13 +657,25 @@ class _TimelineTile extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item.title, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                        Text(
+                          item.title,
+                          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         const SizedBox(height: 2),
-                        Text(item.subtitle, style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                        Text(
+                          item.subtitle,
+                          style: theme.textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                        ),
                       ],
                     ),
                   ),
-                  Text(item.time, style: theme.textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant)),
+                  if (item.time != null)
+                    Text(
+                      _relativeTime(item.time!),
+                      style: theme.textTheme.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                    ),
                 ],
               ),
             ),

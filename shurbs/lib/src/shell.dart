@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:heroicons/heroicons.dart';
 
+import 'controllers/bookmark_controller.dart';
+import 'controllers/home_controller.dart';
+import 'controllers/note_controller.dart';
+import 'controllers/reminder_controller.dart';
+import 'controllers/todo_controller.dart';
+import 'controllers/workspace_controller.dart';
 import 'pages/home_page.dart';
 import 'pages/todo_page.dart';
 import 'pages/alarms_page.dart';
@@ -22,18 +28,54 @@ class _AppShellState extends State<AppShell> {
   int _currentIndex = 0;
   final _searchController = SearchController();
 
-  static const _searchableItems = [
-    _SearchItem(title: 'Buy groceries', section: 'Todo', sectionIndex: 1, icon: HeroIcons.checkCircle),
-    _SearchItem(title: 'Review pull request', section: 'Todo', sectionIndex: 1, icon: HeroIcons.checkCircle),
-    _SearchItem(title: 'Read Flutter docs', section: 'Todo', sectionIndex: 1, icon: HeroIcons.checkCircle),
-    _SearchItem(title: 'Morning standup', section: 'Alarms', sectionIndex: 2, icon: HeroIcons.clock),
-    _SearchItem(title: 'Lunch break', section: 'Alarms', sectionIndex: 2, icon: HeroIcons.clock),
-    _SearchItem(title: 'Evening workout', section: 'Alarms', sectionIndex: 2, icon: HeroIcons.clock),
-    _SearchItem(title: 'Flutter Documentation', section: 'Bookmarks', sectionIndex: 3, icon: HeroIcons.bookmark),
-    _SearchItem(title: 'Dart Language Tour', section: 'Bookmarks', sectionIndex: 3, icon: HeroIcons.bookmark),
-    _SearchItem(title: 'Material Design 3', section: 'Bookmarks', sectionIndex: 3, icon: HeroIcons.bookmark),
-    _SearchItem(title: 'pub.dev packages', section: 'Bookmarks', sectionIndex: 3, icon: HeroIcons.bookmark),
-  ];
+  late final WorkspaceController _workspaceController;
+  late final TodoController _todoController;
+  late final NoteController _noteController;
+  late final BookmarkController _bookmarkController;
+  late final ReminderController _reminderController;
+  late final HomeController _homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _workspaceController = WorkspaceController();
+    _todoController = TodoController();
+    _noteController = NoteController();
+    _bookmarkController = BookmarkController();
+    _reminderController = ReminderController();
+    _homeController = HomeController(
+      todoController: _todoController,
+      noteController: _noteController,
+      bookmarkController: _bookmarkController,
+      reminderController: _reminderController,
+    );
+
+    _loadAll();
+  }
+
+  Future<void> _loadAll() async {
+    await _workspaceController.load();
+    final wsId = _workspaceController.activeWorkspaceId;
+    if (wsId == null) return;
+    await Future.wait([
+      _todoController.load(wsId),
+      _noteController.load(wsId),
+      _bookmarkController.load(wsId),
+      _reminderController.load(wsId),
+    ]);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _homeController.dispose();
+    _workspaceController.dispose();
+    _todoController.dispose();
+    _noteController.dispose();
+    _bookmarkController.dispose();
+    _reminderController.dispose();
+    super.dispose();
+  }
 
   final List<_NavItem> _navItems = const [
     _NavItem(icon: HeroIcons.home, label: 'Home'),
@@ -43,34 +85,43 @@ class _AppShellState extends State<AppShell> {
     _NavItem(icon: HeroIcons.cog6Tooth, label: 'Settings'),
   ];
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    TodoPage(),
-    AlarmsPage(),
-    BookmarksPage(),
-    SettingsPage(),
-  ];
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   Iterable<Widget> _buildSuggestions(BuildContext context, SearchController controller) {
     final query = controller.text.toLowerCase();
     if (query.isEmpty) return [];
 
-    return _searchableItems
-        .where((item) => item.title.toLowerCase().contains(query))
-        .map(
+    final results = <_SearchResult>[];
+
+    for (final todo in _todoController.todos) {
+      if (todo.title.toLowerCase().contains(query)) {
+        results.add(_SearchResult(title: todo.title, section: 'Todo', sectionIndex: 1, icon: HeroIcons.checkCircle));
+      }
+    }
+    for (final note in _noteController.notes) {
+      if (note.title.toLowerCase().contains(query)) {
+        results.add(_SearchResult(title: note.title.isEmpty ? 'Untitled' : note.title, section: 'Notes', sectionIndex: -1, icon: HeroIcons.documentText));
+      }
+    }
+    for (final bookmark in _bookmarkController.bookmarks) {
+      if (bookmark.title.toLowerCase().contains(query)) {
+        results.add(_SearchResult(title: bookmark.title, section: 'Bookmarks', sectionIndex: 3, icon: HeroIcons.bookmark));
+      }
+    }
+    for (final reminder in _reminderController.reminders) {
+      if (reminder.title.toLowerCase().contains(query)) {
+        results.add(_SearchResult(title: reminder.title, section: 'Alarms', sectionIndex: 2, icon: HeroIcons.clock));
+      }
+    }
+
+    return results.take(10).map(
           (item) => ListTile(
             leading: HeroIcon(item.icon),
             title: Text(item.title),
             subtitle: Text(item.section),
             onTap: () {
               controller.closeView(item.title);
-              setState(() => _currentIndex = item.sectionIndex);
+              if (item.sectionIndex >= 0) {
+                setState(() => _currentIndex = item.sectionIndex);
+              }
             },
           ),
         );
@@ -81,6 +132,14 @@ class _AppShellState extends State<AppShell> {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final pages = [
+      HomePage(controller: _homeController),
+      TodoPage(controller: _todoController),
+      AlarmsPage(controller: _reminderController),
+      BookmarksPage(controller: _bookmarkController),
+      const SettingsPage(),
+    ];
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -88,10 +147,16 @@ class _AppShellState extends State<AppShell> {
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: Colors.transparent,
       ),
-      child: Scaffold(
+      child: NotificationListener<NavigateToTabNotification>(
+        onNotification: (n) {
+          setState(() => _currentIndex = n.tabIndex);
+          return true;
+        },
+        child: Scaffold(
         drawer: _AppDrawer(
           currentIndex: _currentIndex,
           onNavigate: (index) => setState(() => _currentIndex = index),
+          noteController: _noteController,
         ),
         body: Column(
           children: [
@@ -152,7 +217,7 @@ class _AppShellState extends State<AppShell> {
                 ),
                 child: IndexedStack(
                   index: _currentIndex,
-                  children: _pages,
+                  children: pages,
                 ),
               ),
             ),
@@ -171,6 +236,7 @@ class _AppShellState extends State<AppShell> {
               )
               .toList(),
         ),
+        ),
       ),
     );
   }
@@ -181,8 +247,13 @@ class _AppShellState extends State<AppShell> {
 class _AppDrawer extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onNavigate;
+  final NoteController noteController;
 
-  const _AppDrawer({required this.currentIndex, required this.onNavigate});
+  const _AppDrawer({
+    required this.currentIndex,
+    required this.onNavigate,
+    required this.noteController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -194,10 +265,7 @@ class _AppDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          // ── Gradient header ────────────────────────────────────────────
           _DrawerHeader(),
-
-          // ── Scrollable body ────────────────────────────────────────────
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
@@ -212,7 +280,12 @@ class _AppDrawer extends StatelessWidget {
                   selected: false,
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const NotesPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => NotesPage(controller: noteController),
+                      ),
+                    );
                   },
                 ),
                 _NavTile(
@@ -224,16 +297,11 @@ class _AppDrawer extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationsPage()));
                   },
                 ),
-
                 const SizedBox(height: 20),
-
-                // ── Workspaces ─────────────────────────────────────────
                 _WorkspacesSection(),
               ],
             ),
           ),
-
-          // ── Footer ────────────────────────────────────────────────────
           _DrawerFooter(currentIndex: currentIndex, onNavigate: onNavigate),
         ],
       ),
@@ -262,9 +330,7 @@ class _DrawerHeader extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              // Dot pattern
               Positioned.fill(child: CustomPaint(painter: _DotPainter())),
-              // Content
               SafeArea(
                 bottom: false,
                 child: Padding(
@@ -272,7 +338,6 @@ class _DrawerHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // App mark
                       Row(
                         children: [
                           Container(
@@ -297,7 +362,6 @@ class _DrawerHeader extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      // Avatar + user
                       Row(
                         children: [
                           Container(
@@ -390,7 +454,6 @@ class _NavTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
                 child: Row(
                   children: [
-                    // Icon badge
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       width: 34,
@@ -505,7 +568,6 @@ class _WorkspacesSection extends StatelessWidget {
                       ),
                     );
                   }),
-                  // New workspace chip
                   GestureDetector(
                     onTap: () {},
                     child: Container(
@@ -562,7 +624,6 @@ class _DrawerFooter extends StatelessWidget {
         top: false,
         child: Row(
           children: [
-            // Settings
             Expanded(
               child: InkWell(
                 onTap: () {
@@ -593,7 +654,6 @@ class _DrawerFooter extends StatelessWidget {
                 ),
               ),
             ),
-            // Theme toggle
             ValueListenableBuilder<ThemeMode>(
               valueListenable: themeModeNotifier,
               builder: (_, mode, __) => _ThemeModeToggle(current: mode),
@@ -605,7 +665,7 @@ class _DrawerFooter extends StatelessWidget {
   }
 }
 
-// ── Theme mode toggle (sun / auto / moon) ─────────────────────────────────────
+// ── Theme mode toggle ─────────────────────────────────────────────────────────
 
 class _ThemeModeToggle extends StatelessWidget {
   final ThemeMode current;
@@ -658,13 +718,13 @@ class _ThemeModeToggle extends StatelessWidget {
 
 // ── Models ────────────────────────────────────────────────────────────────────
 
-class _SearchItem {
+class _SearchResult {
   final String title;
   final String section;
   final int sectionIndex;
   final HeroIcons icon;
 
-  const _SearchItem({
+  const _SearchResult({
     required this.title,
     required this.section,
     required this.sectionIndex,

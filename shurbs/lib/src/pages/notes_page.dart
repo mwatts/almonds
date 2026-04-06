@@ -1,117 +1,87 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:heroicons/heroicons.dart';
 
-import '../rust/api/notes.dart';
+import '../controllers/note_controller.dart';
+import '../models/note_model.dart';
 
-// ── Model ─────────────────────────────────────────────────────────────────────
+class NotesPage extends StatelessWidget {
+  final NoteController controller;
 
-class _Note {
-  final String id;
-  String title;
-  String content;
-  DateTime updatedAt;
-
-  _Note({required this.id, required this.title, required this.content, required this.updatedAt});
-
-  factory _Note.fromJson(Map<String, dynamic> j) => _Note(
-        id: j['identifier'] as String,
-        title: j['title'] as String,
-        content: j['content'] as String,
-        updatedAt: DateTime.parse(j['updatedAt'] as String),
-      );
-}
-
-// ── Notes list page ───────────────────────────────────────────────────────────
-
-class NotesPage extends StatefulWidget {
-  const NotesPage({super.key});
+  const NotesPage({super.key, required this.controller});
 
   @override
-  State<NotesPage> createState() => _NotesPageState();
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        if (controller.loading) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        return _NotesView(controller: controller);
+      },
+    );
+  }
 }
 
-class _NotesPageState extends State<NotesPage> {
-  List<_Note> _notes = [];
-  bool _loading = true;
-  String _search = '';
+class _NotesView extends StatefulWidget {
+  final NoteController controller;
+
+  const _NotesView({required this.controller});
+
+  @override
+  State<_NotesView> createState() => _NotesViewState();
+}
+
+class _NotesViewState extends State<_NotesView> {
+  late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
-    _loadNotes();
+    _searchController = TextEditingController();
   }
 
-  Future<void> _loadNotes() async {
-    try {
-      final raw = await getAllNotes();
-      final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-      setState(() {
-        _notes = list.map(_Note.fromJson).toList();
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() => _loading = false);
-    }
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
-  void _openNote(_Note note) {
+  void _openNote(BuildContext context, Note note) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => _NoteEditorPage(
+        builder: (_) => NoteEditorPage(
           note: note,
-          onSaved: (title, content) => _persistNote(note, title, content),
+          onSaved: (title, content) => widget.controller.update(note, title, content),
         ),
       ),
-    ).then((_) => setState(() {}));
+    );
   }
 
-  Future<void> _persistNote(_Note note, String title, String content) async {
-    try {
-      await updateNote(identifier: note.id, title: title, content: content);
-      note.title = title;
-      note.content = content;
-      note.updatedAt = DateTime.now();
-    } catch (_) {}
-  }
-
-  Future<void> _createNote() async {
-    try {
-      final raw = await createNote(title: 'Untitled', content: '');
-      final json = jsonDecode(raw) as Map<String, dynamic>;
-      final note = _Note.fromJson(json);
-      setState(() => _notes.insert(0, note));
-      _openNote(note);
-    } catch (_) {}
-  }
-
-  Future<void> _deleteNote(_Note note) async {
-    try {
-      await deleteNote(identifier: note.id);
-      setState(() => _notes.removeWhere((n) => n.id == note.id));
-    } catch (_) {}
+  Future<void> _createNote(BuildContext context) async {
+    final note = await widget.controller.create();
+    if (note != null && context.mounted) {
+      _openNote(context, note);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final c = widget.controller;
+    final filtered = c.filtered;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            // ── Search bar ─────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search notes…',
                   prefixIcon: const Padding(
@@ -127,59 +97,44 @@ class _NotesPageState extends State<NotesPage> {
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                onChanged: (v) => setState(() => _search = v),
+                onChanged: c.setSearch,
               ),
             ),
-
-            // ── List ───────────────────────────────────────────────────────
             Expanded(
-              child: Builder(builder: (_) {
-                final filtered = _search.trim().isEmpty
-                    ? _notes
-                    : _notes
-                          .where(
-                            (n) =>
-                                n.title.toLowerCase().contains(_search.toLowerCase()) ||
-                                n.content.toLowerCase().contains(_search.toLowerCase()),
-                          )
-                          .toList();
-
-                if (filtered.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        HeroIcon(HeroIcons.documentText, size: 48, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3)),
-                        const SizedBox(height: 12),
-                        Text(
-                          _search.isEmpty ? 'No notes yet' : 'No results',
-                          style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
-                        ),
-                      ],
+              child: filtered.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          HeroIcon(
+                            HeroIcons.documentText,
+                            size: 48,
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            c.search.isEmpty ? 'No notes yet' : 'No results',
+                            style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
+                      itemCount: filtered.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (_, i) => _NoteCard(
+                        note: filtered[i],
+                        onTap: () => _openNote(context, filtered[i]),
+                        onDelete: () => c.delete(filtered[i]),
+                      ),
                     ),
-                  );
-                }
-
-                return ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 100),
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (_, i) {
-                    final note = filtered[i];
-                    return _NoteCard(
-                      note: note,
-                      onTap: () => _openNote(note),
-                      onDelete: () => _deleteNote(note),
-                    );
-                  },
-                );
-              }),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createNote,
+        onPressed: () => _createNote(context),
         child: const HeroIcon(HeroIcons.plus, size: 22),
       ),
     );
@@ -189,7 +144,7 @@ class _NotesPageState extends State<NotesPage> {
 // ── Note card ─────────────────────────────────────────────────────────────────
 
 class _NoteCard extends StatelessWidget {
-  final _Note note;
+  final Note note;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
@@ -248,7 +203,9 @@ class _NoteCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       _relativeTime(note.updatedAt),
-                      style: theme.textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                      ),
                     ),
                   ],
                 ),
@@ -272,17 +229,17 @@ class _NoteCard extends StatelessWidget {
 
 // ── Note editor page ──────────────────────────────────────────────────────────
 
-class _NoteEditorPage extends StatefulWidget {
-  final _Note note;
+class NoteEditorPage extends StatefulWidget {
+  final Note note;
   final Future<void> Function(String title, String content) onSaved;
 
-  const _NoteEditorPage({super.key, required this.note, required this.onSaved});
+  const NoteEditorPage({super.key, required this.note, required this.onSaved});
 
   @override
-  State<_NoteEditorPage> createState() => _NoteEditorPageState();
+  State<NoteEditorPage> createState() => _NoteEditorPageState();
 }
 
-class _NoteEditorPageState extends State<_NoteEditorPage> {
+class _NoteEditorPageState extends State<NoteEditorPage> {
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   bool _previewing = false;
@@ -301,8 +258,6 @@ class _NoteEditorPageState extends State<_NoteEditorPage> {
     _contentController.dispose();
     super.dispose();
   }
-
-  // ── Toolbar helpers ──────────────────────────────────────────────────────
 
   void _wrapSelection(String before, String after) {
     final ctrl = _contentController;
@@ -401,7 +356,9 @@ class _NoteEditorPageState extends State<_NoteEditorPage> {
           Expanded(
             child: _previewing
                 ? Markdown(
-                    data: _contentController.text.isEmpty ? '*Nothing to preview yet.*' : _contentController.text,
+                    data: _contentController.text.isEmpty
+                        ? '*Nothing to preview yet.*'
+                        : _contentController.text,
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
                     styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
                       p: theme.textTheme.bodyMedium?.copyWith(height: 1.6),

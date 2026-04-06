@@ -1,92 +1,54 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
-import '../rust/api/todo.dart';
+import '../controllers/todo_controller.dart';
+import '../models/todo_model.dart';
 
-class _Todo {
-  final String id;
-  String title;
-  String priority;
-  bool completed;
+class TodoPage extends StatelessWidget {
+  final TodoController controller;
 
-  _Todo({required this.id, required this.title, required this.priority, this.completed = false});
-
-  factory _Todo.fromJson(Map<String, dynamic> j) => _Todo(
-        id: j['identifier'] as String,
-        title: j['title'] as String,
-        priority: j['priority'] as String? ?? 'medium',
-        completed: j['done'] as bool? ?? false,
-      );
-}
-
-class TodoPage extends StatefulWidget {
-  const TodoPage({super.key});
+  const TodoPage({super.key, required this.controller});
 
   @override
-  State<TodoPage> createState() => _TodoPageState();
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        if (controller.loading) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        return _TodoView(controller: controller);
+      },
+    );
+  }
 }
 
-class _TodoPageState extends State<TodoPage> {
-  List<_Todo> _todos = [];
-  bool _loading = true;
-  String _filter = 'all';
-  String _search = '';
+class _TodoView extends StatefulWidget {
+  final TodoController controller;
+
+  const _TodoView({required this.controller});
+
+  @override
+  State<_TodoView> createState() => _TodoViewState();
+}
+
+class _TodoViewState extends State<_TodoView> {
+  late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
-    _loadTodos();
+    _searchController = TextEditingController();
   }
 
-  Future<void> _loadTodos() async {
-    try {
-      final raw = await getAllTodos();
-      final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
-      setState(() {
-        _todos = list.map(_Todo.fromJson).toList();
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() => _loading = false);
-    }
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
-  List<_Todo> get _filtered {
-    List<_Todo> list;
-    switch (_filter) {
-      case 'active':
-        list = _todos.where((t) => !t.completed).toList();
-        break;
-      case 'completed':
-        list = _todos.where((t) => t.completed).toList();
-        break;
-      default:
-        list = List.from(_todos);
-    }
-    if (_search.trim().isNotEmpty) {
-      list = list.where((t) => t.title.toLowerCase().contains(_search.toLowerCase())).toList();
-    }
-    return list;
-  }
-
-  Future<void> _toggleDone(_Todo todo) async {
-    try {
-      await markTodoDone(identifier: todo.id, done: !todo.completed);
-      setState(() => todo.completed = !todo.completed);
-    } catch (_) {}
-  }
-
-  Future<void> _deleteTodo(_Todo todo) async {
-    try {
-      await deleteTodo(identifier: todo.id);
-      setState(() => _todos.removeWhere((t) => t.id == todo.id));
-    } catch (_) {}
-  }
-
-  void _addTodo() {
-    final controller = TextEditingController();
+  void _showAddSheet(BuildContext context) {
+    final titleController = TextEditingController();
     String priority = 'medium';
 
     showModalBottomSheet(
@@ -107,7 +69,7 @@ class _TodoPageState extends State<TodoPage> {
               Text('New Todo', style: Theme.of(ctx).textTheme.titleLarge),
               const SizedBox(height: 16),
               TextField(
-                controller: controller,
+                controller: titleController,
                 autofocus: true,
                 decoration: const InputDecoration(
                   hintText: 'What needs to be done?',
@@ -129,16 +91,10 @@ class _TodoPageState extends State<TodoPage> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () async {
-                    if (controller.text.trim().isNotEmpty) {
+                    final title = titleController.text.trim();
+                    if (title.isNotEmpty) {
                       Navigator.pop(ctx);
-                      try {
-                        final raw = await createTodo(
-                          title: controller.text.trim(),
-                          priority: priority,
-                        );
-                        final json = jsonDecode(raw) as Map<String, dynamic>;
-                        setState(() => _todos.insert(0, _Todo.fromJson(json)));
-                      } catch (_) {}
+                      await widget.controller.create(title, priority);
                     }
                   },
                   child: const Text('Add Todo'),
@@ -154,17 +110,13 @@ class _TodoPageState extends State<TodoPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    final filtered = _filtered;
+    final c = widget.controller;
+    final filtered = c.filtered;
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          if (_todos.isNotEmpty) ...[
+          if (c.todos.isNotEmpty) ...[
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               sliver: SliverToBoxAdapter(
@@ -174,8 +126,8 @@ class _TodoPageState extends State<TodoPage> {
                     ButtonSegment(value: 'active', label: Text('Active')),
                     ButtonSegment(value: 'completed', label: Text('Done')),
                   ],
-                  selected: {_filter},
-                  onSelectionChanged: (val) => setState(() => _filter = val.first),
+                  selected: {c.filter},
+                  onSelectionChanged: (val) => c.setFilter(val.first),
                 ),
               ),
             ),
@@ -200,8 +152,8 @@ class _TodoPageState extends State<TodoPage> {
                     delegate: SliverChildBuilderDelegate(
                       (ctx, i) => _TodoTile(
                         todo: filtered[i],
-                        onToggle: () => _toggleDone(filtered[i]),
-                        onDelete: () => _deleteTodo(filtered[i]),
+                        onToggle: () => c.toggleDone(filtered[i]),
+                        onDelete: () => c.delete(filtered[i]),
                       ),
                       childCount: filtered.length,
                     ),
@@ -210,7 +162,7 @@ class _TodoPageState extends State<TodoPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addTodo,
+        onPressed: () => _showAddSheet(context),
         child: const HeroIcon(HeroIcons.plus),
       ),
     );
@@ -218,7 +170,7 @@ class _TodoPageState extends State<TodoPage> {
 }
 
 class _TodoTile extends StatelessWidget {
-  final _Todo todo;
+  final Todo todo;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
 
