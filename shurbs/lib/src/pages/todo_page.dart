@@ -164,21 +164,23 @@ class _TodoPageState extends State<TodoPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            sliver: SliverToBoxAdapter(
-              child: SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'all', label: Text('All')),
-                  ButtonSegment(value: 'active', label: Text('Active')),
-                  ButtonSegment(value: 'completed', label: Text('Done')),
-                ],
-                selected: {_filter},
-                onSelectionChanged: (val) => setState(() => _filter = val.first),
+          if (_todos.isNotEmpty) ...[
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(value: 'all', label: Text('All')),
+                    ButtonSegment(value: 'active', label: Text('Active')),
+                    ButtonSegment(value: 'completed', label: Text('Done')),
+                  ],
+                  selected: {_filter},
+                  onSelectionChanged: (val) => setState(() => _filter = val.first),
+                ),
               ),
             ),
-          ),
-          const SliverPadding(padding: EdgeInsets.only(top: 12)),
+            const SliverPadding(padding: EdgeInsets.only(top: 12)),
+          ],
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: filtered.isEmpty

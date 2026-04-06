@@ -32,7 +32,6 @@ class BookmarksPage extends StatefulWidget {
 class _BookmarksPageState extends State<BookmarksPage> {
   List<_Bookmark> _bookmarks = [];
   bool _loading = true;
-  String _search = '';
   String? _activeTag;
 
   static const _validTags = ['development', 'inspiration', 'design', 'research'];
@@ -64,11 +63,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
   List<_Bookmark> get _filtered {
     return _bookmarks.where((b) {
-      final matchesSearch = _search.isEmpty ||
-          b.title.toLowerCase().contains(_search.toLowerCase()) ||
-          b.url.toLowerCase().contains(_search.toLowerCase());
-      final matchesTag = _activeTag == null || b.tag == _activeTag;
-      return matchesSearch && matchesTag;
+      return _activeTag == null || b.tag == _activeTag;
     }).toList();
   }
 
@@ -168,48 +163,31 @@ class _BookmarksPageState extends State<BookmarksPage> {
               sliver: SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          FilterChip(
-                            label: const Text('All'),
-                            selected: _activeTag == null,
-                            onSelected: (_) => setState(() => _activeTag = null),
-                          ),
-                          const SizedBox(width: 8),
-                          ..._tags.map((tag) => Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: FilterChip(
-                                  label: Text(tag),
-                                  selected: _activeTag == tag,
-                                  onSelected: (_) =>
-                                      setState(() => _activeTag = _activeTag == tag ? null : tag),
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search bookmarks…',
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.only(left: 12, right: 8),
-                          child: HeroIcon(HeroIcons.magnifyingGlass, size: 18),
+                    if (_bookmarks.isNotEmpty) ...[
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            FilterChip(
+                              label: const Text('All'),
+                              selected: _activeTag == null,
+                              onSelected: (_) => setState(() => _activeTag = null),
+                            ),
+                            const SizedBox(width: 8),
+                            ..._tags.map((tag) => Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: FilterChip(
+                                    label: Text(tag),
+                                    selected: _activeTag == tag,
+                                    onSelected: (_) =>
+                                        setState(() => _activeTag = _activeTag == tag ? null : tag),
+                                  ),
+                                )),
+                          ],
                         ),
-                        prefixIconConstraints: const BoxConstraints(),
-                        filled: true,
-                        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      onChanged: (v) => setState(() => _search = v),
-                    ),
-                    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
+                    ],
                   ],
                 ),
               ),
