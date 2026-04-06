@@ -1,22 +1,19 @@
-use almond_kernel::adapters::bookmarks::BookmarkTag;
+use almond_kernel::enums::Tag;
 use almond_kernel::{
-    adapters::{
-        bookmarks::{CreateBookmark, UpdateBookmark},
-        meta::RequestMeta,
-    },
+    adapters::bookmarks::{CreateBookmark, UpdateBookmark},
     repositories::bookmarks::BookmarkRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };
 
-use crate::error::{make_meta, parse_uuid, AppError};
+use crate::error::{make_meta, parse_uuid};
 use crate::state::app_state;
 
-fn parse_tag(tag: &str) -> BookmarkTag {
+fn parse_tag(tag: &str) -> Tag {
     match tag {
-        "development" => BookmarkTag::Development,
-        "inspiration" => BookmarkTag::Inspiration,
-        "design" => BookmarkTag::Design,
-        _ => BookmarkTag::Research,
+        "development" => Tag::Development,
+        "inspiration" => Tag::Inspiration,
+        "design" => Tag::Design,
+        _ => Tag::Research,
     }
 }
 
@@ -25,7 +22,7 @@ pub async fn create_bookmark(
     title: String,
     url: String,
     tag: String,
-    workspace_identifier: Option<String>,
+    _workspace_identifier: Option<String>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;

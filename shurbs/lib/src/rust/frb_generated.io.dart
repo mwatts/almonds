@@ -4,10 +4,10 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/bookmarks.dart';
+import 'api/kernel.dart';
 import 'api/notes.dart';
 import 'api/recycle_bin.dart';
 import 'api/reminders.dart';
-import 'api/simple.dart';
 import 'api/snippets.dart';
 import 'api/todo.dart';
 import 'api/user_preference.dart';
@@ -267,7 +267,7 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_list_prim_u_8_strict> title,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> url,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> tag,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> workspace_identifier,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> _workspace_identifier,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> meta_workspace_id,
   ) {
     return _wire__crate__api__bookmarks__create_bookmark(
@@ -275,7 +275,7 @@ class RustLibWire implements BaseWire {
       title,
       url,
       tag,
-      workspace_identifier,
+      _workspace_identifier,
       meta_workspace_id,
     );
   }
@@ -1562,47 +1562,25 @@ class RustLibWire implements BaseWire {
             void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
           >();
 
-  WireSyncRust2DartDco wire__crate__api__simple__greet(
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> name,
-  ) {
-    return _wire__crate__api__simple__greet(name);
+  void wire__crate__api__kernel__init_app(int port_) {
+    return _wire__crate__api__kernel__init_app(port_);
   }
 
-  late final _wire__crate__api__simple__greetPtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_shurbs_wire__crate__api__simple__greet');
-  late final _wire__crate__api__simple__greet =
-      _wire__crate__api__simple__greetPtr
-          .asFunction<
-            WireSyncRust2DartDco Function(
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__simple__init_app(int port_) {
-    return _wire__crate__api__simple__init_app(port_);
-  }
-
-  late final _wire__crate__api__simple__init_appPtr =
+  late final _wire__crate__api__kernel__init_appPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
-        'frbgen_shurbs_wire__crate__api__simple__init_app',
+        'frbgen_shurbs_wire__crate__api__kernel__init_app',
       );
-  late final _wire__crate__api__simple__init_app =
-      _wire__crate__api__simple__init_appPtr.asFunction<void Function(int)>();
+  late final _wire__crate__api__kernel__init_app =
+      _wire__crate__api__kernel__init_appPtr.asFunction<void Function(int)>();
 
-  void wire__crate__api__simple__init_kernel(
+  void wire__crate__api__kernel__init_kernel(
     int port_,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> database_url,
   ) {
-    return _wire__crate__api__simple__init_kernel(port_, database_url);
+    return _wire__crate__api__kernel__init_kernel(port_, database_url);
   }
 
-  late final _wire__crate__api__simple__init_kernelPtr =
+  late final _wire__crate__api__kernel__init_kernelPtr =
       _lookup<
         ffi.NativeFunction<
           ffi.Void Function(
@@ -1610,9 +1588,9 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_list_prim_u_8_strict>,
           )
         >
-      >('frbgen_shurbs_wire__crate__api__simple__init_kernel');
-  late final _wire__crate__api__simple__init_kernel =
-      _wire__crate__api__simple__init_kernelPtr
+      >('frbgen_shurbs_wire__crate__api__kernel__init_kernel');
+  late final _wire__crate__api__kernel__init_kernel =
+      _wire__crate__api__kernel__init_kernelPtr
           .asFunction<
             void Function(int, ffi.Pointer<wire_cst_list_prim_u_8_strict>)
           >();
@@ -2143,7 +2121,7 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_list_prim_u_8_strict> identifier,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> title,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> description,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> priority,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> _priority,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> due_date,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> meta_workspace_id,
   ) {
@@ -2152,7 +2130,7 @@ class RustLibWire implements BaseWire {
       identifier,
       title,
       description,
-      priority,
+      _priority,
       due_date,
       meta_workspace_id,
     );
@@ -2275,6 +2253,8 @@ class RustLibWire implements BaseWire {
     ffi.Pointer<wire_cst_list_prim_u_8_strict> description,
     ffi.Pointer<ffi.Bool> is_default,
     ffi.Pointer<ffi.Bool> is_hidden,
+    ffi.Pointer<ffi.Bool> is_secured,
+    ffi.Pointer<wire_cst_list_prim_u_8_strict> password,
   ) {
     return _wire__crate__api__workspaces__update_workspace(
       port_,
@@ -2283,6 +2263,8 @@ class RustLibWire implements BaseWire {
       description,
       is_default,
       is_hidden,
+      is_secured,
+      password,
     );
   }
 
@@ -2296,6 +2278,8 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_list_prim_u_8_strict>,
             ffi.Pointer<ffi.Bool>,
             ffi.Pointer<ffi.Bool>,
+            ffi.Pointer<ffi.Bool>,
+            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
           )
         >
       >('frbgen_shurbs_wire__crate__api__workspaces__update_workspace');
@@ -2309,6 +2293,8 @@ class RustLibWire implements BaseWire {
               ffi.Pointer<wire_cst_list_prim_u_8_strict>,
               ffi.Pointer<ffi.Bool>,
               ffi.Pointer<ffi.Bool>,
+              ffi.Pointer<ffi.Bool>,
+              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
             )
           >();
 

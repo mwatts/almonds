@@ -10,7 +10,6 @@ import 'api/bookmarks.dart';
 import 'api/notes.dart';
 import 'api/recycle_bin.dart';
 import 'api/reminders.dart';
-import 'api/simple.dart';
 import 'api/snippets.dart';
 import 'api/todo.dart';
 import 'api/user_preference.dart';
@@ -624,18 +623,6 @@ class RustLibWire implements BaseWire {
     String id,
   ) => wasmModule.wire__crate__api__workspaces__get_workspace_by_id(port_, id);
 
-  JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__simple__greet(String name) =>
-      wasmModule.wire__crate__api__simple__greet(name);
-
-  void wire__crate__api__simple__init_app(NativePortType port_) =>
-      wasmModule.wire__crate__api__simple__init_app(port_);
-
-  void wire__crate__api__simple__init_kernel(
-    NativePortType port_,
-    String database_url,
-  ) => wasmModule.wire__crate__api__simple__init_kernel(port_, database_url);
-
   void wire__crate__api__workspaces__list_workspaces(NativePortType port_) =>
       wasmModule.wire__crate__api__workspaces__list_workspaces(port_);
 
@@ -1143,16 +1130,6 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
   external void wire__crate__api__workspaces__get_workspace_by_id(
     NativePortType port_,
     String id,
-  );
-
-  external JSAny? /* flutter_rust_bridge::for_generated::WireSyncRust2DartDco */
-  wire__crate__api__simple__greet(String name);
-
-  external void wire__crate__api__simple__init_app(NativePortType port_);
-
-  external void wire__crate__api__simple__init_kernel(
-    NativePortType port_,
-    String database_url,
   );
 
   external void wire__crate__api__workspaces__list_workspaces(

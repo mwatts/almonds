@@ -1,8 +1,9 @@
 use almond_kernel::{
-    adapters::todo::{CreateTodo, TodoPriority, UpdateTodo},
+    adapters::todo::{CreateTodo, UpdateTodo},
     repositories::todo::TodoRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };
+use almond_kernel::enums::Priority as TodoPriority;
 use chrono::NaiveDate;
 
 use crate::error::{make_meta, parse_uuid, AppError};
@@ -26,7 +27,7 @@ pub async fn create_todo(
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
-    let ws_id = workspace_identifier
+    let _ws_id = workspace_identifier
         .as_deref()
         .map(parse_uuid)
         .transpose()
@@ -88,14 +89,14 @@ pub async fn update_todo(
     identifier: String,
     title: Option<String>,
     description: Option<String>,
-    priority: Option<String>,
+    _priority: Option<String>,
     due_date: Option<String>,
     meta_workspace_id: Option<String>,
 ) -> Result<String, String> {
     let id = parse_uuid(&identifier).map_err(|e| e.to_string())?;
     let meta = make_meta(meta_workspace_id).map_err(|e| e.to_string())?;
 
-    let date = due_date
+    let _date = due_date
         .as_deref()
         .map(|d| NaiveDate::parse_from_str(d, "%Y-%m-%d").map_err(|e| e.to_string()))
         .transpose()?;

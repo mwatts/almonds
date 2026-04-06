@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -450783549;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 141276317;
 
 // Section: executor
 
@@ -83,7 +83,7 @@ fn wire__crate__api__bookmarks__create_bookmark_impl(
     title: impl CstDecode<String>,
     url: impl CstDecode<String>,
     tag: impl CstDecode<String>,
-    workspace_identifier: impl CstDecode<Option<String>>,
+    _workspace_identifier: impl CstDecode<Option<String>>,
     meta_workspace_id: impl CstDecode<Option<String>>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
@@ -96,7 +96,7 @@ fn wire__crate__api__bookmarks__create_bookmark_impl(
             let api_title = title.cst_decode();
             let api_url = url.cst_decode();
             let api_tag = tag.cst_decode();
-            let api_workspace_identifier = workspace_identifier.cst_decode();
+            let api__workspace_identifier = _workspace_identifier.cst_decode();
             let api_meta_workspace_id = meta_workspace_id.cst_decode();
             move |context| async move {
                 transform_result_dco::<_, _, String>(
@@ -105,7 +105,7 @@ fn wire__crate__api__bookmarks__create_bookmark_impl(
                             api_title,
                             api_url,
                             api_tag,
-                            api_workspace_identifier,
+                            api__workspace_identifier,
                             api_meta_workspace_id,
                         )
                         .await?;
@@ -1283,25 +1283,7 @@ fn wire__crate__api__workspaces__get_workspace_by_id_impl(
         },
     )
 }
-fn wire__crate__api__simple__greet_impl(
-    name: impl CstDecode<String>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "greet",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_name = name.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let output_ok = Result::<_, ()>::Ok(crate::api::simple::greet(api_name))?;
-                Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__simple__init_app_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
+fn wire__crate__api__kernel__init_app_impl(port_: flutter_rust_bridge::for_generated::MessagePort) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
             debug_name: "init_app",
@@ -1312,7 +1294,7 @@ fn wire__crate__api__simple__init_app_impl(port_: flutter_rust_bridge::for_gener
             move |context| {
                 transform_result_dco::<_, _, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::simple::init_app();
+                        crate::api::kernel::init_app();
                     })?;
                     Ok(output_ok)
                 })())
@@ -1320,7 +1302,7 @@ fn wire__crate__api__simple__init_app_impl(port_: flutter_rust_bridge::for_gener
         },
     )
 }
-fn wire__crate__api__simple__init_kernel_impl(
+fn wire__crate__api__kernel__init_kernel_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     database_url: impl CstDecode<String>,
 ) {
@@ -1335,7 +1317,7 @@ fn wire__crate__api__simple__init_kernel_impl(
             move |context| async move {
                 transform_result_dco::<_, _, String>(
                     (move || async move {
-                        let output_ok = crate::api::simple::init_kernel(api_database_url).await?;
+                        let output_ok = crate::api::kernel::init_kernel(api_database_url).await?;
                         Ok(output_ok)
                     })()
                     .await,
@@ -1830,7 +1812,7 @@ fn wire__crate__api__todo__update_todo_impl(
     identifier: impl CstDecode<String>,
     title: impl CstDecode<Option<String>>,
     description: impl CstDecode<Option<String>>,
-    priority: impl CstDecode<Option<String>>,
+    _priority: impl CstDecode<Option<String>>,
     due_date: impl CstDecode<Option<String>>,
     meta_workspace_id: impl CstDecode<Option<String>>,
 ) {
@@ -1844,7 +1826,7 @@ fn wire__crate__api__todo__update_todo_impl(
             let api_identifier = identifier.cst_decode();
             let api_title = title.cst_decode();
             let api_description = description.cst_decode();
-            let api_priority = priority.cst_decode();
+            let api__priority = _priority.cst_decode();
             let api_due_date = due_date.cst_decode();
             let api_meta_workspace_id = meta_workspace_id.cst_decode();
             move |context| async move {
@@ -1854,7 +1836,7 @@ fn wire__crate__api__todo__update_todo_impl(
                             api_identifier,
                             api_title,
                             api_description,
-                            api_priority,
+                            api__priority,
                             api_due_date,
                             api_meta_workspace_id,
                         )
@@ -1946,6 +1928,8 @@ fn wire__crate__api__workspaces__update_workspace_impl(
     description: impl CstDecode<Option<String>>,
     is_default: impl CstDecode<Option<bool>>,
     is_hidden: impl CstDecode<Option<bool>>,
+    is_secured: impl CstDecode<Option<bool>>,
+    password: impl CstDecode<Option<String>>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -1959,6 +1943,8 @@ fn wire__crate__api__workspaces__update_workspace_impl(
             let api_description = description.cst_decode();
             let api_is_default = is_default.cst_decode();
             let api_is_hidden = is_hidden.cst_decode();
+            let api_is_secured = is_secured.cst_decode();
+            let api_password = password.cst_decode();
             move |context| async move {
                 transform_result_dco::<_, _, String>(
                     (move || async move {
@@ -1968,6 +1954,8 @@ fn wire__crate__api__workspaces__update_workspace_impl(
                             api_description,
                             api_is_default,
                             api_is_hidden,
+                            api_is_secured,
+                            api_password,
                         )
                         .await?;
                         Ok(output_ok)
@@ -2268,7 +2256,7 @@ mod io {
         title: *mut wire_cst_list_prim_u_8_strict,
         url: *mut wire_cst_list_prim_u_8_strict,
         tag: *mut wire_cst_list_prim_u_8_strict,
-        workspace_identifier: *mut wire_cst_list_prim_u_8_strict,
+        _workspace_identifier: *mut wire_cst_list_prim_u_8_strict,
         meta_workspace_id: *mut wire_cst_list_prim_u_8_strict,
     ) {
         wire__crate__api__bookmarks__create_bookmark_impl(
@@ -2276,7 +2264,7 @@ mod io {
             title,
             url,
             tag,
-            workspace_identifier,
+            _workspace_identifier,
             meta_workspace_id,
         )
     }
@@ -2725,23 +2713,16 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_shurbs_wire__crate__api__simple__greet(
-        name: *mut wire_cst_list_prim_u_8_strict,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__simple__greet_impl(name)
+    pub extern "C" fn frbgen_shurbs_wire__crate__api__kernel__init_app(port_: i64) {
+        wire__crate__api__kernel__init_app_impl(port_)
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_shurbs_wire__crate__api__simple__init_app(port_: i64) {
-        wire__crate__api__simple__init_app_impl(port_)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_shurbs_wire__crate__api__simple__init_kernel(
+    pub extern "C" fn frbgen_shurbs_wire__crate__api__kernel__init_kernel(
         port_: i64,
         database_url: *mut wire_cst_list_prim_u_8_strict,
     ) {
-        wire__crate__api__simple__init_kernel_impl(port_, database_url)
+        wire__crate__api__kernel__init_kernel_impl(port_, database_url)
     }
 
     #[unsafe(no_mangle)]
@@ -2962,7 +2943,7 @@ mod io {
         identifier: *mut wire_cst_list_prim_u_8_strict,
         title: *mut wire_cst_list_prim_u_8_strict,
         description: *mut wire_cst_list_prim_u_8_strict,
-        priority: *mut wire_cst_list_prim_u_8_strict,
+        _priority: *mut wire_cst_list_prim_u_8_strict,
         due_date: *mut wire_cst_list_prim_u_8_strict,
         meta_workspace_id: *mut wire_cst_list_prim_u_8_strict,
     ) {
@@ -2971,7 +2952,7 @@ mod io {
             identifier,
             title,
             description,
-            priority,
+            _priority,
             due_date,
             meta_workspace_id,
         )
@@ -3019,6 +3000,8 @@ mod io {
         description: *mut wire_cst_list_prim_u_8_strict,
         is_default: *mut bool,
         is_hidden: *mut bool,
+        is_secured: *mut bool,
+        password: *mut wire_cst_list_prim_u_8_strict,
     ) {
         wire__crate__api__workspaces__update_workspace_impl(
             port_,
@@ -3027,6 +3010,8 @@ mod io {
             description,
             is_default,
             is_hidden,
+            is_secured,
+            password,
         )
     }
 
@@ -3073,871 +3058,3 @@ mod io {
 }
 #[cfg(not(target_family = "wasm"))]
 pub use io::*;
-
-/// cbindgen:ignore
-#[cfg(target_family = "wasm")]
-mod web {
-    // This file is automatically generated, so please do not edit it.
-    // @generated by `flutter_rust_bridge`@ 2.11.1.
-
-    // Section: imports
-
-    use super::*;
-    use flutter_rust_bridge::for_generated::byteorder::{
-        NativeEndian, ReadBytesExt, WriteBytesExt,
-    };
-    use flutter_rust_bridge::for_generated::wasm_bindgen;
-    use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
-    use flutter_rust_bridge::{Handler, IntoIntoDart};
-
-    // Section: boilerplate
-
-    flutter_rust_bridge::frb_generated_boilerplate_web!();
-
-    // Section: dart2rust
-
-    impl CstDecode<String> for String {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> String {
-            self
-        }
-    }
-    impl CstDecode<Vec<String>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<String> {
-            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap()
-                .iter()
-                .map(CstDecode::cst_decode)
-                .collect()
-        }
-    }
-    impl CstDecode<Vec<u8>> for Box<[u8]> {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<u8> {
-            self.into_vec()
-        }
-    }
-    impl CstDecode<Option<String>> for Option<String> {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Option<String> {
-            self.map(CstDecode::cst_decode)
-        }
-    }
-    impl CstDecode<String> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> String {
-            self.as_string().expect("non-UTF-8 string, or not a string")
-        }
-    }
-    impl CstDecode<bool> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> bool {
-            self.is_truthy()
-        }
-    }
-    impl CstDecode<Vec<u8>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<u8> {
-            self.unchecked_into::<flutter_rust_bridge::for_generated::js_sys::Uint8Array>()
-                .to_vec()
-                .into()
-        }
-    }
-    impl CstDecode<u8> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> u8 {
-            self.unchecked_into_f64() as _
-        }
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__change_todo_priority(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        priority: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__change_todo_priority_impl(
-            port_,
-            identifier,
-            priority,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__create_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        title: String,
-        url: String,
-        tag: String,
-        workspace_identifier: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__create_bookmark_impl(
-            port_,
-            title,
-            url,
-            tag,
-            workspace_identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__create_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        title: String,
-        content: String,
-        categories: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        workspace_identifier: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__create_note_impl(
-            port_,
-            title,
-            content,
-            categories,
-            workspace_identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__create_recycle_bin_entry(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        item_id: String,
-        item_type: String,
-        payload: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__create_recycle_bin_entry_impl(
-            port_,
-            item_id,
-            item_type,
-            payload,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__create_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        title: String,
-        description: Option<String>,
-        remind_at: String,
-        recurring: bool,
-        recurrence_rule: Option<String>,
-        alarm_sound: Option<String>,
-        workspace_identifier: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__reminders__create_reminder_impl(
-            port_,
-            title,
-            description,
-            remind_at,
-            recurring,
-            recurrence_rule,
-            alarm_sound,
-            workspace_identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__create_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        code: String,
-        title: Option<String>,
-        language: Option<String>,
-        description: Option<String>,
-        is_pinned: bool,
-        workspace_identifier: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__create_snippet_impl(
-            port_,
-            code,
-            title,
-            language,
-            description,
-            is_pinned,
-            workspace_identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__create_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        title: String,
-        description: Option<String>,
-        priority: String,
-        due_date: Option<String>,
-        workspace_identifier: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__create_todo_impl(
-            port_,
-            title,
-            description,
-            priority,
-            due_date,
-            workspace_identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__user_preference__create_user_preference(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        first_name: String,
-        last_name: String,
-        email: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__user_preference__create_user_preference_impl(
-            port_,
-            first_name,
-            last_name,
-            email,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__workspaces__create_workspace(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        name: String,
-        description: String,
-    ) {
-        wire__crate__api__workspaces__create_workspace_impl(port_, name, description)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__delete_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__delete_bookmark_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__delete_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__delete_note_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__delete_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__reminders__delete_reminder_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__delete_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__delete_snippet_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__delete_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__delete_todo_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__workspaces__delete_workspace(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__workspaces__delete_workspace_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__duplicate_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__bookmarks__duplicate_bookmark_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__duplicate_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__notes__duplicate_note_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__duplicate_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__reminders__duplicate_reminder_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__duplicate_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__snippets__duplicate_snippet_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__duplicate_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__todo__duplicate_todo_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__user_preference__duplicate_user_preference(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__user_preference__duplicate_user_preference_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__get_all_bookmarks(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__get_all_bookmarks_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__get_all_notes(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__get_all_notes_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__get_all_recycle_bin_entries(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__get_all_recycle_bin_entries_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__get_all_reminders(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__reminders__get_all_reminders_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__get_all_snippets(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__get_all_snippets_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__get_all_todos(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__get_all_todos_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__get_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__get_bookmark_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__get_bookmarks_by_tag(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        tag: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__get_bookmarks_by_tag_impl(port_, tag, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__get_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__get_note_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__get_recently_added_bookmarks(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__get_recently_added_bookmarks_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__get_recently_added_notes(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__get_recently_added_notes_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__get_recently_added_snippets(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__get_recently_added_snippets_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__get_recycle_bin_entries_by_type(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        item_type: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__get_recycle_bin_entries_by_type_impl(
-            port_,
-            item_type,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__get_recycle_bin_entry(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__get_recycle_bin_entry_impl(
-            port_,
-            identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__get_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__reminders__get_reminder_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__get_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__get_snippet_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__get_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__get_todo_impl(port_, identifier, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__user_preference__get_user_preference(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__user_preference__get_user_preference_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__workspaces__get_workspace_by_id(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        id: String,
-    ) {
-        wire__crate__api__workspaces__get_workspace_by_id_impl(port_, id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__simple__greet(
-        name: String,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__simple__greet_impl(name)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__simple__init_app(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-    ) {
-        wire__crate__api__simple__init_app_impl(port_)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__simple__init_kernel(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        database_url: String,
-    ) {
-        wire__crate__api__simple__init_kernel_impl(port_, database_url)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__workspaces__list_workspaces(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-    ) {
-        wire__crate__api__workspaces__list_workspaces_impl(port_)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__mark_todo_done(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        done: bool,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__mark_todo_done_impl(port_, identifier, done, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__purge_all_recycle_bin_entries(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__purge_all_recycle_bin_entries_impl(port_, meta_workspace_id)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__recycle_bin__purge_recycle_bin_entry(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__recycle_bin__purge_recycle_bin_entry_impl(
-            port_,
-            identifier,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__transfer_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__bookmarks__transfer_bookmark_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__transfer_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__notes__transfer_note_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__transfer_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__reminders__transfer_reminder_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__transfer_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__snippets__transfer_snippet_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__transfer_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__todo__transfer_todo_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__user_preference__transfer_user_preference(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        record_identifier: String,
-        previous_workspace_identifier: String,
-        target_workspace_identifier: String,
-    ) {
-        wire__crate__api__user_preference__transfer_user_preference_impl(
-            port_,
-            record_identifier,
-            previous_workspace_identifier,
-            target_workspace_identifier,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__bookmarks__update_bookmark(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        title: Option<String>,
-        url: Option<String>,
-        tag: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__bookmarks__update_bookmark_impl(
-            port_,
-            identifier,
-            title,
-            url,
-            tag,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__notes__update_note(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        title: Option<String>,
-        content: Option<String>,
-        categories: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__notes__update_note_impl(
-            port_,
-            identifier,
-            title,
-            content,
-            categories,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__reminders__update_reminder(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        title: Option<String>,
-        description: Option<String>,
-        remind_at: Option<String>,
-        recurring: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        recurrence_rule: Option<String>,
-        alarm_sound: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__reminders__update_reminder_impl(
-            port_,
-            identifier,
-            title,
-            description,
-            remind_at,
-            recurring,
-            recurrence_rule,
-            alarm_sound,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__snippets__update_snippet(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        title: Option<String>,
-        language: Option<String>,
-        code: Option<String>,
-        description: Option<String>,
-        is_pinned: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__snippets__update_snippet_impl(
-            port_,
-            identifier,
-            title,
-            language,
-            code,
-            description,
-            is_pinned,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__update_todo(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        title: Option<String>,
-        description: Option<String>,
-        priority: Option<String>,
-        due_date: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__update_todo_impl(
-            port_,
-            identifier,
-            title,
-            description,
-            priority,
-            due_date,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__todo__update_todo_due_date(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        due_date: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__todo__update_todo_due_date_impl(
-            port_,
-            identifier,
-            due_date,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__user_preference__update_user_preference(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        first_name: Option<String>,
-        last_name: Option<String>,
-        email: Option<String>,
-        meta_workspace_id: Option<String>,
-    ) {
-        wire__crate__api__user_preference__update_user_preference_impl(
-            port_,
-            identifier,
-            first_name,
-            last_name,
-            email,
-            meta_workspace_id,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__workspaces__update_workspace(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        identifier: String,
-        name: Option<String>,
-        description: Option<String>,
-        is_default: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        is_hidden: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__workspaces__update_workspace_impl(
-            port_,
-            identifier,
-            name,
-            description,
-            is_default,
-            is_hidden,
-        )
-    }
-}
-#[cfg(target_family = "wasm")]
-pub use web::*;

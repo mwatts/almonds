@@ -26,12 +26,16 @@ Future<String> updateWorkspace({
   String? description,
   bool? isDefault,
   bool? isHidden,
+  bool? isSecured,
+  String? password,
 }) => RustLib.instance.api.crateApiWorkspacesUpdateWorkspace(
   identifier: identifier,
   name: name,
   description: description,
   isDefault: isDefault,
   isHidden: isHidden,
+  isSecured: isSecured,
+  password: password,
 );
 
 Future<void> deleteWorkspace({

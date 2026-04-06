@@ -4,10 +4,10 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/bookmarks.dart';
+import 'api/kernel.dart';
 import 'api/notes.dart';
 import 'api/recycle_bin.dart';
 import 'api/reminders.dart';
-import 'api/simple.dart';
 import 'api/snippets.dart';
 import 'api/todo.dart';
 import 'api/user_preference.dart';
@@ -63,7 +63,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
   @override
   Future<void> executeRustInitializers() async {
-    await api.crateApiSimpleInitApp();
+    await api.crateApiKernelInitApp();
   }
 
   @override
@@ -74,7 +74,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -450783549;
+  int get rustContentHash => 141276317;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -292,11 +292,9 @@ abstract class RustLibApi extends BaseApi {
 
   Future<String> crateApiWorkspacesGetWorkspaceById({required String id});
 
-  String crateApiSimpleGreet({required String name});
+  Future<void> crateApiKernelInitApp();
 
-  Future<void> crateApiSimpleInitApp();
-
-  Future<void> crateApiSimpleInitKernel({required String databaseUrl});
+  Future<void> crateApiKernelInitKernel({required String databaseUrl});
 
   Future<String> crateApiWorkspacesListWorkspaces();
 
@@ -417,6 +415,8 @@ abstract class RustLibApi extends BaseApi {
     String? description,
     bool? isDefault,
     bool? isHidden,
+    bool? isSecured,
+    String? password,
   });
 }
 
@@ -1876,68 +1876,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "get_workspace_by_id", argNames: ["id"]);
 
   @override
-  String crateApiSimpleGreet({required String name}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_String(name);
-          return wire.wire__crate__api__simple__greet(arg0);
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiSimpleGreetConstMeta,
-        argValues: [name],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiSimpleGreetConstMeta =>
-      const TaskConstMeta(debugName: "greet", argNames: ["name"]);
-
-  @override
-  Future<void> crateApiSimpleInitApp() {
+  Future<void> crateApiKernelInitApp() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
-          return wire.wire__crate__api__simple__init_app(port_);
+          return wire.wire__crate__api__kernel__init_app(port_);
         },
         codec: DcoCodec(
           decodeSuccessData: dco_decode_unit,
           decodeErrorData: null,
         ),
-        constMeta: kCrateApiSimpleInitAppConstMeta,
+        constMeta: kCrateApiKernelInitAppConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleInitAppConstMeta =>
+  TaskConstMeta get kCrateApiKernelInitAppConstMeta =>
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
   @override
-  Future<void> crateApiSimpleInitKernel({required String databaseUrl}) {
+  Future<void> crateApiKernelInitKernel({required String databaseUrl}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           var arg0 = cst_encode_String(databaseUrl);
-          return wire.wire__crate__api__simple__init_kernel(port_, arg0);
+          return wire.wire__crate__api__kernel__init_kernel(port_, arg0);
         },
         codec: DcoCodec(
           decodeSuccessData: dco_decode_unit,
           decodeErrorData: dco_decode_String,
         ),
-        constMeta: kCrateApiSimpleInitKernelConstMeta,
+        constMeta: kCrateApiKernelInitKernelConstMeta,
         argValues: [databaseUrl],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleInitKernelConstMeta =>
+  TaskConstMeta get kCrateApiKernelInitKernelConstMeta =>
       const TaskConstMeta(debugName: "init_kernel", argNames: ["databaseUrl"]);
 
   @override
@@ -2694,6 +2672,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     String? description,
     bool? isDefault,
     bool? isHidden,
+    bool? isSecured,
+    String? password,
   }) {
     return handler.executeNormal(
       NormalTask(
@@ -2703,6 +2683,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           var arg2 = cst_encode_opt_String(description);
           var arg3 = cst_encode_opt_box_autoadd_bool(isDefault);
           var arg4 = cst_encode_opt_box_autoadd_bool(isHidden);
+          var arg5 = cst_encode_opt_box_autoadd_bool(isSecured);
+          var arg6 = cst_encode_opt_String(password);
           return wire.wire__crate__api__workspaces__update_workspace(
             port_,
             arg0,
@@ -2710,6 +2692,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             arg2,
             arg3,
             arg4,
+            arg5,
+            arg6,
           );
         },
         codec: DcoCodec(
@@ -2717,7 +2701,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeErrorData: dco_decode_String,
         ),
         constMeta: kCrateApiWorkspacesUpdateWorkspaceConstMeta,
-        argValues: [identifier, name, description, isDefault, isHidden],
+        argValues: [
+          identifier,
+          name,
+          description,
+          isDefault,
+          isHidden,
+          isSecured,
+          password,
+        ],
         apiImpl: this,
       ),
     );
@@ -2732,6 +2724,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "description",
           "isDefault",
           "isHidden",
+          "isSecured",
+          "password",
         ],
       );
 

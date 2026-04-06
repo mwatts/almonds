@@ -1,4 +1,4 @@
-pub mod simple;
+pub mod kernel;
 pub mod bookmarks;
 pub mod notes;
 pub mod recycle_bin;

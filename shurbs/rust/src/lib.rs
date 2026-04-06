@@ -5,5 +5,5 @@ pub mod api;
 
 
 
-// Re-export kernel init so Flutter can call it on app start.
-pub use state::init_kernel;
+// Re-export data engine init so Flutter can call it on app start.
+pub use state::init_data_engine;
