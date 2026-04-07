@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
+import '../../profile_notifier.dart';
+
 class ProfileSettingsPage extends StatefulWidget {
   const ProfileSettingsPage({super.key});
 
@@ -9,10 +11,19 @@ class ProfileSettingsPage extends StatefulWidget {
 }
 
 class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
-  final _firstNameController = TextEditingController(text: 'Adeoye');
-  final _lastNameController = TextEditingController(text: 'Adefemi');
-  final _emailController = TextEditingController(text: 'adeoye@wildalmonds.app');
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _emailController;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final p = ProfileNotifier.instance;
+    _firstNameController = TextEditingController(text: p.firstName);
+    _lastNameController = TextEditingController(text: p.lastName);
+    _emailController = TextEditingController(text: p.email);
+  }
 
   @override
   void dispose() {
@@ -24,7 +35,11 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   Future<void> _save() async {
     setState(() => _saving = true);
-    await Future.delayed(const Duration(milliseconds: 800));
+    await ProfileNotifier.instance.save(
+      newFirstName: _firstNameController.text.trim(),
+      newLastName: _lastNameController.text.trim(),
+      newEmail: _emailController.text.trim(),
+    );
     if (mounted) setState(() => _saving = false);
   }
 
@@ -94,24 +109,6 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
                             ),
                           )
                         : const Text('Save changes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  child: ListTile(
-                    leading: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: colorScheme.error.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(child: HeroIcon(HeroIcons.trash, size: 18, color: colorScheme.error)),
-                    ),
-                    title: Text('Delete account', style: TextStyle(color: colorScheme.error)),
-                    subtitle: const Text('Permanently remove your data'),
-                    trailing: HeroIcon(HeroIcons.chevronRight, size: 16, color: colorScheme.onSurfaceVariant),
-                    onTap: () {},
                   ),
                 ),
                 const SizedBox(height: 32),

@@ -3,6 +3,8 @@ import 'package:heroicons/heroicons.dart';
 
 import '../controllers/home_controller.dart';
 import '../models/todo_model.dart';
+import '../profile_notifier.dart';
+import 'notes_page.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -32,6 +34,12 @@ class HomePage extends StatelessWidget {
                       reminderCount: controller.reminderCount,
                       bookmarkCount: controller.bookmarkCount,
                       noteCount: controller.noteCount,
+                      onNotesTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NotesPage(controller: controller.noteController),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 28),
                     _FocusSectionHeader(count: controller.activeTodoCount),
@@ -168,14 +176,17 @@ class _HeroBanner extends StatelessWidget {
                       letterSpacing: -0.5,
                     ),
               ),
-              Text(
-                'Adeoye',
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              ListenableBuilder(
+                listenable: ProfileNotifier.instance,
+                builder: (_, __) => Text(
+                  ProfileNotifier.instance.displayName,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       color: isDark ? cs.onSurface : Colors.white,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -1,
                       height: 1.1,
                     ),
+                ),
               ),
               const SizedBox(height: 16),
               Container(
@@ -216,31 +227,45 @@ class _StatsRow extends StatelessWidget {
   final int reminderCount;
   final int bookmarkCount;
   final int noteCount;
+  final VoidCallback onNotesTap;
 
   const _StatsRow({
     required this.todoCount,
     required this.reminderCount,
     required this.bookmarkCount,
     required this.noteCount,
+    required this.onNotesTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final stats = [
-      _Stat('Todos', '$todoCount', HeroIcons.checkCircle, const Color(0xFF6366F1)),
-      _Stat('Reminders', '$reminderCount', HeroIcons.clock, const Color(0xFFF59E0B)),
-      _Stat('Bookmarks', '$bookmarkCount', HeroIcons.bookmark, const Color(0xFF8B5CF6)),
-      _Stat('Notes', '$noteCount', HeroIcons.documentText, const Color(0xFF10B981)),
+      (
+        stat: _Stat('Todos', '$todoCount', HeroIcons.checkCircle, const Color(0xFF6366F1)),
+        onTap: () => NavigateToTabNotification(1).dispatch(context),
+      ),
+      (
+        stat: _Stat('Reminders', '$reminderCount', HeroIcons.clock, const Color(0xFFF59E0B)),
+        onTap: () => NavigateToTabNotification(2).dispatch(context),
+      ),
+      (
+        stat: _Stat('Bookmarks', '$bookmarkCount', HeroIcons.bookmark, const Color(0xFF8B5CF6)),
+        onTap: () => NavigateToTabNotification(3).dispatch(context),
+      ),
+      (
+        stat: _Stat('Notes', '$noteCount', HeroIcons.documentText, const Color(0xFF10B981)),
+        onTap: onNotesTap,
+      ),
     ];
 
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: stats
-            .map((s) => Expanded(
+            .map((e) => Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(right: s == stats.last ? 0 : 10),
-                    child: _StatCard(stat: s),
+                    padding: EdgeInsets.only(right: e == stats.last ? 0 : 10),
+                    child: _StatCard(stat: e.stat, onTap: e.onTap),
                   ),
                 ))
             .toList(),
@@ -259,13 +284,16 @@ class _Stat {
 
 class _StatCard extends StatelessWidget {
   final _Stat stat;
-  const _StatCard({required this.stat});
+  final VoidCallback onTap;
+  const _StatCard({required this.stat, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
@@ -311,6 +339,7 @@ class _StatCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

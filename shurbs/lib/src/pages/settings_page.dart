@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 
 import 'settings/profile_settings_page.dart';
+import '../profile_notifier.dart';
 import 'settings/appearance_settings_page.dart';
 import 'settings/locale_settings_page.dart';
 import 'settings/workspaces_settings_page.dart';
 import 'settings/backup_settings_page.dart';
-import 'settings/ai_settings_page.dart';
 import 'settings/notifications_settings_page.dart';
 import 'settings/reminder_settings_page.dart';
 import 'settings/about_settings_page.dart';
@@ -72,13 +72,6 @@ class SettingsPage extends StatelessWidget {
               colorScheme: colorScheme,
               theme: theme,
               items: [
-                _SettingsItem(
-                  icon: HeroIcons.cpuChip,
-                  label: 'AI & Ollama',
-                  subtitle: 'Local model & assistant config',
-                  color: const Color(0xFFD02752),
-                  onTap: () => go(const AiSettingsPage()),
-                ),
                 _SettingsItem(
                   icon: HeroIcons.bell,
                   label: 'Notifications',
@@ -171,51 +164,45 @@ class _ProfileCard extends StatelessWidget {
                   : colorScheme.primary.withValues(alpha: 0.2),
             ),
           ),
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: colorScheme.primary,
-                child: Text(
-                  'A',
-                  style: TextStyle(
-                    color: colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Adeoye',
-                      style: theme.textTheme.titleMedium?.copyWith(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+          child: ListenableBuilder(
+            listenable: ProfileNotifier.instance,
+            builder: (_, __) {
+              final profile = ProfileNotifier.instance;
+              return Column(
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: colorScheme.primary,
+                    child: Text(
+                      profile.initials,
+                      style: TextStyle(
+                        color: colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : colorScheme.onPrimaryContainer,
+                        fontSize: 26,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'adeoye@example.com',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: isDark
-                            ? const Color(0xFF8a9dc6)
-                            : colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    profile.fullName.isNotEmpty ? profile.fullName : 'Not set',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : colorScheme.onPrimaryContainer,
                     ),
-                  ],
-                ),
-              ),
-              HeroIcon(
-                HeroIcons.chevronRight,
-                size: 18,
-                color: isDark ? const Color(0xFF8a9dc6) : colorScheme.onPrimaryContainer.withValues(alpha: 0.5),
-              ),
-            ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    profile.email.isNotEmpty ? profile.email : 'Not set',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDark
+                          ? const Color(0xFF8a9dc6)
+                          : colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
