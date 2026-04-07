@@ -7,6 +7,7 @@ import 'src/app.dart';
 import 'src/rust/api/kernel.dart';
 import 'src/rust/frb_generated.dart';
 import 'src/services/notification_service.dart';
+import 'src/profile_notifier.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ Future<void> main() async {
   await initKernel(databaseUrl: 'sqlite://$dbPath?mode=rwc');
 
   await NotificationService.instance.init();
+  await ProfileNotifier.instance.load();
 
   runApp(const App());
 }

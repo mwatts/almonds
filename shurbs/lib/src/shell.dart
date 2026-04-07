@@ -18,6 +18,7 @@ import 'pages/notes_page.dart';
 import 'pages/settings_page.dart';
 import 'pages/notifications_page.dart';
 import 'theme_notifier.dart';
+import 'profile_notifier.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -202,15 +203,18 @@ class _AppShellState extends State<AppShell> {
                       padding: const EdgeInsets.only(right: 4),
                       child: GestureDetector(
                         onTap: () => setState(() => _currentIndex = 4),
-                        child: CircleAvatar(
-                          radius: 18,
-                          backgroundColor: colorScheme.primaryContainer,
-                          child: Text(
-                            'A',
-                            style: TextStyle(
-                              color: colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                        child: ListenableBuilder(
+                          listenable: ProfileNotifier.instance,
+                          builder: (_, __) => CircleAvatar(
+                            radius: 18,
+                            backgroundColor: colorScheme.primaryContainer,
+                            child: Text(
+                              ProfileNotifier.instance.initials,
+                              style: TextStyle(
+                                color: colorScheme.onPrimaryContainer,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ),
@@ -344,6 +348,10 @@ class _DrawerHeader extends StatelessWidget {
     return ValueListenableBuilder<AccentSwatch>(
       valueListenable: accentColorNotifier,
       builder: (_, accent, __) {
+        return ListenableBuilder(
+          listenable: ProfileNotifier.instance,
+          builder: (_, __) {
+            final profile = ProfileNotifier.instance;
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -374,9 +382,9 @@ class _DrawerHeader extends StatelessWidget {
                             child: CircleAvatar(
                               radius: 22,
                               backgroundColor: accent.primaryContainer,
-                              child: const Text(
-                                'A',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                              child: Text(
+                                profile.initials,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                             ),
                           ),
@@ -384,12 +392,12 @@ class _DrawerHeader extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Adeoye',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16),
+                              Text(
+                                profile.displayName,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16),
                               ),
                               Text(
-                                'adeoye@example.com',
+                                profile.email.isNotEmpty ? profile.email : 'Set up your profile',
                                 style: TextStyle(color: Colors.white.withValues(alpha: 0.72), fontSize: 12),
                               ),
                             ],
@@ -402,6 +410,8 @@ class _DrawerHeader extends StatelessWidget {
               ),
             ],
           ),
+        );
+          },
         );
       },
     );

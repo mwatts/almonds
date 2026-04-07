@@ -126,8 +126,11 @@ class _CalendarPageState extends State<CalendarPage> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, _) => Scaffold(
-        body: SafeArea(
-          child: Column(
+        appBar: AppBar(
+          title: const Text('Calendar', style: TextStyle(color: Colors.black)),
+          foregroundColor: Colors.black,
+        ),
+        body: Column(
           children: [
             // ── View toggle ─────────────────────────────────────────────────
             Padding(
@@ -209,7 +212,6 @@ class _CalendarPageState extends State<CalendarPage> {
                       ),
               ),
           ],
-          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _showAddEventSheet(),

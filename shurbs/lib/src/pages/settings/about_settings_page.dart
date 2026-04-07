@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class AboutSettingsPage extends StatelessWidget {
   const AboutSettingsPage({super.key});
 
@@ -15,7 +14,6 @@ class AboutSettingsPage extends StatelessWidget {
       _InfoItem(label: 'Version', value: '1.0.0', mono: true),
       _InfoItem(label: 'Build', value: '2026.04.04', mono: true),
       _InfoItem(label: 'License', value: 'MIT', mono: false),
-      _InfoItem(label: 'Platform', value: 'Android / iOS', mono: false),
     ];
 
     return Scaffold(
@@ -23,9 +21,12 @@ class AboutSettingsPage extends StatelessWidget {
         title: const Text('About', style: TextStyle(color: Colors.black)),
         foregroundColor: Colors.black,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Column(
         children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -65,7 +66,9 @@ class AboutSettingsPage extends StatelessWidget {
                         color: colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Center(child: HeroIcon(HeroIcons.arrowPath, size: 18, color: colorScheme.primary)),
+                      child: Center(
+                        child: HeroIcon(HeroIcons.arrowPath, size: 18, color: colorScheme.primary),
+                      ),
                     ),
                     title: const Text('Check for updates'),
                     subtitle: const Text('You are on the latest version'),
@@ -83,10 +86,12 @@ class AboutSettingsPage extends StatelessWidget {
                         color: colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Center(child: HeroIcon(HeroIcons.codeBracket, size: 18, color: colorScheme.primary)),
+                      child: Center(
+                        child: HeroIcon(HeroIcons.codeBracket, size: 18, color: colorScheme.primary),
+                      ),
                     ),
                     title: const Text('Built openly on GitHub'),
-                    subtitle: const Text('MIT License · github.com/opeolluwa/almonds'),
+                    subtitle: const Text('github.com/opeolluwa/almonds'),
                     trailing: HeroIcon(HeroIcons.arrowTopRightOnSquare, size: 16, color: colorScheme.onSurfaceVariant),
                     onTap: () => launchUrl(
                       Uri.parse('https://github.com/opeolluwa/almonds'),
@@ -97,7 +102,32 @@ class AboutSettingsPage extends StatelessWidget {
                 const SizedBox(height: 32),
               ],
             ),
-          );
+          ),
+          // ── Pinned footer ──────────────────────────────────────────────────
+          SafeArea(
+            top: false,
+            child: GestureDetector(
+              onTap: () => launchUrl(
+                Uri.parse('https://github.com/opeolluwa/almonds'),
+                mode: LaunchMode.externalApplication,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'made with ♥ by opeolluwa',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 0.65),
+                    letterSpacing: 0.3,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
