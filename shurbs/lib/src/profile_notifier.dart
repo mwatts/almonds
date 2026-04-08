@@ -9,6 +9,7 @@ class ProfileNotifier extends ChangeNotifier {
   static final instance = ProfileNotifier._();
 
   String _id = '';
+  String _workspaceId = '';
   String firstName = '';
   String lastName = '';
   String email = '';
@@ -17,9 +18,10 @@ class ProfileNotifier extends ChangeNotifier {
   String get fullName => [firstName, lastName].where((s) => s.isNotEmpty).join(' ');
   String get initials => firstName.isNotEmpty ? firstName[0].toUpperCase() : 'U';
 
-  Future<void> load() async {
+  Future<void> load(String workspaceId) async {
+    _workspaceId = workspaceId;
     try {
-      final raw = await getUserPreference();
+      final raw = await getUserPreference(metaWorkspaceId: workspaceId);
       if (raw != null && raw.isNotEmpty) {
         final j = jsonDecode(raw) as Map<String, dynamic>;
         _id = j['identifier'] as String? ?? '';
@@ -37,13 +39,16 @@ class ProfileNotifier extends ChangeNotifier {
     required String newFirstName,
     required String newLastName,
     required String newEmail,
+    String? workspaceId,
   }) async {
+    if (workspaceId != null) _workspaceId = workspaceId;
     try {
       if (_id.isEmpty) {
         final raw = await createUserPreference(
           firstName: newFirstName,
           lastName: newLastName,
           email: newEmail,
+          metaWorkspaceId: _workspaceId.isNotEmpty ? _workspaceId : null,
         );
         final j = jsonDecode(raw) as Map<String, dynamic>;
         _id = j['identifier'] as String? ?? '';
@@ -53,6 +58,7 @@ class ProfileNotifier extends ChangeNotifier {
           firstName: newFirstName,
           lastName: newLastName,
           email: newEmail,
+          metaWorkspaceId: _workspaceId.isNotEmpty ? _workspaceId : null,
         );
       }
       firstName = newFirstName;

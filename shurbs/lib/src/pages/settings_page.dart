@@ -44,21 +44,21 @@ class SettingsPage extends StatelessWidget {
                   icon: HeroIcons.paintBrush,
                   label: 'Appearance',
                   subtitle: 'Theme, colors & font size',
-                  color: const Color(0xFF7C3AED),
+                  color: colorScheme.primary,
                   onTap: () => go(const AppearanceSettingsPage()),
                 ),
                 _SettingsItem(
                   icon: HeroIcons.language,
                   label: 'Locale',
                   subtitle: 'Language, region & date format',
-                  color: const Color(0xFF0891B2),
+                  color: colorScheme.primary,
                   onTap: () => go(const LocaleSettingsPage()),
                 ),
                 _SettingsItem(
                   icon: HeroIcons.briefcase,
                   label: 'Workspaces',
                   subtitle: 'Manage your workspaces',
-                  color: const Color(0xFF059669),
+                  color: colorScheme.primary,
                   onTap: () => go(const WorkspacesSettingsPage()),
                 ),
               ],
@@ -76,14 +76,14 @@ class SettingsPage extends StatelessWidget {
                   icon: HeroIcons.bell,
                   label: 'Notifications',
                   subtitle: 'Alerts, badges & sounds',
-                  color: const Color(0xFFEA580C),
+                  color: colorScheme.primary,
                   onTap: () => go(const NotificationsSettingsPage()),
                 ),
                 _SettingsItem(
                   icon: HeroIcons.clock,
                   label: 'Reminder',
                   subtitle: 'Default ringtone & snooze',
-                  color: const Color(0xFFCA8A04),
+                  color: colorScheme.primary,
                   onTap: () => go(const ReminderSettingsPage()),
                 ),
               ],
@@ -101,7 +101,7 @@ class SettingsPage extends StatelessWidget {
                   icon: HeroIcons.cloudArrowUp,
                   label: 'Backup & Sync',
                   subtitle: 'Export, import & cloud sync',
-                  color: const Color(0xFF2563EB),
+                  color: colorScheme.primary,
                   onTap: () => go(const BackupSettingsPage()),
                 ),
               ],
@@ -119,7 +119,7 @@ class SettingsPage extends StatelessWidget {
                   icon: HeroIcons.informationCircle,
                   label: 'About',
                   subtitle: 'Version, changelog & credits',
-                  color: const Color(0xFF6B7280),
+                  color: colorScheme.primary,
                   onTap: () => go(const AboutSettingsPage()),
                 ),
               ],
@@ -147,40 +147,63 @@ class _ProfileCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
         child: ListenableBuilder(
             listenable: ProfileNotifier.instance,
             builder: (_, __) {
               final profile = ProfileNotifier.instance;
               return Column(
                 children: [
-                  CircleAvatar(
-                    radius: 36,
-                    backgroundColor: colorScheme.primary,
-                    child: Text(
-                      profile.initials,
-                      style: TextStyle(
-                        color: colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26,
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 48,
+                        backgroundColor: colorScheme.primary,
+                        child: Text(
+                          profile.initials,
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 36,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1a2540) : Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDark ? const Color(0xFF2a3550) : colorScheme.outlineVariant,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt_rounded,
+                            size: 14,
+                            color: isDark ? const Color(0xFF8a9dc6) : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Text(
                     profile.fullName.isNotEmpty ? profile.fullName : 'Not set',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : colorScheme.onPrimaryContainer,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 3),
                   Text(
-                    profile.email.isNotEmpty ? profile.email : 'Not set',
+                    profile.email.isNotEmpty ? profile.email : 'Tap to set up profile',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: isDark
-                          ? const Color(0xFF8a9dc6)
-                          : colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+                      color: isDark ? const Color(0xFF8a9dc6) : Colors.black54,
                     ),
                   ),
                 ],
@@ -292,11 +315,17 @@ class _SettingsTile extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: item.color.withValues(alpha: isDark ? 0.18 : 0.12),
+                color: isDark
+                    ? item.color.withValues(alpha: 0.18)
+                    : Colors.black.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Center(
-                child: HeroIcon(item.icon, size: 18, color: item.color),
+                child: HeroIcon(
+                  item.icon,
+                  size: 18,
+                  color: isDark ? item.color : Colors.black87,
+                ),
               ),
             ),
             const SizedBox(width: 14),
@@ -304,13 +333,19 @@ class _SettingsTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.label, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500)),
+                  Text(
+                    item.label,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? null : Colors.black87,
+                    ),
+                  ),
                   if (item.subtitle != null) ...[
                     const SizedBox(height: 1),
                     Text(
                       item.subtitle!,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                        color: isDark ? colorScheme.onSurfaceVariant : Colors.black45,
                       ),
                     ),
                   ],

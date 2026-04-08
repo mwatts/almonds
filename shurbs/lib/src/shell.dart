@@ -66,6 +66,7 @@ class _AppShellState extends State<AppShell> {
     final wsId = _workspaceController.activeWorkspaceId;
     if (wsId == null) return;
     await Future.wait([
+      ProfileNotifier.instance.load(wsId),
       _todoController.load(wsId),
       _noteController.load(wsId),
       _bookmarkController.load(wsId),
@@ -290,20 +291,13 @@ class _AppDrawer extends StatelessWidget {
                 _NavTile(icon: HeroIcons.checkCircle, label: 'Todos', selected: currentIndex == 1, onTap: () => go(1)),
                 _NavTile(icon: HeroIcons.clock, label: 'Reminders', selected: currentIndex == 2, onTap: () => go(2)),
                 _NavTile(icon: HeroIcons.bookmark, label: 'Bookmarks', selected: currentIndex == 3, onTap: () => go(3)),
-                _NavTile(
-                  icon: HeroIcons.calendarDays,
-                  label: 'Calendar',
-                  selected: false,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CalendarPage(controller: calendarController),
-                      ),
-                    );
-                  },
-                ),
+                // _NavTile(
+                //   icon: HeroIcons.calendarDays,
+                //   label: 'Calendar',
+                //   selected: false,
+                //   muted: true,
+                //   onTap: () {},
+                // ),
                 _NavTile(
                   icon: HeroIcons.documentText,
                   label: 'Notes',
@@ -442,8 +436,9 @@ class _NavTile extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final bool muted;
 
-  const _NavTile({required this.icon, required this.label, required this.selected, required this.onTap});
+  const _NavTile({required this.icon, required this.label, required this.selected, required this.onTap, this.muted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -453,13 +448,15 @@ class _NavTile extends StatelessWidget {
     return ValueListenableBuilder<AccentSwatch>(
       valueListenable: accentColorNotifier,
       builder: (_, accent, __) {
-        return Padding(
+        return Opacity(
+          opacity: muted ? 0.4 : 1.0,
+          child: Padding(
           padding: const EdgeInsets.only(bottom: 2),
           child: Material(
             color: selected ? accent.primary.withValues(alpha: 0.1) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
-              onTap: onTap,
+              onTap: muted ? null : onTap,
               borderRadius: BorderRadius.circular(10),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
@@ -504,7 +501,7 @@ class _NavTile extends StatelessWidget {
               ),
             ),
           ),
-        );
+        ));
       },
     );
   }

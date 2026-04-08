@@ -37,6 +37,7 @@ class ReminderController extends ChangeNotifier {
     required String remindAt,
     required bool recurring,
     String? recurrenceRule,
+    AlarmSound? alarmSound,
   }) async {
     if (_workspaceId == null) return;
     try {
@@ -45,6 +46,7 @@ class ReminderController extends ChangeNotifier {
         remindAt: remindAt,
         recurring: recurring,
         recurrenceRule: recurrenceRule,
+        alarmSound: alarmSound?.stem,
         metaWorkspaceId: _workspaceId,
       );
       final json = jsonDecode(raw) as Map<String, dynamic>;

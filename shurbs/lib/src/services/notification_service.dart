@@ -15,27 +15,6 @@ class NotificationService {
   final _plugin = FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
-  // Notification channel
-  static const _androidDetails = AndroidNotificationDetails(
-    'shurbs_reminders',
-    'Reminders',
-    channelDescription: 'Scheduled reminder alerts',
-    importance: Importance.max,
-    priority: Priority.high,
-    playSound: true,
-    enableVibration: true,
-    fullScreenIntent: true,
-  );
-
-  static const _details = NotificationDetails(
-    android: _androidDetails,
-    iOS: DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    ),
-  );
-
   // Day abbreviation → (flutter_local_notifications Day, Dart weekday int)
   static const _dayMap = <String, (Day, int)>{
     'Mon': (Day.monday, DateTime.monday),
@@ -46,6 +25,50 @@ class NotificationService {
     'Sat': (Day.saturday, DateTime.saturday),
     'Sun': (Day.sunday, DateTime.sunday),
   };
+
+  // ── Notification channels (one per sound + one default) ───────────────────
+
+  static AndroidNotificationDetails _androidDetails(AlarmSound? sound) {
+    if (sound == null) {
+      return const AndroidNotificationDetails(
+        'shurbs_reminders',
+        'Reminders',
+        channelDescription: 'Scheduled reminder alerts',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        enableVibration: true,
+        fullScreenIntent: true,
+      );
+    }
+    return AndroidNotificationDetails(
+      'shurbs_sound_${sound.stem}',
+      'Reminders – ${sound.label}',
+      channelDescription: 'Reminder alerts with ${sound.label} sound',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound(sound.stem),
+      enableVibration: true,
+      fullScreenIntent: true,
+    );
+  }
+
+  static DarwinNotificationDetails _iosDetails(AlarmSound? sound) {
+    return DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      sound: sound != null ? '${sound.stem}.mp3' : null,
+    );
+  }
+
+  static NotificationDetails _details(AlarmSound? sound) => NotificationDetails(
+        android: _androidDetails(sound),
+        iOS: _iosDetails(sound),
+      );
+
+  // ── Init ──────────────────────────────────────────────────────────────────
 
   Future<void> init() async {
     if (_initialized) return;
@@ -92,13 +115,13 @@ class NotificationService {
     final now = tz.TZDateTime.now(tz.local);
     final hour = reminder.remindAt.hour;
     final minute = reminder.remindAt.minute;
+    final details = _details(reminder.alarmSound);
 
     final days = reminder.days;
 
     if (days.isEmpty) {
-      // ── One-shot or daily ────────────────────────────────────────────────────
+      // ── One-shot or daily ────────────────────────────────────────────────
       if (reminder.recurring) {
-        // No days selected but marked recurring → repeat daily
         var scheduled = tz.TZDateTime(
             tz.local, now.year, now.month, now.day, hour, minute);
         if (scheduled.isBefore(now)) {
@@ -109,12 +132,13 @@ class NotificationService {
           reminder.title,
           null,
           scheduled,
-          _details,
+          details,
           matchDateTimeComponents: DateTimeComponents.time,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
         );
       } else {
-        // One-shot: fire at the next occurrence of remindAt
         var scheduled = tz.TZDateTime(
             tz.local, now.year, now.month, now.day, hour, minute);
         if (scheduled.isBefore(now)) {
@@ -125,12 +149,14 @@ class NotificationService {
           reminder.title,
           null,
           scheduled,
-          _details,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+          details,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
         );
       }
     } else {
-      // ── Weekly on selected days ───────────────────────────────────────────
+      // ── Weekly on selected days ──────────────────────────────────────────
       for (var i = 0; i < days.length; i++) {
         final entry = _dayMap[days[i]];
         if (entry == null) continue;
@@ -143,9 +169,11 @@ class NotificationService {
           reminder.title,
           null,
           scheduled,
-          _details,
+          details,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
         );
       }
     }
@@ -163,7 +191,6 @@ class NotificationService {
 
   Future<void> cancelReminder(String reminderId) async {
     if (!_initialized) return;
-    // Cancel one-shot/daily slot and all 7 weekday slots
     await _plugin.cancel(_idFor(reminderId));
     for (var i = 1; i <= 7; i++) {
       await _plugin.cancel(_idFor(reminderId, i));

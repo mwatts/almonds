@@ -7,7 +7,6 @@ import 'src/app.dart';
 import 'src/rust/api/kernel.dart';
 import 'src/rust/frb_generated.dart';
 import 'src/services/notification_service.dart';
-import 'src/profile_notifier.dart';
 import 'src/pages/onboarding_page.dart';
 
 Future<void> main() async {
@@ -21,7 +20,6 @@ Future<void> main() async {
   await initKernel(databaseUrl: 'sqlite://$dbPath?mode=rwc');
 
   await NotificationService.instance.init();
-  await ProfileNotifier.instance.load();
 
   final seenOnboarding = await hasSeenOnboarding();
 

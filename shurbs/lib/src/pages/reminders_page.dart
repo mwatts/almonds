@@ -41,6 +41,7 @@ class _RemindersView extends StatelessWidget {
     final labelController = TextEditingController();
     TimeOfDay selectedTime = TimeOfDay.now();
     final selectedDays = <String>{};
+    AlarmSound? selectedSound;
 
     showModalBottomSheet(
       context: context,
@@ -90,6 +91,35 @@ class _RemindersView extends StatelessWidget {
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 12),
+              // ── Sound picker ───────────────────────────────────────────────
+              Row(
+                children: [
+                  const HeroIcon(HeroIcons.musicalNote, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: DropdownButton<AlarmSound?>(
+                      value: selectedSound,
+                      isExpanded: true,
+                      underline: const SizedBox.shrink(),
+                      hint: const Text('Default sound'),
+                      items: [
+                        const DropdownMenuItem<AlarmSound?>(
+                          value: null,
+                          child: Text('Default sound'),
+                        ),
+                        ...AlarmSound.values.map(
+                          (s) => DropdownMenuItem<AlarmSound?>(
+                            value: s,
+                            child: Text(s.label),
+                          ),
+                        ),
+                      ],
+                      onChanged: (v) => setModalState(() => selectedSound = v),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
@@ -112,6 +142,7 @@ class _RemindersView extends StatelessWidget {
                         remindAt: _toRfc3339(dt),
                         recurring: selectedDays.isNotEmpty,
                         recurrenceRule: rule.isEmpty ? null : rule,
+                        alarmSound: selectedSound,
                       );
                     }
                   },

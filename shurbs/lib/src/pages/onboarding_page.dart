@@ -2,9 +2,10 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../shell.dart';
+import 'setup_page.dart';
 
 // ── First-launch guard ────────────────────────────────────────────────────────
 
@@ -81,7 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     await markOnboardingSeen();
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const AppShell()),
+      MaterialPageRoute(builder: (_) => const SetupPage()),
     );
   }
 
@@ -96,7 +97,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final isLast = _page == _slides.length - 1;
     final accent = Theme.of(context).colorScheme.primary;
 
-    return Scaffold(
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: accent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
       backgroundColor: const Color(0xFFF8F6F2),
       body: Stack(
         children: [
@@ -108,9 +117,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
             itemBuilder: (_, i) => _SlideView(slide: _slides[i]),
           ),
 
+          // ── Accent status bar fill ─────────────────────────────────────────
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: statusBarHeight,
+              color: accent,
+            ),
+          ),
+
           // ── Dot indicators (top center) ────────────────────────────────────
           Positioned(
-            top: MediaQuery.of(context).padding.top + 20,
+            top: statusBarHeight + 20,
             left: 0,
             right: 0,
             child: Row(
@@ -183,7 +204,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 

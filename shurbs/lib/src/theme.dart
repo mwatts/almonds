@@ -20,13 +20,26 @@ TextTheme poppinsTextTheme([TextTheme? base]) {
 }
 
 ThemeData lightTheme(AccentSwatch accent) {
+  // fromSeed can darken the primary for WCAG contrast — override it to keep
+  // the exact 500 palette value the user chose.
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: accent.primary,
+    brightness: Brightness.light,
+  ).copyWith(
+    primary: accent.primary,
+    onPrimary: Colors.white,
+    primaryContainer: accent.primaryContainer,
+    onPrimaryContainer: accent.onPrimaryContainer,
+  );
+
   return ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: accent.primary,
-      brightness: Brightness.light,
-    ),
+    colorScheme: colorScheme,
     textTheme: poppinsTextTheme(),
     useMaterial3: true,
+    scaffoldBackgroundColor: const Color(0xFFF8F6F2),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: Colors.white,
+    ),
     cardTheme: CardThemeData(
       elevation: 0,
       shadowColor: Colors.transparent,
@@ -90,6 +103,9 @@ ThemeData darkTheme(AccentSwatch accent) {
     textTheme: poppinsTextTheme(ThemeData.dark().textTheme),
     useMaterial3: true,
     scaffoldBackgroundColor: _onyxBackground,
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: _onyxSurface,
+    ),
     cardTheme: CardThemeData(
       color: _onyxSurface,
       elevation: 0,
