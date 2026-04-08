@@ -19,6 +19,8 @@ enum AlarmSound {
     }
   }
 
+  String get assetPath => 'assets/sounds/$stem.mp3';
+
   String get label {
     switch (this) {
       case AlarmSound.funnyAlarm:
