@@ -26,6 +26,7 @@ mod m20260314_150343_create_trigger_for_bookmarks;
 mod m20260327_000000_add_workspace_id_to_user_preference;
 mod m20260331_000000_add_workspace_flags;
 mod m20260403_000000_add_workspace_security;
+mod m20260408_233613_kk;
 
 pub use sea_orm_migration::prelude::*;
 
@@ -37,9 +38,9 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20260217_143820_create_snippet_table::Migration),
             Box::new(m20260217_150510_create_sync_queue_table::Migration),
-            Box::new(m20260218_071617_create_ollama_conversation_history::Migration),
             Box::new(m20260218_071539_create_ollama_conversation_prompt::Migration),
             Box::new(m20260218_071549_create_ollama_conversation_response::Migration),
+            Box::new(m20260218_071617_create_ollama_conversation_history::Migration),
             Box::new(m20260218_110352_create_note_table::Migration),
             Box::new(m20260218_110353_create_note_category_table::Migration),
             Box::new(m20260218_171131_create_todo_table::Migration),
@@ -63,6 +64,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20260327_000000_add_workspace_id_to_user_preference::Migration),
             Box::new(m20260331_000000_add_workspace_flags::Migration),
             Box::new(m20260403_000000_add_workspace_security::Migration),
+            Box::new(m20260408_233613_kk::Migration),
         ]
     }
 }
