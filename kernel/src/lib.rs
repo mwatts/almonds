@@ -8,12 +8,10 @@ pub mod repositories;
 pub mod sync_engine;
 pub mod utils;
 pub use kernel::DataEngine;
+#[cfg(feature = "markdown2pdf")]
+pub mod markdown2pdf;
 
 pub use graphql_ws_client::*;
 pub use sea_orm;
 
 pub use migration;
-
-#[cfg(feature = "markdown2pdf")]
-pub mod markdown2pdf;
-    

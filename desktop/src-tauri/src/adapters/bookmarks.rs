@@ -3,6 +3,7 @@ use almond_kernel::enums::Tag as BookmarkTag;
 use sanitizer::prelude::*;
 use serde::Deserialize;
 use validator::Validate;
+
 #[derive(Debug, Deserialize, Sanitizer, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateBookmark {
@@ -48,7 +49,6 @@ pub struct UpdateBookmark {
 
 impl From<UpdateBookmark> for almond_kernel::adapters::bookmarks::UpdateBookmark {
     fn from(b: UpdateBookmark) -> Self {
-
         let tag = b.tag.as_deref().map(|t| match t {
             "development" => BookmarkTag::Development,
             "inspiration" => BookmarkTag::Inspiration,

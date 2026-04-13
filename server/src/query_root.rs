@@ -1,4 +1,3 @@
-use almond_kernel::entities::*;
 use async_graphql::dynamic::*;
 use sea_orm::DatabaseConnection;
 use seaography::{async_graphql, lazy_static::lazy_static, Builder, BuilderContext};

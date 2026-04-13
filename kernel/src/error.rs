@@ -28,10 +28,10 @@ pub enum KernelError {
 
     #[error("Reminder does not exists ")]
     ReminderNotFound(String),
-    
+
     #[error("Failed to read download Directory")]
     DownloadDirNotFound,
-    
+
     #[cfg(feature = "markdown2pdf")]
     #[error("Failed to parse markdown: {0}")]
     Markdown2Pdf(String),

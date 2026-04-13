@@ -1,6 +1,7 @@
 use almond_kernel::adapters::meta::RequestMeta;
 use almond_kernel::enums::Priority as TodoPriority;
 use serde::Deserialize;
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateTodo {
