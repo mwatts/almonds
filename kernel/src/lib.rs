@@ -10,7 +10,6 @@ pub mod utils;
 pub use kernel::DataEngine;
 #[cfg(feature = "markdown2pdf")]
 pub mod markdown2pdf;
-
 #[cfg(feature = "sync_engine")]
 pub mod sync_engine;
 #[cfg(feature = "sync_engine")]

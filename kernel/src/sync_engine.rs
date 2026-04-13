@@ -1,18 +1,18 @@
 use async_trait::async_trait;
 use futures::{StreamExt, stream};
-use tokio::time::{Duration, sleep};
-
-const MAX_RETRIES: usize = 3;
-const CONCURRENCY_LIMIT: usize = 10;
-
 #[cfg(feature = "sync_engine")]
 use graphql_client::GraphQLQuery;
 use reqwest::{
     Client, Url,
     header::{HeaderMap, HeaderValue},
 };
+use tokio::time::{Duration, sleep};
 
 use crate::error::KernelError;
+
+const MAX_RETRIES: usize = 3;
+const CONCURRENCY_LIMIT: usize = 10;
+
 pub struct SyncEngine {
     graphql_client: reqwest::Client,
     api_url: String,
