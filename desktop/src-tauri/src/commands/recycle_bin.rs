@@ -1,6 +1,7 @@
 use almond_kernel::{
-    adapters::{meta::RequestMeta, recycle_bin::RecycleBinItemType},
+    adapters::{meta::RequestMeta },
     entities::recycle_bin,
+    enums::ItemType as RecycleBinItemType,
     repositories::recycle_bin::RecycleBinRepositoryExt,
 };
 use tauri::State;
