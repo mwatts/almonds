@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 use futures::{StreamExt, stream};
-#[cfg(feature = "sync_engine")]
 use graphql_client::GraphQLQuery;
 use reqwest::{
     Client, Url,
@@ -22,7 +21,6 @@ pub struct SyncEngine {
     resource_path: String,
 }
 
-#[cfg(feature = "sync_engine")]
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = ".graphql/sync_queue_schema.graphql",
@@ -44,14 +42,19 @@ pub trait SyncEngineTrait {
     ) -> Result<Self, KernelError>
     where
         Self: Sized;
+
     async fn up_sync(&self, data_queue: DataQueue) -> Result<(), KernelError>;
+
     async fn down_sync(&self, data_queue: DataQueue) -> Result<(), KernelError>;
+
     async fn upload_one(&self, item: crate::entities::sync_queue::Model)
     -> Result<(), KernelError>;
+
     async fn upload_with_retry(
         &self,
         item: crate::entities::sync_queue::Model,
     ) -> Result<(), KernelError>;
+
     async fn handle_up_sync(
         &self,
         item: crate::entities::sync_queue::Model,
@@ -67,51 +70,6 @@ pub trait SyncEngineTrait {
 
 #[async_trait]
 impl SyncEngineTrait for SyncEngine {
-    async fn upload_with_retry(
-        &self,
-        item: crate::entities::sync_queue::Model,
-    ) -> Result<(), KernelError> {
-        let mut attempts = 0;
-
-        loop {
-            match self.upload_one(item.clone()).await {
-                Ok(_) => return Ok(()),
-                Err(e) => {
-                    attempts += 1;
-
-                    if attempts >= MAX_RETRIES {
-                        return Err(e);
-                    }
-
-                    let delay = Duration::from_secs(2_u64.pow(attempts as u32));
-                    sleep(delay).await;
-                }
-            }
-        }
-    }
-
-    async fn upload_one(
-        &self,
-        item: crate::entities::sync_queue::Model,
-    ) -> Result<(), KernelError> {
-        let res = self
-            .graphql_client
-            .post(&self.api_url)
-            .json(&item)
-            .send()
-            .await
-            .map_err(|e| KernelError::EnvError(e.to_string()))?;
-
-        if !res.status().is_success() {
-            return Err(KernelError::EnvError(format!(
-                "Request failed: {}",
-                res.status()
-            )));
-        }
-
-        Ok(())
-    }
-
     async fn new(
         db: DatabaseConnection,
         api_url: &str,
@@ -169,6 +127,55 @@ impl SyncEngineTrait for SyncEngine {
         Ok(())
     }
 
+    async fn down_sync(&self, data_queue: DataQueue) -> Result<(), KernelError> {
+        unimplemented!()
+    }
+
+    async fn upload_one(
+        &self,
+        item: crate::entities::sync_queue::Model,
+    ) -> Result<(), KernelError> {
+        let res = self
+            .graphql_client
+            .post(&self.api_url)
+            .json(&item)
+            .send()
+            .await
+            .map_err(|e| KernelError::EnvError(e.to_string()))?;
+
+        if !res.status().is_success() {
+            return Err(KernelError::EnvError(format!(
+                "Request failed: {}",
+                res.status()
+            )));
+        }
+
+        Ok(())
+    }
+
+    async fn upload_with_retry(
+        &self,
+        item: crate::entities::sync_queue::Model,
+    ) -> Result<(), KernelError> {
+        let mut attempts = 0;
+
+        loop {
+            match self.upload_one(item.clone()).await {
+                Ok(_) => return Ok(()),
+                Err(e) => {
+                    attempts += 1;
+
+                    if attempts >= MAX_RETRIES {
+                        return Err(e);
+                    }
+
+                    let delay = Duration::from_secs(2_u64.pow(attempts as u32));
+                    sleep(delay).await;
+                }
+            }
+        }
+    }
+
     /// Find or create the record on the remote. If it already exists, compare
     /// `updated_at` timestamps and upload only when the local copy is newer.
     async fn handle_up_sync(
@@ -186,11 +193,8 @@ impl SyncEngineTrait for SyncEngine {
             "SELECT updated_at FROM \"{}\" WHERE identifier = ?",
             item.table_name
         );
-        let stmt = Statement::from_sql_and_values(
-            backend,
-            &sql,
-            [item.record_identifier.clone().into()],
-        );
+        let stmt =
+            Statement::from_sql_and_values(backend, &sql, [item.record_identifier.clone().into()]);
 
         let local_record = RecordTimestamp::find_by_statement(stmt)
             .one(&self.db)
@@ -252,10 +256,6 @@ impl SyncEngineTrait for SyncEngine {
         dbg!("Handling down sync for items: {:?}", items);
 
         Ok(())
-    }
-
-    async fn down_sync(&self, data_queue: DataQueue) -> Result<(), KernelError> {
-        unimplemented!()
     }
 
     async fn remove_from_queue(&self, identifier: uuid::Uuid) -> Result<(), KernelError> {

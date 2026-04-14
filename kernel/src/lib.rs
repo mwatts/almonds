@@ -1,13 +1,12 @@
 pub mod adapters;
+pub mod data_engine;
 pub mod entities;
 #[cfg(feature = "sqlite")]
 pub mod enums;
 pub mod error;
-pub mod kernel;
 pub mod repositories;
-pub mod sync_engine;
 pub mod utils;
-pub use kernel::DataEngine;
+pub use data_engine::DataEngine;
 #[cfg(feature = "markdown2pdf")]
 pub mod markdown2pdf;
 #[cfg(feature = "sync_engine")]
