@@ -43,6 +43,7 @@ test-server:
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
 		--seaography \
+		--tables users,one_time_passwords,notifications,countries,wait_list \
 		-o src/entities
 
 # Pull schema and generate entities + seaography bindings for MySQL (muted)
