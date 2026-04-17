@@ -4,7 +4,7 @@ use seaography::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::entities;
+use almond_kernel::entities;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

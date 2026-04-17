@@ -1,15 +1,16 @@
-use crate::{
-    config::AppConfig,
-    entities::{self},
-    errors::app_error::AppError,
-};
 use almond_kernel::sync_engine::{DataQueue, SyncEngine, SyncEngineTrait};
 use axum::http::HeaderMap;
 use rayon::prelude::*;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait};
 use seaography::{
-    async_graphql::{self, Context},
     CustomFields,
+    async_graphql::{self, Context},
+};
+
+use crate::{
+    config::AppConfig,
+    entities::{self},
+    errors::app_error::AppError,
 };
 
 pub struct SyncQueue;
@@ -88,7 +89,7 @@ fn resolve_to_entity(item: &almond_kernel::entities::sync_queue::Model) -> Entit
         "recycle_bin" => EntityWrapper::RecycleBin(entities::recycle_bin::Entity),
         "sync_queue" => EntityWrapper::SyncQueue(entities::sync_queue::Entity),
         "user_preference" => EntityWrapper::UserPreference(entities::user_preference::Entity),
-      
+
         _ => EntityWrapper::NoOp,
     }
 }
