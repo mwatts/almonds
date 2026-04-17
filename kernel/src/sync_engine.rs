@@ -31,6 +31,13 @@ pub struct SyncEngine {
 pub struct SyncQueueView;
 
 pub type DataQueue = Vec<crate::entities::sync_queue::Model>;
+pub type SyncQueueItemIdentifier = String;
+
+pub struct SyncResult {
+    pub sync_queue_item: Vec<SyncQueueItemIdentifier>,
+    pub failed_items: Vec<SyncQueueItemIdentifier>,
+    pub new_records: DataQueue,
+}
 
 #[async_trait]
 pub trait SyncEngineTrait {
@@ -43,29 +50,7 @@ pub trait SyncEngineTrait {
     where
         Self: Sized;
 
-    async fn up_sync(&self, data_queue: DataQueue) -> Result<(), KernelError>;
-
-    async fn down_sync(&self, data_queue: DataQueue) -> Result<(), KernelError>;
-
-    async fn upload_one(&self, item: crate::entities::sync_queue::Model)
-    -> Result<(), KernelError>;
-
-    async fn upload_with_retry(
-        &self,
-        item: crate::entities::sync_queue::Model,
-    ) -> Result<(), KernelError>;
-
-    async fn handle_up_sync(
-        &self,
-        item: crate::entities::sync_queue::Model,
-    ) -> Result<(), KernelError>;
-
-    async fn handle_down_sync(
-        &self,
-        items: Vec<crate::entities::sync_queue::Model>,
-    ) -> Result<(), KernelError>;
-
-    async fn remove_from_queue(&self, identifier: uuid::Uuid) -> Result<(), KernelError>;
+    async fn sync(&self, data_queue: DataQueue) -> Result<SyncResult, KernelError>;
 }
 
 #[async_trait]
@@ -102,6 +87,27 @@ impl SyncEngineTrait for SyncEngine {
         })
     }
 
+    async fn sync(&self, data_queue: DataQueue) -> Result<SyncResult, KernelError> {
+        let mut synced_items = vec![];
+        let mut failed_items = vec![];
+
+        for item in data_queue {
+            let identifier = item.record_identifier.clone();
+            match self.handle_up_sync(item).await {
+                Ok(_) => synced_items.push(identifier),
+                Err(_) => failed_items.push(identifier),
+            }
+        }
+
+        Ok(SyncResult {
+            sync_queue_item: synced_items,
+            failed_items,
+            new_records: vec![],
+        })
+    }
+}
+
+impl SyncEngine {
     async fn up_sync(&self, data_queue: DataQueue) -> Result<(), KernelError> {
         let results = stream::iter(data_queue.into_iter())
             .map(|item| async move { self.upload_with_retry(item).await })

@@ -1,12 +1,14 @@
+use almond_kernel::entities;
 use almond_kernel::sync_engine::{DataQueue, SyncEngine, SyncEngineTrait};
 use axum::http::HeaderMap;
-use sea_orm::DatabaseConnection;
+use rayon::prelude::*;
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait};
 use seaography::{
     async_graphql::{self, Context},
     CustomFields,
 };
 
-use crate::{cli::app, config::AppConfig, entities::sync_queue, errors::app_error::AppError};
+use crate::{config::AppConfig, errors::app_error::AppError};
 
 pub struct SyncQueue;
 
@@ -48,7 +50,52 @@ impl SyncQueue {
         )
         .await?;
 
-        let res = sync_engine.up_sync(input).await?;
+        // convert to entities
+        let resolved_entities = input
+            .par_iter()
+            .map(|item| resolve_to_entity(item))
+            .collect::<Vec<_>>();
+
         Ok(true)
     }
+}
+
+pub enum EntityWrapper {
+    Bookmark(entities::bookmark::Entity),
+    Notes(entities::notes::Entity),
+    NoteCategories(entities::note_categories::Entity),
+    Snippets(entities::snippets::Entity),
+    Todo(entities::todo::Entity),
+    Reminder(entities::reminder::Entity),
+    Workspaces(entities::workspaces::Entity),
+    RecycleBin(entities::recycle_bin::Entity),
+    SyncQueue(entities::sync_queue::Entity),
+    UserPreference(entities::user_preference::Entity),
+    NoOp,
+}
+
+fn resolve_to_entity(item: &almond_kernel::entities::sync_queue::Model) -> EntityWrapper {
+    match item.table_name.as_str() {
+        "bookmark" => EntityWrapper::Bookmark(entities::bookmark::Entity),
+        "notes" => EntityWrapper::Notes(entities::notes::Entity),
+        "note_categories" => EntityWrapper::NoteCategories(entities::note_categories::Entity),
+        "snippets" => EntityWrapper::Snippets(entities::snippets::Entity),
+        "todo" => EntityWrapper::Todo(entities::todo::Entity),
+        "reminder" => EntityWrapper::Reminder(entities::reminder::Entity),
+        "workspaces" => EntityWrapper::Workspaces(entities::workspaces::Entity),
+        "recycle_bin" => EntityWrapper::RecycleBin(entities::recycle_bin::Entity),
+        "sync_queue" => EntityWrapper::SyncQueue(entities::sync_queue::Entity),
+        "user_preference" => EntityWrapper::UserPreference(entities::user_preference::Entity),
+
+        _ => EntityWrapper::NoOp,
+    }
+}
+
+// see which is newer between upstream and downstream and return the delta for syncing
+
+fn resolve_delta<T>(upstream: T, downstream: T) -> Option<T>
+where
+    T: EntityTrait + ColumnTrait,
+{
+    todo!()
 }

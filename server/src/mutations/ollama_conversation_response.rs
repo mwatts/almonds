@@ -1,4 +1,4 @@
-use entities::ollama_conversation_response::{ActiveModel, Model};
+use almond_kernel::entities::ollama_conversation_response::{ActiveModel, Model};
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr};
 use seaography::{
     async_graphql::{self, Context},
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::{
-    entities, errors::app_error::AppError,
+    errors::app_error::AppError,
     types::ollama_conversation_response::CreateOllamaConversationResponseInput,
     utils::validator::format_validation_errors,
 };

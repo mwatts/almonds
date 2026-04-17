@@ -15,3 +15,24 @@ pub mod sync_queue;
 pub mod todo;
 pub mod user_preference;
 pub mod workspaces;
+
+seaography::register_entity_modules!([
+    bookmark,
+    note_categories,
+    notes,
+    ollama_conversation_history,
+    ollama_conversation_prompt,
+    ollama_conversation_response,
+    recycle_bin,
+    reminder,
+    snippets,
+    sync_queue,
+    todo,
+    user_preference,
+    workspaces,
+]);
+seaography::register_active_enums!([
+    sea_orm_active_enums::ItemType,
+    sea_orm_active_enums::Priority,
+    sea_orm_active_enums::Tag,
+]);

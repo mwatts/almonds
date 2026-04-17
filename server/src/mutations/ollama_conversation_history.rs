@@ -1,3 +1,4 @@
+use almond_kernel::entities;
 use entities::ollama_conversation_history::{ActiveModel, Model};
 use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr};
 use seaography::{
@@ -9,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::{
-    entities, errors::app_error::AppError,
+    errors::app_error::AppError,
     types::ollama_conversation_history::CreateOllamaConversationHistoryInput,
     utils::validator::format_validation_errors,
 };
@@ -40,7 +41,8 @@ impl CreateOllamaConversationHistory {
         let model: Model = active_model
             .insert(db_conn)
             .await
-            .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))?;
+            .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))?
+            as Model;
 
         Ok(model)
     }

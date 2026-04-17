@@ -17,7 +17,7 @@ MYSQL_URL    := "mysql://almond:almond@localhost:3307/almond"
 SQLITE_URL   := "sqlite://./almond.db?mode=rwc"
 DATABASE_URL :="postgres://orchard:orchard@localhost:6543/orchard"
 
-set dotenv-required := true
+set dotenv-required := false
 set dotenv-load := true
 set dotenv-path := ".env"
 set export := true

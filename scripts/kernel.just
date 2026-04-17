@@ -67,7 +67,8 @@ db-clean:
 		--database-url {{url}} \
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		-o src/entities
+		-o src/entities \
+		--seaography
 
 # Pull schema and generate entities for SQLite (feature: sqlite)
 [working-directory: 'kernel']
@@ -85,7 +86,8 @@ db-clean:
 		--database-url {{POSTGRES_URL}} \
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		-o src/entities/postgres
+		-o src/entities/postgres \
+		--seaography
 
 # Pull schema and generate entities for MySQL using docker defaults (feature: mysql)
 [working-directory: 'kernel']
