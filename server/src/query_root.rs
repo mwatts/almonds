@@ -1,8 +1,8 @@
-use almond_kernel::entities::register_active_enums;
-use almond_kernel::entities::register_entity_modules;
+// use almond_kernel::entities::register_active_enums;
+// use almond_kernel::entities::register_entity_modules;
 use async_graphql::dynamic::*;
 use sea_orm::DatabaseConnection;
-use seaography::{Builder, BuilderContext, async_graphql, lazy_static::lazy_static};
+use seaography::{async_graphql, lazy_static::lazy_static, Builder, BuilderContext};
 
 use crate::{mutations, types};
 
@@ -25,17 +25,17 @@ pub fn schema_builder(
     complexity: Option<usize>,
 ) -> SchemaBuilder {
     let mut builder = Builder::new(context, database.clone());
-    builder = register_entity_modules(builder);
-    builder = register_active_enums(builder);
+    // builder = register_entity_modules(builder);
+    // builder = register_active_enums(builder);
 
-    seaography::register_custom_inputs!(
-        builder,
-        [
-            types::ollama_conversation_history::CreateOllamaConversationHistoryInput,
-            types::ollama_conversation_prompt::CreateOllamaConversationPromptInput,
-            types::ollama_conversation_response::CreateOllamaConversationResponseInput
-        ]
-    );
+    // seaography::register_custom_inputs!(
+    //     builder,
+    //     [
+    //         types::ollama_conversation_history::CreateOllamaConversationHistoryInput,
+    //         types::ollama_conversation_prompt::CreateOllamaConversationPromptInput,
+    //         types::ollama_conversation_response::CreateOllamaConversationResponseInput
+    //     ]
+    // );
 
     seaography::register_custom_mutations!(
         builder,
@@ -50,9 +50,6 @@ pub fn schema_builder(
             mutations::reminder::SyncReminder,
             mutations::workspace::SyncWorkspace,
             mutations::recycle_bin::SyncRecycleBinItem,
-            mutations::ollama_conversation_history::CreateOllamaConversationHistory,
-            mutations::ollama_conversation_prompt::CreateOllamaConversationPrompt,
-            mutations::ollama_conversation_response::CreateOllamaConversationResponse
         ]
     );
 

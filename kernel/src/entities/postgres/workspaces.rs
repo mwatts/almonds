@@ -81,3 +81,21 @@ impl Related<super::user_preference::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
+pub enum RelatedEntity {
+    #[sea_orm(entity = "super::bookmark::Entity")]
+    Bookmark,
+    #[sea_orm(entity = "super::notes::Entity")]
+    Notes,
+    #[sea_orm(entity = "super::recycle_bin::Entity")]
+    RecycleBin,
+    #[sea_orm(entity = "super::reminder::Entity")]
+    Reminder,
+    #[sea_orm(entity = "super::snippets::Entity")]
+    Snippets,
+    #[sea_orm(entity = "super::todo::Entity")]
+    Todo,
+    #[sea_orm(entity = "super::user_preference::Entity")]
+    UserPreference,
+}
