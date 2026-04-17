@@ -41,7 +41,8 @@ impl CreateOllamaConversationHistory {
         let model: Model = active_model
             .insert(db_conn)
             .await
-            .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))? as Model;
+            .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))?
+            as Model;
 
         Ok(model)
     }

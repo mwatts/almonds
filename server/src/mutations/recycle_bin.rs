@@ -1,7 +1,7 @@
 use almond_kernel::entities;
 use seaography::{
-    CustomFields,
     async_graphql::{self, Context},
+    CustomFields,
 };
 use serde::{Deserialize, Serialize};
 

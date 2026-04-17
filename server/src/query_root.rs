@@ -1,9 +1,9 @@
-use async_graphql::dynamic::*;
-use sea_orm::DatabaseConnection;
-use seaography::{async_graphql, lazy_static::lazy_static, Builder, BuilderContext};
-
 use almond_kernel::entities::register_active_enums;
 use almond_kernel::entities::register_entity_modules;
+use async_graphql::dynamic::*;
+use sea_orm::DatabaseConnection;
+use seaography::{Builder, BuilderContext, async_graphql, lazy_static::lazy_static};
+
 use crate::{mutations, types};
 
 lazy_static! {
