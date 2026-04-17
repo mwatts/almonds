@@ -43,11 +43,3 @@ impl Related<super::one_time_passwords::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
-pub enum RelatedEntity {
-    #[sea_orm(entity = "super::notifications::Entity")]
-    Notifications,
-    #[sea_orm(entity = "super::one_time_passwords::Entity")]
-    OneTimePasswords,
-}

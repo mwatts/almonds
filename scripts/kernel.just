@@ -68,6 +68,7 @@ db-clean:
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
 		-o src/entities
+		--seography
 
 # Pull schema and generate entities for SQLite (feature: sqlite)
 [working-directory: 'kernel']

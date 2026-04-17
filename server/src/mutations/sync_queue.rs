@@ -1,3 +1,4 @@
+use almond_kernel::entities;
 use almond_kernel::sync_engine::{DataQueue, SyncEngine, SyncEngineTrait};
 use axum::http::HeaderMap;
 use rayon::prelude::*;
@@ -7,11 +8,7 @@ use seaography::{
     CustomFields,
 };
 
-use crate::{
-    config::AppConfig,
-    entities::{self},
-    errors::app_error::AppError,
-};
+use crate::{config::AppConfig, errors::app_error::AppError};
 
 pub struct SyncQueue;
 

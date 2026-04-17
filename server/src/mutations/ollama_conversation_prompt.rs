@@ -1,5 +1,5 @@
-use entities::ollama_conversation_prompt::{ActiveModel, Model};
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr};
+use almond_kernel::entities::ollama_conversation_prompt::{self, ActiveModel};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr, EntityTrait};
 use seaography::{
     async_graphql::{self, Context},
     itertools::Itertools,
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::{
-    entities, errors::app_error::AppError,
+    errors::app_error::AppError,
     types::ollama_conversation_prompt::CreateOllamaConversationPromptInput,
     utils::validator::format_validation_errors,
 };
@@ -23,7 +23,7 @@ impl CreateOllamaConversationPrompt {
     async fn create_ollama_conversation_prompt(
         ctx: &Context<'_>,
         input: CreateOllamaConversationPromptInput,
-    ) -> async_graphql::Result<entities::ollama_conversation_prompt::Model, AppError> {
+    ) -> async_graphql::Result<ollama_conversation_prompt::Model, AppError> {
         if let Err(err) = input.validate() {
             let better_error_message = format_validation_errors(err);
             return Err(AppError::OperationFailed(
@@ -37,7 +37,7 @@ impl CreateOllamaConversationPrompt {
 
         let active_model: ActiveModel = input.into();
 
-        let model: Model = active_model
+        let model = active_model
             .insert(db_conn)
             .await
             .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))?;

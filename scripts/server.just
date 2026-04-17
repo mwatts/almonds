@@ -27,14 +27,6 @@ test-server:
 	@sea-orm-cli migrate init
 
 
-[working-directory: 'server']
-@generate--server-entities url:
-	sea-orm-cli generate entity \
-		--database-url {{url}} \
-		--with-serde both \
-		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		-o src/entities
-
 # Pull schema and generate entities + seaography bindings for PostgreSQL
 [working-directory: 'server']
 @generate-server-entities:
@@ -42,7 +34,6 @@ test-server:
 		--database-url {{DATABASE_URL}} \
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		--seaography \
 		--tables users,one_time_passwords,notifications,countries,wait_list \
 		-o src/entities
 
