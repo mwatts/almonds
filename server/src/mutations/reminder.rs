@@ -1,46 +1,21 @@
-use entities::reminder::{ActiveModel, Model};
-use sea_orm::{ActiveModelTrait, DatabaseConnection, DbErr};
 use seaography::{
     async_graphql::{self, Context},
-    itertools::Itertools,
     CustomFields,
 };
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
-use crate::{
-    entities, errors::app_error::AppError, types::reminder::CreateReminderInput,
-    utils::validator::format_validation_errors,
-};
+use crate::entities;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct CreateReminder;
+pub struct SyncReminder;
 
 #[CustomFields]
-impl CreateReminder {
-    async fn create_reminder(
+impl SyncReminder {
+    async fn sync_reminder(
         ctx: &Context<'_>,
-        input: CreateReminderInput,
-    ) -> async_graphql::Result<entities::reminder::Model, AppError> {
-        if let Err(err) = input.validate() {
-            let better_error_message = format_validation_errors(err);
-            return Err(AppError::OperationFailed(
-                better_error_message.into_iter().join(","),
-            ));
-        }
-
-        let db_conn = ctx
-            .data::<DatabaseConnection>()
-            .map_err(|err| AppError::InternalError(err.message))?;
-
-        let active_model: ActiveModel = input.into();
-
-        let model: Model = active_model
-            .insert(db_conn)
-            .await
-            .map_err(|err: DbErr| AppError::GraphQLError(err.to_string()))?;
-
-        Ok(model)
+        input: Vec<entities::reminder::Model>,
+    ) -> async_graphql::Result<bool> {
+        unimplemented!()
     }
 }

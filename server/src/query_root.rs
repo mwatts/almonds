@@ -31,14 +31,6 @@ pub fn schema_builder(
     seaography::register_custom_inputs!(
         builder,
         [
-            types::workspaces::CreateWorkspaceInput,
-            types::todo::CreateTodoInput,
-            types::notes::CreateNoteInput,
-            types::reminder::CreateReminderInput,
-            types::snippets::CreateSnippetInput,
-            types::bookmark::CreateBookmarkInput,
-            types::recycle_bin::CreateRecycleBinItemInput,
-            types::note_category::CreateNoteCategoryInput,
             types::ollama_conversation_history::CreateOllamaConversationHistoryInput,
             types::ollama_conversation_prompt::CreateOllamaConversationPromptInput,
             types::ollama_conversation_response::CreateOllamaConversationResponseInput
@@ -50,14 +42,14 @@ pub fn schema_builder(
         [
             mutations::preflight::Preflight,
             mutations::sync_queue::SyncQueue,
-            mutations::workspace::CreateWorkspace,
-            mutations::todo::CreateTodo,
-            mutations::notes::CreateNote,
-            mutations::reminder::CreateReminder,
-            mutations::snippets::CreateSnippet,
-            mutations::bookmark::CreateBookmark,
-            mutations::recycle_bin::CreateRecycleBinItem,
-            mutations::note_category::CreateNoteCategory,
+            mutations::bookmark::SyncBookmark,
+            mutations::notes::SyncNote,
+            mutations::note_category::SyncNoteCategory,
+            mutations::snippets::SyncSnippet,
+            mutations::todo::SyncTodo,
+            mutations::reminder::SyncReminder,
+            mutations::workspace::SyncWorkspace,
+            mutations::recycle_bin::SyncRecycleBinItem,
             mutations::ollama_conversation_history::CreateOllamaConversationHistory,
             mutations::ollama_conversation_prompt::CreateOllamaConversationPrompt,
             mutations::ollama_conversation_response::CreateOllamaConversationResponse
