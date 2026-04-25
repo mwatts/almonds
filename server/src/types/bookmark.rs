@@ -17,16 +17,16 @@ pub struct SyncBookmarkInput {
     pub workspace_identifier: Option<Uuid>,
 }
 
-impl Into<entities::bookmark::Model> for SyncBookmarkInput {
-    fn into(self) -> entities::bookmark::Model {
+impl From<SyncBookmarkInput> for entities::bookmark::Model {
+    fn from(val: SyncBookmarkInput) -> Self {
         entities::bookmark::Model {
-            identifier: self.identifier,
-            title: self.title,
-            url: self.url,
-            tag: self.tag,
-            created_at: self.created_at.parse().unwrap(),
-            updated_at: self.updated_at.parse().unwrap(),
-            workspace_identifier: self.workspace_identifier,
+            identifier: val.identifier,
+            title: val.title,
+            url: val.url,
+            tag: val.tag,
+            created_at: val.created_at.parse().unwrap(),
+            updated_at: val.updated_at.parse().unwrap(),
+            workspace_identifier: val.workspace_identifier,
         }
     }
 }

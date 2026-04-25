@@ -7,8 +7,7 @@ use crate::{
     response::ApiResponseBuilder,
     routes::{
         app::public_routes,
-        auth::authentication_routes, /* notification::notification_routes*/
-        users::user_routes,
+        auth::authentication_routes,
         // wait_list::wait_list_routes,
     },
     services::{

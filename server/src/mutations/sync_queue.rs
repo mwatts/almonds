@@ -16,7 +16,7 @@ pub struct SyncQueue;
 impl SyncQueue {
     async fn sync_queue(ctx: &Context<'_>, input: DataQueue) -> async_graphql::Result<bool> {
         let req_ctx = extract_request_context(ctx)?;
-        let app_config = AppConfig::from_env()?;
+        let _app_config = AppConfig::from_env()?;
 
         let filtered = filter_stale_items(req_ctx.db_conn, input).await?;
 
@@ -98,7 +98,7 @@ fn resolve_to_entity(item: &almond_kernel::entities::sync_queue::Model) -> Entit
     }
 }
 
-fn resolve_delta<T>(upstream: T, downstream: T) -> Option<T>
+fn resolve_delta<T>(_upstream: T, _downstream: T) -> Option<T>
 where
     T: EntityTrait + ColumnTrait,
 {
