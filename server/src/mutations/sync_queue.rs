@@ -1,6 +1,5 @@
 use almond_kernel::entities;
-use almond_kernel::sync_engine::{DataQueue, SyncEngine, SyncEngineTrait};
-use rayon::prelude::*;
+use almond_kernel::sync_engine::DataQueue;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, FromQueryResult, Statement};
 use seaography::{
     async_graphql::{self, Context},
@@ -13,19 +12,6 @@ use crate::{
 
 pub struct SyncQueue;
 
-impl SyncQueue {
-    async fn sync_engine(
-        db: DatabaseConnection,
-        api_url: &str,
-        api_key: &str,
-        resource_path: &str,
-    ) -> Result<SyncEngine, AppError> {
-        SyncEngine::new(db, api_url, api_key, resource_path)
-            .await
-            .map_err(|err| AppError::InternalError(err.to_string()))
-    }
-}
-
 #[CustomFields]
 impl SyncQueue {
     async fn sync_queue(ctx: &Context<'_>, input: DataQueue) -> async_graphql::Result<bool> {
@@ -37,19 +23,6 @@ impl SyncQueue {
         if filtered.is_empty() {
             return Ok(true);
         }
-
-        let sync_engine = Self::sync_engine(
-            req_ctx.db_conn.to_owned(),
-            &app_config.base_url,
-            req_ctx.api_key,
-            &app_config.graphql_endpoint,
-        )
-        .await?;
-
-        sync_engine
-            .sync(filtered)
-            .await
-            .map_err(|err| AppError::InternalError(err.to_string()))?;
 
         Ok(true)
     }

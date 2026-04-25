@@ -1,6 +1,9 @@
 pub mod adapters;
 pub mod data_engine;
 pub mod entities;
+
+#[cfg(feature = "sync_engine")]
+pub mod types;
 #[cfg(feature = "sqlite")]
 pub mod enums;
 pub mod error;
