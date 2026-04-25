@@ -37,7 +37,19 @@ pub fn schema_builder(
     builder = register_entity_modules(builder);
     builder = register_active_enums(builder);
 
-    seaography::register_custom_inputs!(builder, [types::bookmark::SyncBookmarkInput,]);
+    seaography::register_custom_inputs!(
+        builder,
+        [
+            types::bookmark::SyncBookmarkInput,
+            types::note::SyncNoteInput,
+            types::snippet::SyncSnippetInput,
+            types::todo::SyncTodoInput,
+            types::reminder::SyncReminderInput,
+            types::workspace::SyncWorkspaceInput,
+            // types::recycle_bin::SyncRecycleBinInput,
+            types::user_preference::SyncUserPreferenceInput,
+        ]
+    );
 
     seaography::register_custom_outputs!(builder, [almond_kernel::sync_engine::EntitySyncResult,]);
 
