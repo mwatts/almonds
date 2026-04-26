@@ -8,6 +8,7 @@ use super::sea_orm_active_enums::Priority;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "todo")]
 #[serde(rename_all = "camelCase")]
+// #[boltffi::data]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub identifier: Uuid,

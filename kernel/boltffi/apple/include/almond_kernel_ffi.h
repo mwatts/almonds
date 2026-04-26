@@ -28,28 +28,21 @@ static inline uint64_t boltffi_atomic_u64_load(const volatile uint64_t* target) 
 }
 
 
-// ___CreateConversationHistory: internal repr(C) layout for CreateConversationHistory.
-// The ___ prefix marks this as an FFI-private type — foreign wrappers
-// generate their own native struct and read/write through this layout.
-typedef struct {
-    bool bookmarked;
-} ___CreateConversationHistory;
-typedef int32_t ___BookmarkTag;
-#define ___BookmarkTag_Development 0
-#define ___BookmarkTag_Inspiration 1
-#define ___BookmarkTag_Design 2
-#define ___BookmarkTag_Research 3
-typedef int32_t ___RecycleBinItemType;
-#define ___RecycleBinItemType_Todo 0
-#define ___RecycleBinItemType_Note 1
-#define ___RecycleBinItemType_Reminder 2
-#define ___RecycleBinItemType_Snippet 3
-#define ___RecycleBinItemType_Bookmark 4
-#define ___RecycleBinItemType_Workspace 5
-typedef int32_t ___TodoPriority;
-#define ___TodoPriority_High 0
-#define ___TodoPriority_Medium 1
-#define ___TodoPriority_Low 2
+typedef int32_t ___ItemType;
+#define ___ItemType_Todo 0
+#define ___ItemType_Note 1
+#define ___ItemType_Reminder 2
+#define ___ItemType_Snippet 3
+#define ___ItemType_Bookmark 4
+typedef int32_t ___Priority;
+#define ___Priority_High 0
+#define ___Priority_Medium 1
+#define ___Priority_Low 2
+typedef int32_t ___Tag;
+#define ___Tag_Development 0
+#define ___Tag_Inspiration 1
+#define ___Tag_Design 2
+#define ___Tag_Research 3
 
 void boltffi_free_string(FfiString s);
 void boltffi_free_buf(FfiBuf_u8 buf);

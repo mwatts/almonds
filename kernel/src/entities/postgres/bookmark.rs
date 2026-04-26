@@ -8,6 +8,8 @@ use super::sea_orm_active_enums::Tag;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "bookmark")]
 #[serde(rename_all = "camelCase")]
+#[boltffi::data]
+#[boltffi::name("Bookmark")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub identifier: Uuid,

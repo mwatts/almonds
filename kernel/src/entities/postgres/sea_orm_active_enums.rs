@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "item_type")]
+#[boltffi::data]
 pub enum ItemType {
     #[sea_orm(string_value = "todo")]
     Todo,
@@ -19,6 +20,7 @@ pub enum ItemType {
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "priority")]
+#[boltffi::data]
 pub enum Priority {
     #[sea_orm(string_value = "high")]
     High,
@@ -29,6 +31,7 @@ pub enum Priority {
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "tag")]
+#[boltffi::data]
 pub enum Tag {
     #[sea_orm(string_value = "development")]
     Development,

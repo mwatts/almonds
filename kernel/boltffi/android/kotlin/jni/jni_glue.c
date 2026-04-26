@@ -1,11 +1,12 @@
 #include <jni.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <stdatomic.h>
-#include <almond_kernel.h>
+#include <almond_kernel_ffi.h>
 
 static inline bool boltffi_exception_pending(JNIEnv* env) {
     return (*env)->ExceptionCheck(env);
@@ -36,6 +37,16 @@ static inline void boltffi_throw_runtime(JNIEnv* env, const char* message) {
     if (exception_class == NULL) return;
     (*env)->ThrowNew(env, exception_class, message);
     (*env)->DeleteLocalRef(env, exception_class);
+}
+
+static inline void boltffi_throw_status(JNIEnv* env, FfiStatus status, const char* fallback_message) {
+    if (status.code == 3) {
+        boltffi_throw_illegal_argument(env, "invalid argument");
+    } else if (status.code == 4) {
+        boltffi_throw_runtime(env, "operation cancelled");
+    } else {
+        boltffi_throw_runtime(env, fallback_message);
+    }
 }
 
 static inline bool boltffi_try_jlong_to_usize(jlong value, uintptr_t* out_value) {
@@ -112,7 +123,7 @@ static inline jlong boltffi_jvm_callback_handle_clone(
 static inline jbyteArray boltffi_buf_to_jbytearray(JNIEnv* env, FfiBuf_u8 buf) {
     if (buf.ptr == NULL) {
         if (buf.len != 0) {
-            boltffi_throw_out_of_memory(env, "BoltFFI buffer pointer was null");
+            boltffi_throw_runtime(env, "BoltFFI buffer pointer was null with non-zero length");
         }
         return NULL;
     }
@@ -141,9 +152,176 @@ static inline jbyteArray boltffi_status_buf_to_jbytearray(JNIEnv* env, FfiStatus
         if (buf.ptr != NULL) {
             boltffi_free_buf(buf);
         }
+        boltffi_throw_status(env, status, "ffi call failed");
         return NULL;
     }
     return boltffi_buf_to_jbytearray(env, buf);
+}
+
+static inline uint32_t boltffi_le_u32(const uint8_t* bytes) {
+    return
+        ((uint32_t)bytes[0]) |
+        ((uint32_t)bytes[1] << 8) |
+        ((uint32_t)bytes[2] << 16) |
+        ((uint32_t)bytes[3] << 24);
+}
+
+static inline jstring boltffi_utf8_buf_to_jstring(JNIEnv* env, FfiBuf_u8 buf) {
+    if (buf.ptr == NULL) {
+        if (buf.len != 0) {
+            boltffi_throw_runtime(env, "BoltFFI string buffer pointer was null with non-zero length");
+        }
+        return NULL;
+    }
+    if (buf.len < 4) {
+        boltffi_free_buf(buf);
+        boltffi_throw_runtime(env, "BoltFFI string buffer missing length prefix");
+        return NULL;
+    }
+
+    const uint8_t* bytes = (const uint8_t*)buf.ptr;
+    size_t payload_len = (size_t)boltffi_le_u32(bytes);
+    if (payload_len > buf.len - 4) {
+        boltffi_free_buf(buf);
+        boltffi_throw_runtime(env, "BoltFFI string buffer length prefix exceeded payload");
+        return NULL;
+    }
+    if (payload_len == 0) {
+        boltffi_free_buf(buf);
+        return (*env)->NewString(env, NULL, 0);
+    }
+    if (payload_len > (size_t)INT32_MAX) {
+        boltffi_free_buf(buf);
+        boltffi_throw_out_of_memory(env, "BoltFFI string too large for Java string");
+        return NULL;
+    }
+
+    const uint8_t* utf8 = bytes + 4;
+    jchar stack_chars[64];
+    jchar* chars = stack_chars;
+    if (payload_len > sizeof(stack_chars) / sizeof(stack_chars[0])) {
+        chars = (jchar*)malloc(payload_len * sizeof(jchar));
+        if (chars == NULL) {
+            boltffi_free_buf(buf);
+            boltffi_throw_out_of_memory(env, "Failed to allocate Java string buffer");
+            return NULL;
+        }
+    }
+
+    size_t in_pos = 0;
+    size_t out_pos = 0;
+    bool invalid_utf8 = false;
+    while (in_pos < payload_len) {
+        uint8_t b0 = utf8[in_pos];
+        if (b0 < 0x80) {
+            chars[out_pos++] = (jchar)b0;
+            in_pos += 1;
+            continue;
+        }
+
+        uint32_t codepoint = 0;
+        if ((b0 & 0xE0) == 0xC0) {
+            if (in_pos + 1 >= payload_len) {
+                invalid_utf8 = true;
+                break;
+            }
+            uint8_t b1 = utf8[in_pos + 1];
+            if ((b1 & 0xC0) != 0x80) {
+                invalid_utf8 = true;
+                break;
+            }
+            codepoint = ((uint32_t)(b0 & 0x1F) << 6) | (uint32_t)(b1 & 0x3F);
+            if (codepoint < 0x80) {
+                invalid_utf8 = true;
+                break;
+            }
+            chars[out_pos++] = (jchar)codepoint;
+            in_pos += 2;
+            continue;
+        }
+
+        if ((b0 & 0xF0) == 0xE0) {
+            if (in_pos + 2 >= payload_len) {
+                invalid_utf8 = true;
+                break;
+            }
+            uint8_t b1 = utf8[in_pos + 1];
+            uint8_t b2 = utf8[in_pos + 2];
+            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80) {
+                invalid_utf8 = true;
+                break;
+            }
+            codepoint =
+                ((uint32_t)(b0 & 0x0F) << 12) |
+                ((uint32_t)(b1 & 0x3F) << 6) |
+                (uint32_t)(b2 & 0x3F);
+            if (codepoint < 0x800 || (codepoint >= 0xD800 && codepoint <= 0xDFFF)) {
+                invalid_utf8 = true;
+                break;
+            }
+            chars[out_pos++] = (jchar)codepoint;
+            in_pos += 3;
+            continue;
+        }
+
+        if ((b0 & 0xF8) == 0xF0) {
+            if (in_pos + 3 >= payload_len) {
+                invalid_utf8 = true;
+                break;
+            }
+            uint8_t b1 = utf8[in_pos + 1];
+            uint8_t b2 = utf8[in_pos + 2];
+            uint8_t b3 = utf8[in_pos + 3];
+            if ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80 || (b3 & 0xC0) != 0x80) {
+                invalid_utf8 = true;
+                break;
+            }
+            codepoint =
+                ((uint32_t)(b0 & 0x07) << 18) |
+                ((uint32_t)(b1 & 0x3F) << 12) |
+                ((uint32_t)(b2 & 0x3F) << 6) |
+                (uint32_t)(b3 & 0x3F);
+            if (codepoint < 0x10000 || codepoint > 0x10FFFF) {
+                invalid_utf8 = true;
+                break;
+            }
+            uint32_t surrogate = codepoint - 0x10000;
+            chars[out_pos++] = (jchar)(0xD800 + (surrogate >> 10));
+            chars[out_pos++] = (jchar)(0xDC00 + (surrogate & 0x3FF));
+            in_pos += 4;
+            continue;
+        }
+
+        invalid_utf8 = true;
+        break;
+    }
+
+    jstring result = NULL;
+    if (!invalid_utf8) {
+        if (out_pos > (size_t)INT32_MAX) {
+            boltffi_throw_out_of_memory(env, "BoltFFI string too large for Java string");
+        } else {
+            result = (*env)->NewString(env, chars, (jsize)out_pos);
+        }
+    }
+
+    if (chars != stack_chars) {
+        free(chars);
+    }
+    boltffi_free_buf(buf);
+
+    if (invalid_utf8) {
+        char message[96];
+        snprintf(
+            message,
+            sizeof(message),
+            "BoltFFI string buffer contained invalid UTF-8 at byte offset %zu",
+            in_pos
+        );
+        boltffi_throw_runtime(env, message);
+        return NULL;
+    }
+    return result;
 }
 
 static inline bool boltffi_lookup_static_method(
@@ -270,7 +448,7 @@ static inline void boltffi_static_call_cache_reset(JNIEnv* env, BoltFFIStaticCal
     atomic_store_explicit(&cache->state, BOLTFFI_STATIC_CALL_CACHE_UNINIT, memory_order_release);
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_example_almond_1kernel_Native_boltffi_1last_1error_1message(JNIEnv *env, jclass cls) {
+JNIEXPORT jbyteArray JNICALL Java_com_example_almond_1kernel_1ffi_Native_boltffi_1last_1error_1message(JNIEnv *env, jclass cls) {
     FfiString out = { 0 };
     FfiStatus status = boltffi_last_error_message(&out);
     if (status.code != 0 || out.ptr == NULL || out.len == 0) {
