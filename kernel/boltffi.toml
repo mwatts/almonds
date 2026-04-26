@@ -6,16 +6,16 @@ global_args = []
 [cargo.command_args]
 
 [package]
-name = "almond_kernel"
+name = "almond_kernel_ffi"
 
 [targets.apple]
 enabled = true
-output = "ffi/apple"
+output = "dist/apple"
 deployment_target = "16.0"
 include_macos = false
 
 [targets.apple.swift]
-module_name = "AlmondKernel"
+module_name = "AlmondKernelFfi"
 tools_version = "5.9"
 error_style = "throwing"
 
@@ -30,13 +30,18 @@ distribution = "local"
 layout = "ffi-only"
 skip_package_swift = false
 
+[targets.apple.debug_symbols]
+enabled = false
+format = "zip"
+bundle = "unstripped"
+
 [targets.android]
 enabled = true
-output = "ffi/android"
+output = "dist/android"
 min_sdk = 24
 
 [targets.android.kotlin]
-package = "com.example.almond_kernel"
+package = "com.example.almond_kernel_ffi"
 api_style = "top_level"
 error_style = "throwing"
 factory_style = "constructors"
@@ -47,24 +52,48 @@ factory_style = "constructors"
 
 [targets.android.pack]
 
+[targets.android.debug_symbols]
+enabled = false
+format = "zip"
+bundle = "unstripped"
+
 [targets.wasm]
 enabled = true
 triple = "wasm32-unknown-unknown"
 profile = "release"
-output = "ffi/wasm"
+output = "dist/wasm"
 
 [targets.wasm.optimize]
 
 [targets.wasm.typescript.type_mappings]
 
 [targets.wasm.npm]
-package_name = "almond-kernel"
 
 [targets.java.jvm]
 enabled = false
 output = "dist/java"
+strip_symbols = false
+
+[targets.java.jvm.debug_symbols]
+enabled = false
+format = "zip"
+bundle = "unstripped"
 
 [targets.java.android]
 enabled = false
 output = "dist/java/android"
 min_sdk = 24
+
+[targets.dart]
+output = "dist/dart"
+enabled = false
+
+[targets.python]
+output = "dist/python"
+enabled = false
+
+[targets.python.wheel]
+
+[targets.csharp]
+output = "dist/csharp"
+enabled = false

@@ -6,6 +6,8 @@ edition = "2024"
 [workspace]
 members = [".", "migration"]
 
+[lib]
+crate-type = ["staticlib"]
 
 
 [features]
@@ -48,6 +50,8 @@ thiserror = "2.0.18"
 tokio = { version = "1.50.0", features = ["full"] }
 uuid = { version = "1.21.0", features = ["v4"] }
 validator = { version = "0.20.0", features = ["derive"] }
+diplomat = "0.10.0"
+diplomat-runtime = "0.10.0"
 
 [dependencies.seaography]
 version = "~2.0.0-rc.8" 

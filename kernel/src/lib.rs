@@ -20,3 +20,13 @@ mod sync_queue_query;
 pub use sea_orm;
 
 pub use migration;
+
+
+
+#[diplomat::bridge]
+mod ffi {
+
+    pub use super::entities::bookmark::Model as BookmarkModel;
+    // pub use repositories::*;
+
+}
