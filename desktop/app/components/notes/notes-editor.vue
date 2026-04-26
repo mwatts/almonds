@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { marked } from "marked";
 import { Domternal } from "@domternal/vue";
+import DOMPurify from "dompurify";
+import { Details } from "@domternal/extension-details";
+import { CodeBlockLowlight } from "@domternal/extension-code-block-lowlight";
+import { createLowlight, common } from 'lowlight';
 import {
   StarterKit,
   BubbleMenu,
@@ -21,7 +25,7 @@ import {
 
 const colorMode = useColorMode();
 const isDark = computed(() => colorMode.value === "dark");
-
+const lowlight = createLowlight(common);
 const dmVars = computed(() =>
   isDark.value
     ? {
@@ -48,9 +52,11 @@ const extensions = [
   Superscript,
   Subscript,
   Text,
+  Details,
   TextStyle,
   Code,
   TextAlign,
+  CodeBlockLowlight.configure({ lowlight }),
   Emoji.configure({
     emojis,
     suggestion: { render: createEmojiSuggestionRenderer() },
@@ -83,12 +89,12 @@ const initialContent = computed(() => {
 });
 
 function handleUpdate({ editor }: { editor: any }) {
-  model.value = editor.getHTML();
+  model.value = DOMPurify.sanitize(editor.getHTML());
 }
 </script>
 
 <template>
-  <div :class="{ 'dm-theme-dark': isDark}" :style="dmVars" class="h-full">
+  <div :class="{ 'dm-theme-dark': isDark }" :style="dmVars" class="h-full">
     <Domternal
       :extensions="extensions"
       :content="initialContent"
