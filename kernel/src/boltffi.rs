@@ -181,10 +181,8 @@ pub mod priority_enum_ffi {
     );
 }
 
-
-
 pub mod models_ffi {
-    use boltffi::{custom_ffi, CustomFfiConvertible};
+    use boltffi::{CustomFfiConvertible, custom_ffi};
 
     use crate::entities::note_categories::Model as NoteCategoryModel;
     use crate::entities::notes::Model as NoteModel;
@@ -222,8 +220,6 @@ pub mod models_ffi {
     impl_ffi_passthrough!(TodoModel);
     impl_ffi_passthrough!(UserPreferenceModel);
 }
-
-
 
 // pub mod models_ffi {
 //     use boltffi::{custom_ffi, CustomFfiConvertible};

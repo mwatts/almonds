@@ -86,6 +86,8 @@ db-clean:
 		--database-url {{POSTGRES_URL}} \
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
+		--model-extra-attributes 'boltffi::data' \
+		--enum-extra-attributes 'boltffi::data' \
 		-o src/entities/postgres \
 		--seaography
 
