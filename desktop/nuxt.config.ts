@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: ["@/assets/css/main.css", "highlight.js/styles/atom-one-dark.css"],
+  css: [ "highlight.js/styles/atom-one-dark.css", "@domternal/theme", "@/assets/css/main.css",],
   ssr: false,
   modules: [
     // "@nuxt/a11y",

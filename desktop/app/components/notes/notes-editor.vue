@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import "@domternal/theme";
 import { Domternal } from "@domternal/vue";
 import {
   StarterKit,
@@ -22,13 +21,16 @@ import {
 const colorMode = useColorMode();
 const isDark = computed(() => colorMode.value === "dark");
 
-const dmAccentVars = computed(() =>
+const dmVars = computed(() =>
   isDark.value
     ? {
         "--dm-accent": "var(--color-accent-400)",
         "--dm-accent-hover": "var(--color-accent-300)",
         "--dm-accent-surface":
           "color-mix(in srgb, var(--color-accent-400) 15%, transparent)",
+        "--dm-bg": "var(--color-surface-900)",
+        "--dm-surface": "var(--color-surface-800)",
+        "--dm-border-color": "var(--color-surface-700)",
       }
     : {
         "--dm-accent": "var(--color-accent-500)",
@@ -72,15 +74,15 @@ function handleUpdate({ editor }: { editor: any }) {
 </script>
 
 <template>
-  <Domternal
-    :extensions="extensions"
-    :content="model ?? ''"
-    :on-update="handleUpdate"
-    :class="isDark ? 'dm-theme-dark' : ''"
-    :style="dmAccentVars"
-  >
-    <Domternal.Toolbar class="-mt-5" />
-    <Domternal.Content class="bg-transparent" />
-    <Domternal.BubbleMenu class="" />
-  </Domternal>
+  <div :class="{ 'dm-theme-dark': isDark}" :style="dmVars" class="h-full">
+    <Domternal
+      :extensions="extensions"
+      :content="model ?? ''"
+      :on-update="handleUpdate"
+    >
+      <Domternal.Toolbar class="-mt-5" />
+      <Domternal.Content class="bg-transparent" />
+      <Domternal.BubbleMenu class="" />
+    </Domternal>
+  </div>
 </template>
