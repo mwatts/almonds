@@ -1,10 +1,15 @@
 {
   "words": [
+    "Domternal",
+    "highlightjs",
+    "iconify",
     "lucide",
     "rgba",
+    "scule",
+    "seaography",
+    "shiki",
     "tauri",
-    "thiserror",
-    "seaography"
+    "thiserror"
   ],
   "userWords": [
     "Nuxt",

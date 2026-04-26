@@ -13,12 +13,20 @@ const noteStore = useNoteStore();
 
 const preview = computed(() => {
   const stripped = props.content
-    .replace(/#{1,6}\s+/g, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/\*(.+?)\*/g, "$1")
-    .replace(/`{1,3}[^`]*`{1,3}/g, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
     .replace(/\[(.+?)\]\(.+?\)/g, "$1")
+    .replace(/`{3}[\s\S]*?`{3}/g, "")
+    .replace(/`[^`]+`/g, "")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/_(.+?)_/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/~~(.+?)~~/g, "$1")
+    .replace(/^[-*_]{3,}$/gm, "")
+    .replace(/^\d+\.\s+/gm, "")
     .replace(/^[-*>]\s+/gm, "")
+    .replace(/<[^>]+>/g, "")
     .replace(/\n+/g, " ")
     .trim();
   return stripped.length > 120 ? stripped.slice(0, 120) + "…" : stripped;
