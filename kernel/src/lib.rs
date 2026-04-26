@@ -20,4 +20,3 @@ mod sync_queue_query;
 pub use sea_orm;
 
 pub use migration;
-
