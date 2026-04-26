@@ -9,6 +9,7 @@ pub mod repositories;
 pub mod types;
 pub mod utils;
 pub use data_engine::DataEngine;
+pub mod boltffi;
 #[cfg(feature = "markdown2pdf")]
 pub mod markdown2pdf;
 #[cfg(feature = "sync_engine")]
@@ -19,4 +20,3 @@ mod sync_queue_query;
 pub use sea_orm;
 
 pub use migration;
-pub mod boltffi;
