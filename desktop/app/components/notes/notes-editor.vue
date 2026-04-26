@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import "@domternal/theme";
 import { Domternal } from "@domternal/vue";
 import {
   StarterKit,
@@ -18,14 +19,24 @@ import {
   createEmojiSuggestionRenderer,
 } from "@domternal/extension-emoji";
 
-// const content = defineModel<string>({ required: true });
-// const { content } = defineProps({
-//   content: {
-//     type: String,
-//     required: true,
-//   },
-// });
-// const emit = defineEmits(["update:modelValue"]);
+const colorMode = useColorMode();
+const isDark = computed(() => colorMode.value === "dark");
+
+const dmAccentVars = computed(() =>
+  isDark.value
+    ? {
+        "--dm-accent": "var(--color-accent-400)",
+        "--dm-accent-hover": "var(--color-accent-300)",
+        "--dm-accent-surface":
+          "color-mix(in srgb, var(--color-accent-400) 15%, transparent)",
+      }
+    : {
+        "--dm-accent": "var(--color-accent-500)",
+        "--dm-accent-hover": "var(--color-accent-600)",
+        "--dm-accent-surface":
+          "color-mix(in srgb, var(--color-accent-500) 10%, transparent)",
+      },
+);
 
 const extensions = [
   StarterKit,
@@ -65,9 +76,11 @@ function handleUpdate({ editor }: { editor: any }) {
     :extensions="extensions"
     :content="model ?? ''"
     :on-update="handleUpdate"
+    :class="isDark ? 'dm-theme-dark' : ''"
+    :style="dmAccentVars"
   >
     <Domternal.Toolbar class="-mt-5" />
-    <Domternal.Content class="bg-transparent dark:dm-theme-auto" />
+    <Domternal.Content class="bg-transparent" />
     <Domternal.BubbleMenu class="" />
   </Domternal>
 </template>
