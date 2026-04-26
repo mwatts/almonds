@@ -3,6 +3,9 @@ name = "almond_kernel"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+crate-type = ["staticlib"]
+
 [workspace]
 members = [".", "migration"]
 
@@ -17,6 +20,7 @@ sync_engine = ["dep:graphql-ws-client", "dep:graphql_client"]
 [dependencies]
 argon2 = "0.5"
 async-trait = "0.1.89"
+boltffi = { version = "0.24.1", features = ["chrono"] }
 chrono = { version = "0.4", features = ["serde"] }
 dirs = { version = "6.0.0", optional = true }
 futures = "0.3.32"
@@ -60,3 +64,6 @@ optional = true
 [dev-dependencies]
 fake = "4.4.0"
 lazy_static = "1.5.0"
+
+[build-dependencies]
+boltffi="0.1"

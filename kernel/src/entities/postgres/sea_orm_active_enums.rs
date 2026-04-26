@@ -2,8 +2,9 @@
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-
+use boltffi::*;
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[data]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "item_type")]
 pub enum ItemType {
     #[sea_orm(string_value = "todo")]
@@ -18,6 +19,7 @@ pub enum ItemType {
     Bookmark,
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[data]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "priority")]
 pub enum Priority {
     #[sea_orm(string_value = "high")]
@@ -29,6 +31,7 @@ pub enum Priority {
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "tag")]
+#[data]
 pub enum Tag {
     #[sea_orm(string_value = "development")]
     Development,

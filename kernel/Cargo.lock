@@ -66,6 +66,8 @@ version = "0.1.0"
 dependencies = [
  "argon2",
  "async-trait",
+ "boltffi 0.1.1",
+ "boltffi 0.24.1",
  "chrono",
  "dirs 6.0.0",
  "fake",
@@ -708,6 +710,85 @@ dependencies = [
  "futures-io",
  "futures-lite",
  "piper",
+]
+
+[[package]]
+name = "boltffi"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "566f6f6a1f039c7360e489ef2543d9df82f19af08c3e2c96cae203b911b63ea5"
+dependencies = [
+ "boltffi_core 0.1.1",
+ "boltffi_macros 0.1.1",
+]
+
+[[package]]
+name = "boltffi"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfad35cda498538f3347ecd48e55d129c149f0c661b295615360c3319edfab61"
+dependencies = [
+ "boltffi_core 0.24.1",
+ "boltffi_macros 0.24.1",
+]
+
+[[package]]
+name = "boltffi_core"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b46e44738e1351af4ce884a569da0928144594ce4fd598c22ef2aeb68f6768bc"
+dependencies = [
+ "boltffi_macros 0.1.1",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "boltffi_core"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4072be97bd3c2aa23d5318692133d33191e2c9f9708f6a618cb5228a9a2150ff"
+dependencies = [
+ "boltffi_macros 0.24.1",
+ "chrono",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "boltffi_ffi_rules"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cedeaa3afa513ef733faf58d5870ffb959f7f9acbe118d43694bb475c6603a2"
+
+[[package]]
+name = "boltffi_ffi_rules"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6140296f842dfa6fd7f69992be0f178ab894597145fd0d6e4ef6087f6b5ca847"
+
+[[package]]
+name = "boltffi_macros"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b673014b1698241690518424227fbd10c054960b7a478b2db95adbf1d4937904"
+dependencies = [
+ "boltffi_ffi_rules 0.1.1",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.116",
+]
+
+[[package]]
+name = "boltffi_macros"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a96f0bcff6047fc772a0f3826e8091a7884056010d22febf0cb8c9348716b749"
+dependencies = [
+ "boltffi_ffi_rules 0.24.1",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.116",
 ]
 
 [[package]]
