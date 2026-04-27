@@ -5,11 +5,10 @@ use serde::{Deserialize, Serialize};
 
 use super::sea_orm_active_enums::Tag;
 
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize, ts_rs :: TS)]
 #[sea_orm(table_name = "bookmark")]
 #[serde(rename_all = "camelCase")]
-#[boltffi::data]
-#[boltffi::name("Bookmark")]
+#[ts(export, export_to = "bookmark.ts")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub identifier: Uuid,

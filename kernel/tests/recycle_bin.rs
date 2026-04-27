@@ -6,10 +6,8 @@ use fake::{Fake, faker::lorem::en::Paragraph};
 use uuid::Uuid;
 
 use almond_kernel::{
-    adapters::{
-        meta::RequestMeta,
-        recycle_bin::{CreateRecycleBinEntry, RecycleBinItemType},
-    },
+    adapters::{meta::RequestMeta, recycle_bin::CreateRecycleBinEntry},
+    enums::ItemType as RecycleBinItemType,
     error::KernelError,
     repositories::prelude::RecycleBinRepositoryExt,
 };

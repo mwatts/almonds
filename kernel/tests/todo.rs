@@ -11,8 +11,9 @@ use fake::{
 use almond_kernel::{
     adapters::{
         meta::RequestMeta,
-        todo::{CreateTodo, TodoPriority, UpdateTodo},
+        todo::{CreateTodo, UpdateTodo},
     },
+    enums::Priority as TodoPriority,
     error::KernelError,
     repositories::prelude::TodoRepositoryExt,
 };

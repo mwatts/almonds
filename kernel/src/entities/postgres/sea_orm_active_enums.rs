@@ -3,9 +3,11 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
+)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "item_type")]
-#[boltffi::data]
+#[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum ItemType {
     #[sea_orm(string_value = "todo")]
     Todo,
@@ -18,9 +20,11 @@ pub enum ItemType {
     #[sea_orm(string_value = "bookmark")]
     Bookmark,
 }
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
+)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "priority")]
-#[boltffi::data]
+#[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum Priority {
     #[sea_orm(string_value = "high")]
     High,
@@ -29,9 +33,11 @@ pub enum Priority {
     #[sea_orm(string_value = "low")]
     Low,
 }
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
+)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "tag")]
-#[boltffi::data]
+#[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum Tag {
     #[sea_orm(string_value = "development")]
     Development,
