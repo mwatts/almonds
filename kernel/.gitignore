@@ -19,3 +19,6 @@ almond*.db
 
 
 almond.db
+
+
+node_modules

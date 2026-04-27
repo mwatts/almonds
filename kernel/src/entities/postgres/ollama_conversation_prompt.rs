@@ -3,10 +3,10 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize, ts_rs :: TS)]
 #[sea_orm(table_name = "ollama_conversation_prompt")]
 #[serde(rename_all = "camelCase")]
-// #[boltffi::data]
+#[ts(export, export_to = "ollama_conversation_prompt.ts")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub identifier: Uuid,

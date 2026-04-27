@@ -86,11 +86,15 @@ db-clean:
 		--database-url {{POSTGRES_URL}} \
 		--with-serde both \
 		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		--model-extra-attributes 'boltffi::data' \
-		--enum-extra-attributes 'boltffi::data' \
+		--model-extra-derives 'ts_rs::TS' \
+		--model-extra-attributes 'ts(export)' \
+		--enum-extra-derives 'ts_rs::TS' \
+		--enum-extra-attributes 'ts(export)' \
 		-o src/entities/postgres \
 		--seaography
-
+	python3 ../scripts/fix-ts-exports.py src/entities/postgres
+	cargo test
+	
 # Pull schema and generate entities for MySQL using docker defaults (feature: mysql)
 [working-directory: 'kernel']
 @db-pull-mysql:

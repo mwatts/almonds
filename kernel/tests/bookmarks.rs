@@ -13,10 +13,11 @@ use fake::{
 
 use almond_kernel::{
     adapters::{
-        bookmarks::{BookmarkTag, CreateBookmark, UpdateBookmark},
+        bookmarks::{CreateBookmark, UpdateBookmark},
         meta::RequestMeta,
         workspace::CreateWorkspace,
     },
+    enums::Tag as BookmarkTag,
     error::KernelError,
     repositories::{
         bookmarks::BookmarkRepository,
