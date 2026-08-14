@@ -29,4 +29,4 @@ almonds/src-tauri/almond.dev.db
 prod.db
 backup.sql
 pgdump.sql
-desktop/src-tauri/almonds-pglite
+console/src-tauri/almonds-pglite

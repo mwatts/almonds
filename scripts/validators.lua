@@ -6,4 +6,4 @@ local function contains(t, value)
     return false
 end
 
-contains(directories, "desktop")
+contains(directories, "console")

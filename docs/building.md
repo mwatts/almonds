@@ -1,6 +1,6 @@
 # Building
 
-## Desktop
+## Console
 
 ```bash
 just build almond

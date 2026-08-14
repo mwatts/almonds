@@ -175,7 +175,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
             isOpen = false;
             searchInputRef?.blur();
           "
-        >
+        />
         <kbd
           v-if="!searchQuery"
           class="hidden sm:inline-flex items-center gap-0.5 text-[10px] text-gray-400 dark:text-gray-500 font-mono select-none"
@@ -218,13 +218,14 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
       <UTooltip text="Notifications">
         <UButton
+          v-if="!hideAuthGated"
           size="sm"
           color="neutral"
           class="cursor-pointer"
           variant="ghost"
           icon="heroicons:bell"
           aria-label="Notifications"
-          @click="navigateTo('/notifications')"
+          @click="() => navigateTo('/notifications')"
         />
       </UTooltip>
 

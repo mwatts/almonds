@@ -9,23 +9,23 @@ end
 
 local function lint(target)
   if target == "all" then
-    run("desktop", "npm run format")
-    run("desktop", "npm run lint:fix")
+    run("console", "npm run format")
+    run("console", "npm run lint:fix")
     run("kernel", "sh ../scripts/format")
     run("server", "sh ../scripts/format")
-    run("desktop/src-tauri", "sh ../../scripts/format")
-  elseif target == "desktop" then
-    run("desktop", "npm run format")
-    run("desktop", "npm run lint:fix")
+    run("console/src-tauri", "sh ../../scripts/format")
+  elseif target == "console" then
+    run("console", "npm run format")
+    run("console", "npm run lint:fix")
   elseif target == "kernel" then
     run("kernel", "sh ../scripts/format")
   elseif target == "server" then
     run("server", "sh ../scripts/format")
-  elseif target == "desktop-tauri" then
-    run("desktop/src-tauri", "sh ../../scripts/format")
+  elseif target == "console-tauri" then
+    run("console/src-tauri", "sh ../../scripts/format")
   else
     io.stderr:write("Unknown target: " .. target .. "\n")
-    io.stderr:write("Targets: all, desktop, kernel, server, desktop-tauri\n")
+    io.stderr:write("Targets: all, console, kernel, server, console-tauri\n")
     os.exit(1)
   end
 end
@@ -33,7 +33,7 @@ end
 local target = arg[1]
 if not target then
   io.stderr:write("Usage: lua lint.lua <target>\n")
-  io.stderr:write("Targets: all, desktop, kernel, server, desktop-tauri\n")
+  io.stderr:write("Targets: all, console, kernel, server, console-tauri\n")
   os.exit(1)
 end
 

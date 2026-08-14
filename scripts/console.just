@@ -1,34 +1,34 @@
 
 
 
-[working-directory:'desktop']
+[working-directory:'console']
 watch-frontend:
     npm run dev
 
-[working-directory:'desktop']
+[working-directory:'console']
 watch-tauri:
     npm run tauri dev
 
-[working-directory:'desktop']
-watch-desktop:
+[working-directory:'console']
+watch-console:
     npm run dev & npm run tauri dev
 
-[working-directory:'desktop']
-build-desktop:
+[working-directory:'console']
+build-console:
     npm run tauri build
 
 
-[working-directory:'desktop']
+[working-directory:'console']
 install-frontend-dependencies:
     npm install
 
 
-[working-directory:'desktop']
-test-desktop:
+[working-directory:'console']
+test-console:
     echo "TBD"
 
 
 
-[working-directory:'desktop/src-tauri']
+[working-directory:'console/src-tauri']
 test-tauri:
     echo "TBD"

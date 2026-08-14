@@ -16,9 +16,9 @@
 useSeoMeta({
   title: 'Almonds — Your Personal Workspace, Reimagined',
   description:
-    'A beautiful desktop app that unifies your notes, bookmarks, snippets, tasks, and local AI into one focused workspace. Free and open source.',
+    'A beautiful console app that unifies your notes, bookmarks, snippets, tasks, and local AI into one focused workspace. Free and open source.',
   ogTitle: 'Almonds — Your Personal Workspace, Reimagined',
   ogDescription:
-    'Notes, bookmarks, snippets, tasks, and local AI — all in one beautiful desktop app. Free, open source, privacy-first.',
+    'Notes, bookmarks, snippets, tasks, and local AI — all in one beautiful console app. Free, open source, privacy-first.',
 })
 </script>

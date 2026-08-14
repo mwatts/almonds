@@ -1,5 +1,5 @@
 local directories = {
-    "desktop", "kernel", "tauri", "server"
+    "console", "kernel", "tauri", "server"
 }
 
 

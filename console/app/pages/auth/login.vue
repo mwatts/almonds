@@ -53,9 +53,9 @@ async function handleSubmit() {
 <template>
   <div class="flex flex-col gap-5">
     <div class="flex flex-col gap-1">
-      <AppLeadingText >
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
         Welcome back
-      </AppLeadingText>
+      </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400">
         Sign in to your Almonds account to continue.
       </p>
@@ -120,5 +120,6 @@ async function handleSubmit() {
         Sign up
       </NuxtLink>
     </p>
+    
   </div>
 </template>

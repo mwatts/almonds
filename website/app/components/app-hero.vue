@@ -42,7 +42,7 @@
       class="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-slate-500 dark:text-slate-400"
     >
       Almonds unifies your notes, bookmarks, code snippets, tasks, and local AI
-      conversations into one beautiful desktop workspace.
+      conversations into one beautiful console workspace.
     </p>
 
     <!-- CTAs -->

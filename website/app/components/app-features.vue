@@ -17,7 +17,7 @@
         </h2>
         <p class="mt-5 text-base mx-auto max-w-xl text-slate-500 dark:text-slate-500">
           Stop juggling a dozen apps. Almonds brings every tool you need into a single,
-          distraction-free desktop experience.
+          distraction-free console experience.
         </p>
       </div>
 

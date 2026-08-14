@@ -1,6 +1,6 @@
 import 'scripts/kernel.just'
 import 'scripts/misc.just'
-import 'scripts/desktop.just'
+import 'scripts/console.just'
 import 'scripts/lint.just'
 import 'scripts/test.just'
 import 'scripts/server.just'
@@ -41,10 +41,10 @@ build target:
 lint target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
-		just lint-desktop
+		just lint-console
 		just lint-kernel
 		just lint-server
-		just lint-desktop-tauri
+		just lint-console-tauri
 	else
 		just lint-{{target}}
 	fi
@@ -53,10 +53,10 @@ lint target:
 test target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
-		just test-desktop
+		just test-console
 		just test-kernel
 		just test-server
-		just test-desktop-tauri
+		just test-console-tauri
 	else
 		just test-{{target}}
 	fi

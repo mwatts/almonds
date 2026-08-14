@@ -7,13 +7,13 @@ lint-kernel:
     sh ../scripts/format
 
 
-[working-directory:'desktop/src-tauri']
-lint-desktop-tauri:
+[working-directory:'console/src-tauri']
+lint-console-tauri:
     sh ../../scripts/format
 
 
-[working-directory:'desktop']
-lint-desktop:
+[working-directory:'console']
+lint-console:
     npm run format
     npm run lint:fix
 
