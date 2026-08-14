@@ -1,4 +1,4 @@
-use almond_kernel::{adapters::meta::RequestMeta, sea_orm::sea_query::prelude::Local};
+use lunar::{adapters::meta::RequestMeta, sea_orm::sea_query::prelude::Local};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -19,7 +19,7 @@ pub struct CreateSnippet {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<CreateSnippet> for almond_kernel::adapters::snippets::CreateSnippet {
+impl From<CreateSnippet> for lunar::adapters::snippets::CreateSnippet {
     fn from(snippet: CreateSnippet) -> Self {
         Self {
             title: snippet.title,
@@ -44,7 +44,7 @@ pub struct UpdateSnippet {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<UpdateSnippet> for almond_kernel::adapters::snippets::UpdateSnippet {
+impl From<UpdateSnippet> for lunar::adapters::snippets::UpdateSnippet {
     fn from(snippet: UpdateSnippet) -> Self {
         Self {
             title: snippet.title,

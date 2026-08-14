@@ -3,7 +3,7 @@ use serde::Serialize;
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
     #[error("{0}")]
-    Kernel(#[from] almond_kernel::error::KernelError),
+    Kernel(#[from] lunar::error::LunarError),
     #[error("IO error: {0}")]
     Io(String),
     #[error("Path error: {0}")]

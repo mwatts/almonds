@@ -1,5 +1,5 @@
-use almond_kernel::adapters::meta::RequestMeta;
-use almond_kernel::enums::Priority as TodoPriority;
+use lunar::adapters::meta::RequestMeta;
+use lunar::entities::sea_orm_active_enums::Priority as TodoPriority;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -12,7 +12,7 @@ pub struct CreateTodo {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<CreateTodo> for almond_kernel::adapters::todo::CreateTodo {
+impl From<CreateTodo> for lunar::adapters::todo::CreateTodo {
     fn from(t: CreateTodo) -> Self {
         use chrono::NaiveDate;
 
@@ -43,7 +43,7 @@ pub struct UpdateTodo {
     pub description: Option<String>,
 }
 
-impl From<UpdateTodo> for almond_kernel::adapters::todo::UpdateTodo {
+impl From<UpdateTodo> for lunar::adapters::todo::UpdateTodo {
     fn from(t: UpdateTodo) -> Self {
         Self {
             title: t.title,

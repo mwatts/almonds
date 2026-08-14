@@ -1,4 +1,4 @@
-use almond_kernel::{entities::sync_queue, repositories::sync_queue::SyncQueueRepositoryExt};
+use lunar::{entities::sync_queue, repositories::sync_queue::SyncQueueRepositoryExt};
 use tauri::State;
 use uuid::Uuid;
 

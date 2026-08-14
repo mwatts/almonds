@@ -1,4 +1,4 @@
-use almond_kernel::adapters::meta::RequestMeta;
+use lunar::adapters::meta::RequestMeta;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -11,7 +11,7 @@ pub struct CreateUserPreference {
 }
 
 impl From<CreateUserPreference>
-    for almond_kernel::adapters::workspace_preferences::CreateUserPreference
+    for lunar::adapters::workspace_preferences::CreateUserPreference
 {
     fn from(p: CreateUserPreference) -> Self {
         Self {
@@ -32,7 +32,7 @@ pub struct UpdateUserPreference {
 }
 
 impl From<UpdateUserPreference>
-    for almond_kernel::adapters::workspace_preferences::UpdateUserPreference
+    for lunar::adapters::workspace_preferences::UpdateUserPreference
 {
     fn from(p: UpdateUserPreference) -> Self {
         Self {

@@ -1,4 +1,4 @@
-use almond_kernel::{
+use lunar::{
     adapters::meta::RequestMeta,
     entities::notes,
     repositories::notes::NotesRepositoryExt,
@@ -139,7 +139,7 @@ pub async fn export_notes_as_pdf(
     let note_content = note.content;
     let note_title = note.title;
 
-    almond_kernel::markdown2pdf::parse_markdown_to_pdf(&note_content, &note_title)
+    lunar::markdown2pdf::parse_markdown_to_pdf(&note_content, &note_title)
         .map_err(|err| AppError::Io(err.to_string()))?;
 
     Ok(())

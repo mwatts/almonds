@@ -1,4 +1,4 @@
-use almond_kernel::{adapters::meta::RequestMeta, sea_orm::prelude::DateTimeWithTimeZone};
+use lunar::{adapters::meta::RequestMeta, sea_orm::prelude::DateTimeWithTimeZone};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -16,7 +16,7 @@ pub struct CreateReminder {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<CreateReminder> for almond_kernel::adapters::reminder::CreateReminder {
+impl From<CreateReminder> for lunar::adapters::reminder::CreateReminder {
     fn from(r: CreateReminder) -> Self {
         Self {
             title: r.title,
@@ -42,7 +42,7 @@ pub struct UpdateReminder {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<UpdateReminder> for almond_kernel::adapters::reminder::UpdateReminder {
+impl From<UpdateReminder> for lunar::adapters::reminder::UpdateReminder {
     fn from(r: UpdateReminder) -> Self {
         Self {
             title: r.title,

@@ -2,9 +2,9 @@ use std::io::BufReader;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
-use almond_kernel::adapters::meta::RequestMeta;
-use almond_kernel::repositories::reminder::ReminderRepositoryExt;
-use almond_kernel::repositories::workspace::WorkspaceRepositoryExt;
+use lunar::adapters::meta::RequestMeta;
+use lunar::repositories::reminder::ReminderRepositoryExt;
+use lunar::repositories::workspace::WorkspaceRepositoryExt;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_notification::NotificationExt;
 

@@ -1,7 +1,7 @@
-use almond_kernel::{
+use lunar::{
     adapters::meta::RequestMeta,
     entities::bookmark,
-    enums::Tag as BookmarkTag,
+    entities::sea_orm_active_enums::Tag as BookmarkTag,
     repositories::bookmarks::BookmarkRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };

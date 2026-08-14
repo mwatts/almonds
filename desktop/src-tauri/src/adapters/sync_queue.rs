@@ -9,7 +9,7 @@ pub struct AddSyncQueueEntry {
     pub created_at: String,
 }
 
-impl From<AddSyncQueueEntry> for almond_kernel::adapters::sync_queue::SyncQueueEntry {
+impl From<AddSyncQueueEntry> for lunar::adapters::sync_queue::SyncQueueEntry {
     fn from(entry: AddSyncQueueEntry) -> Self {
         Self {
             table_name: entry.table_name,

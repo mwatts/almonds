@@ -1,5 +1,5 @@
-use almond_kernel::{
-    adapters::meta::RequestMeta, entities::recycle_bin, enums::ItemType as RecycleBinItemType,
+use lunar::{
+    adapters::meta::RequestMeta, entities::recycle_bin, entities::sea_orm_active_enums::ItemType as RecycleBinItemType,
     repositories::recycle_bin::RecycleBinRepositoryExt,
 };
 use tauri::State;

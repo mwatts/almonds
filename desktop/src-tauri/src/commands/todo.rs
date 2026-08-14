@@ -1,7 +1,7 @@
-use almond_kernel::{
+use lunar::{
     adapters::meta::RequestMeta,
     entities::todo,
-    enums::Priority as TodoPriority,
+    entities::sea_orm_active_enums::Priority as TodoPriority,
     repositories::todo::TodoRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };

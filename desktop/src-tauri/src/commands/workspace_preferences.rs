@@ -1,4 +1,4 @@
-use almond_kernel::{
+use lunar::{
     adapters::meta::RequestMeta,
     entities::workspace_preferences,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},

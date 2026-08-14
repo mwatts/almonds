@@ -1,5 +1,5 @@
-use almond_kernel::adapters::meta::RequestMeta;
-use almond_kernel::enums::Tag as BookmarkTag;
+use lunar::adapters::meta::RequestMeta;
+use lunar::entities::sea_orm_active_enums::Tag as BookmarkTag;
 use sanitizer::prelude::*;
 use serde::Deserialize;
 use validator::Validate;
@@ -17,7 +17,7 @@ pub struct CreateBookmark {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<CreateBookmark> for almond_kernel::adapters::bookmarks::CreateBookmark {
+impl From<CreateBookmark> for lunar::adapters::bookmarks::CreateBookmark {
     fn from(b: CreateBookmark) -> Self {
         let tag = match b.tag.as_str() {
             "development" => BookmarkTag::Development,
@@ -47,7 +47,7 @@ pub struct UpdateBookmark {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<UpdateBookmark> for almond_kernel::adapters::bookmarks::UpdateBookmark {
+impl From<UpdateBookmark> for lunar::adapters::bookmarks::UpdateBookmark {
     fn from(b: UpdateBookmark) -> Self {
         let tag = b.tag.as_deref().map(|t| match t {
             "development" => BookmarkTag::Development,

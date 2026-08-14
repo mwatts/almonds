@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use almond_kernel::{
+use lunar::{
     repositories::{
         bookmarks::BookmarkRepository, notes::NotesRepository,
         notifications::NotificationRepository, prelude::*, recycle_bin::RecycleBinRepository,
         reminder::ReminderRepository, snippets::SnippetRepository, sync_queue::SyncQueueRepository,
-        todo::TodoRepository, user_preferences::UserPreferencesRepository,
+        sync_queue::SyncQueueRepositoryExt, todo::TodoRepository, user_preferences::UserPreferencesRepository,
         user_preferences::UserPreferencesRepositoryExt, workspace::WorkspaceRepository,
         workspace_preferences::WorkspacePreferenceRepository,
     },

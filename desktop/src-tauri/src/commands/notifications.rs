@@ -1,7 +1,7 @@
-use almond_kernel::{
+use lunar::{
     adapters::{meta::RequestMeta, notifications::CreateNotification},
     entities::notifications,
-    enums::NotificationType,
+    entities::sea_orm_active_enums::NotificationType,
     repositories::notifications::NotificationRepositoryExt,
 };
 use tauri::State;
