@@ -7,7 +7,6 @@ import { useAlarmScheduler } from "~/composables/useAlarmScheduler";
 import { useWorkspaceSetup } from "~/composables/useWorkspaceSetup";
 
 import "@domternal/theme";
-const { init } = useAccentColor();
 const { init: initFontSize } = useFontSize();
 const { init: initDarkTheme } = useDarkTheme();
 const { setupRequired, checkSetup, initializing } = useUserSetup();
@@ -22,7 +21,6 @@ useAlarmScheduler();
 const showWorkspaceLock = ref(false);
 
 onMounted(async () => {
-  init();
   initFontSize();
   initDarkTheme();
   await checkSetup();

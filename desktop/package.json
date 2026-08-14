@@ -24,6 +24,7 @@
     "@domternal/extension-table": "^0.7.4",
     "@domternal/theme": "^0.7.4",
     "@domternal/vue": "^0.7.4",
+    "@electric-sql/pglite": "^0.5.5",
     "@highlightjs/vue-plugin": "^2.1.0",
     "@huggingface/transformers": "^3.8.1",
     "@nuxt/a11y": "^1.0.0-alpha.1",

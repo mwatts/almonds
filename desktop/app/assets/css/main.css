@@ -7,17 +7,17 @@
 }
 
 :root {
-  --app-accent-50: #fdf2f4;
-  --app-accent-100: #fce7eb;
-  --app-accent-200: #f9d0d9;
-  --app-accent-300: #f4a9b9;
-  --app-accent-400: #ed7694;
-  --app-accent-500: #d02752;
-  --app-accent-600: #bf2249;
-  --app-accent-700: #a11d3f;
-  --app-accent-800: #871b3a;
-  --app-accent-900: #741b36;
-  --app-accent-950: #410a1a;
+  --app-accent-50: #f0f9ff;
+  --app-accent-100: #e0f2fe;
+  --app-accent-200: #bae6fd;
+  --app-accent-300: #7dd3fc;
+  --app-accent-400: #38bdf8;
+  --app-accent-500: #0ea5e9;
+  --app-accent-600: #0284c7;
+  --app-accent-700: #0369a1;
+  --app-accent-800: #075985;
+  --app-accent-900: #0c4a6e;
+  --app-accent-950: #082f49;
 }
 
 @theme inline {
@@ -63,7 +63,7 @@ body {
 }
 
 * {
-  user-select: none;
+  /*user-select: none;*/
 }
 
 /*

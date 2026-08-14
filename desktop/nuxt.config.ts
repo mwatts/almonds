@@ -37,11 +37,30 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
   ],
 
+  hooks: {
+    "imports:extend": (imports) => {
+      for (let i = imports.length - 1; i >= 0; i--) {
+        if (imports[i].name === "options") {
+          imports.splice(i, 1);
+        }
+      }
+    },
+  },
+
   apollo: {
     clients: {
       default: {
         httpEndpoint: "http://localhost:8000/orchard",
       },
+    },
+  },
+
+  runtimeConfig: {
+    public: {
+      serverUrl:
+        process.env.SERVER_URL ||
+        process.env.NUXT_PUBLIC_SERVER_URL ||
+        "http://localhost:5006",
     },
   },
 
