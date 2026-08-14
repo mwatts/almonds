@@ -1,4 +1,4 @@
-use almond_kernel::error::KernelError;
+use lunar::error::KernelError;
 use axum::{http::StatusCode, response::IntoResponse};
 
 use crate::errors::app_error::AppError;

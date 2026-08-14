@@ -1,6 +1,6 @@
 ---
 title: "Introducing Almonds — Your Personal Workspace, Reimagined"
-description: "I'm excited to share why I'm building Almonds, a free, open source desktop app that brings your notes, tasks, bookmarks, and local AI together in one focused workspace."
+description: "I'm excited to share why I'm building Almonds, a free, open source console app that brings your notes, tasks, bookmarks, and local AI together in one focused workspace."
 date: 2026-02-23
 author: "Adefemi Adeoye"
 tags: ["announcement", "open-source", "productivity"]
@@ -20,7 +20,7 @@ At its core is a shared Rust library, dutifully called **kernel**, that handles 
 
 I chose Rust not just because it's fast, but because it's safe. Memory safety, predictable performance, and strong concurrency guarantees allow Almonds to stay lightweight and responsive as your workspace grows.
 
-The desktop app is built with Tauri, pairing a robust frontend with a native Rust backend. The result:
+The console app is built with Tauri, pairing a robust frontend with a native Rust backend. The result:
 
 - Smaller binary size compared to traditional Electron apps  
 - Lower memory footprint  

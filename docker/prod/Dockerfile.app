@@ -16,8 +16,8 @@ RUN set -e && \
 
 WORKDIR /app
 
-# Copy the full workspace (server depends on kernel via relative path ../kernel)
-COPY kernel ./kernel
+# Copy the full workspace (server depends on lunar via relative path ../lunar)
+COPY lunar ./lunar
 COPY server ./server
 
 RUN cargo build --release --manifest-path server/Cargo.toml --bin orchard && \

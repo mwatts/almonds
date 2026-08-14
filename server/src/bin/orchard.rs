@@ -4,7 +4,7 @@ use std::{
     time::Duration,
 };
 
-use almond_kernel::{data_engine, error::KernelError};
+use lunar::{data_engine, error::KernelError};
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{

@@ -8,6 +8,7 @@
 # Allow the two crates
 !kernel/**
 !server/**
+!lunar/**
 
 # But ignore their build artifacts
 kernel/target

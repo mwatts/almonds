@@ -1,6 +1,6 @@
 import 'scripts/kernel.just'
 import 'scripts/misc.just'
-import 'scripts/desktop.just'
+import 'scripts/console.just'
 import 'scripts/lint.just'
 import 'scripts/test.just'
 import 'scripts/server.just'
@@ -15,6 +15,7 @@ POSTGRES_URL := "postgres://almond:almond@localhost:5433/almond"
 MYSQL_URL    := "mysql://almond:almond@localhost:3307/almond"
 SQLITE_URL   := "sqlite://./almonds-dev.db?mode=rwc"
 DATABASE_URL :="postgres://orchard:orchard@localhost:6543/orchard"
+
 
 set dotenv-required := false
 set dotenv-load := true
@@ -40,10 +41,10 @@ build target:
 lint target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
-		just lint-desktop
+		just lint-console
 		just lint-kernel
 		just lint-server
-		just lint-desktop-tauri
+		just lint-console-tauri
 	else
 		just lint-{{target}}
 	fi
@@ -52,10 +53,10 @@ lint target:
 test target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
-		just test-desktop
+		just test-console
 		just test-kernel
 		just test-server
-		just test-desktop-tauri
+		just test-console-tauri
 	else
 		just test-{{target}}
 	fi

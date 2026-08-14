@@ -39,7 +39,7 @@ sudo apt install -y \
 ```bash
 just watch almond     # frontend + Tauri (recommended)
 just watch frontend   # Nuxt dev server only
-just watch tauri      # Tauri desktop only
+just watch tauri      # Tauri console only
 just watch kernel     # watch the kernel crate
 ```
 

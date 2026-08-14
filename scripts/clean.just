@@ -1,5 +1,5 @@
-[working-directory: 'desktop']
-clean-desktop:
+[working-directory: 'console']
+clean-console:
     rm -rf node_modules dist .nuxt
     cd src-tauri && cargo clean
 
@@ -14,16 +14,16 @@ clean-server:
 clean target:
     #!/usr/bin/env sh
     echo "Cleaning {{target}} build assets"
-    if [ "{{target}}" = "desktop" ]; then
-        just clean-desktop
+    if [ "{{target}}" = "console" ]; then
+        just clean-console
     elif [ "{{target}}" = "kernel" ]; then
         just clean-kernel
     elif [ "{{target}}" = "server" ]; then
         just clean-server
     elif [ "{{target}}" = "all" ]; then
-        just clean-desktop
+        just clean-console
         just clean-kernel
         just clean-server
     else
-        echo "Invalid target '{{target}}'. Use one of: desktop, kernel, server, all"
+        echo "Invalid target '{{target}}'. Use one of: console, kernel, server, all"
     fi

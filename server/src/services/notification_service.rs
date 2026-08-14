@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use almond_kernel::entities::notifications;
+use lunar::entities::notifications;
 use axum::{
     extract::ws::{Message, WebSocket},
     response::Response,
