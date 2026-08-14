@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use almond_kernel::{
+use lunar::{
     entities,
     repositories::workspace::{WorkspaceRepository, WorkspaceRepositoryExt},
     sync_engine::EntitySyncResult,

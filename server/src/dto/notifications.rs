@@ -46,6 +46,6 @@ impl fmt::Display for Notification {
 #[derive(Debug, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PaginatedNotification {
-    pub notifications: Vec<almond_kernel::entities::notifications::Model>,
+    pub notifications: Vec<lunar::entities::notifications::Model>,
     pub total: u64,
 }

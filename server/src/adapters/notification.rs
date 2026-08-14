@@ -1,1 +1,1 @@
-pub use almond_kernel::adapters::notifications::CreateNotification;
+pub use lunar::adapters::notifications::CreateNotification;

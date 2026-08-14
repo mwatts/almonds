@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use almond_kernel::entities::notifications;
+use lunar::entities::notifications;
 use sea_orm::{
     ActiveModelTrait, ActiveValue::Set, ColumnTrait, DatabaseConnection, EntityTrait,
     IntoActiveModel, PaginatorTrait, QueryFilter, QuerySelect,

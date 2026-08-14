@@ -72,7 +72,7 @@
   --color-primary-900: var(--app-accent-900);
   --color-primary-950: var(--app-accent-950);
 
-  --color-primary: oklch(56.262% 0.20195 13.152);
+  --color-primary: var(--color-accent-500);
 }
 
 html {

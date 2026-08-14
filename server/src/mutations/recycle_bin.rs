@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use almond_kernel::{
+use lunar::{
     entities,
     repositories::recycle_bin::{RecycleBinRepository, RecycleBinRepositoryExt},
     sync_engine::EntitySyncResult,

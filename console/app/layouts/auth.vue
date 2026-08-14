@@ -18,6 +18,8 @@
     >
       <slot />
     </div>
+
+    <slot name="below-card" />
   </div>
 </template>
 

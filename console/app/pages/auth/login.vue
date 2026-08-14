@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoginRequest } from "~/composables/useAuthApi";
 
-definePageMeta({ layout: "auth" });
+definePageMeta({ layout: false });
 
 const authApi = useAuthApi();
 const authStore = useAuthStore();
@@ -13,7 +13,7 @@ const loading = ref(false);
 const submitError = ref("");
 
 onMounted(() => {
-  if (authStore.isAuthenticated) {
+  if (authStore.isAuthenticated || authStore.isGuest) {
     navigateTo("/");
   }
 });
@@ -48,78 +48,101 @@ async function handleSubmit() {
     loading.value = false;
   }
 }
+
+function continueWithoutLogin() {
+  authStore.enterGuestMode();
+  navigateTo("/");
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
-    <div class="flex flex-col gap-1">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-        Welcome back
-      </h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400">
-        Sign in to your Almonds account to continue.
+  <NuxtLayout name="auth">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+          Welcome back
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          Sign in to your Almonds account to continue.
+        </p>
+      </div>
+
+      <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+        <AppInput
+          v-model="form.email"
+          type="email"
+          name="email"
+          label="Email"
+          hint="required"
+          placeholder="you@example.com"
+          :disabled="loading"
+        />
+        <p v-if="errors.email" class="text-xs text-red-500 -mt-3">
+          {{ errors.email }}
+        </p>
+
+        <div>
+          <AppInput
+            v-model="form.password"
+            type="password"
+            name="password"
+            label="Password"
+            hint="required"
+            placeholder="••••••••"
+            :disabled="loading"
+          />
+          <div class="flex justify-end mt-1">
+            <NuxtLink
+              to="/auth/reset-password"
+              class="text-xs text-accent-500 hover:text-accent-600 font-medium"
+            >
+              Forgot password?
+            </NuxtLink>
+          </div>
+        </div>
+        <p v-if="errors.password" class="text-xs text-red-500 -mt-3">
+          {{ errors.password }}
+        </p>
+
+        <p v-if="submitError" class="text-sm text-red-500">{{ submitError }}</p>
+
+        <AppButton
+          type="submit"
+          color="primary"
+          class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
+          :loading="loading"
+          :disabled="loading"
+        >
+          Sign in
+        </AppButton>
+      </form>
+
+      <p class="text-sm text-center text-gray-500 dark:text-gray-400">
+        Don't have an account?
+        <NuxtLink
+          to="/auth/signup"
+          class="text-accent-500 hover:text-accent-600 font-medium"
+        >
+          Sign up
+        </NuxtLink>
       </p>
     </div>
 
-    <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-      <AppInput
-        v-model="form.email"
-        type="email"
-        name="email"
-        label="Email"
-        hint="required"
-        placeholder="you@example.com"
-        :disabled="loading"
-      />
-      <p v-if="errors.email" class="text-xs text-red-500 -mt-3">
-        {{ errors.email }}
-      </p>
-
-      <div>
-        <AppInput
-          v-model="form.password"
-          type="password"
-          name="password"
-          label="Password"
-          hint="required"
-          placeholder="••••••••"
+    <template #below-card>
+      <div class="flex flex-col items-center gap-2 mt-4">
+        <NuxtLink
+          type="button"
+          color="neutral"
+          class="px-6 py-2.5 rounded-lg text-sm  text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
           :disabled="loading"
-        />
-        <div class="flex justify-end mt-1">
-          <NuxtLink
-            to="/auth/reset-password"
-            class="text-xs text-accent-500 hover:text-accent-600 font-medium"
-          >
-            Forgot password?
-          </NuxtLink>
-        </div>
+          @click="continueWithoutLogin"
+        >
+            <p class="text-sm text-gray-400 dark:text-gray-500">
+              Continue without account
+            </p>
+        </NuxtLink>
+       
       </div>
-      <p v-if="errors.password" class="text-xs text-red-500 -mt-3">
-        {{ errors.password }}
-      </p>
-
-      <p v-if="submitError" class="text-sm text-red-500">{{ submitError }}</p>
-
-      <AppButton
-        type="submit"
-        color="primary"
-        class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
-        :loading="loading"
-        :disabled="loading"
-      >
-        Sign in
-      </AppButton>
-    </form>
-
-    <p class="text-sm text-center text-gray-500 dark:text-gray-400">
-      Don't have an account?
-      <NuxtLink
-        to="/auth/signup"
-        class="text-accent-500 hover:text-accent-600 font-medium"
-      >
-        Sign up
-      </NuxtLink>
-    </p>
-    
-  </div>
+    </template>
+  </NuxtLayout>
 </template>

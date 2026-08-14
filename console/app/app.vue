@@ -5,7 +5,6 @@ import {
 } from "@tauri-apps/plugin-notification";
 import { useAlarmScheduler } from "~/composables/useAlarmScheduler";
 import { useWorkspaceSetup } from "~/composables/useWorkspaceSetup";
-
 import "@domternal/theme";
 const { init: initFontSize } = useFontSize();
 const { init: initDarkTheme } = useDarkTheme();
@@ -17,6 +16,7 @@ const {
 } = useWorkspaceSetup();
 
 useAlarmScheduler();
+const authenticated = ref(true);
 
 const showWorkspaceLock = ref(false);
 
@@ -67,7 +67,7 @@ onMounted(async () => {
 
   <Body>
     <UApp>
-      <AppTitlebar authenticate />
+      <AppTitlebar :authenticate="authenticated" />
     </UApp>
   </Body>
 </template>

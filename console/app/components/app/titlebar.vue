@@ -11,7 +11,10 @@ const isOnline = computed(() => syncQueueStore.isOnline);
 const runningSync = computed(() => syncQueueStore.runningSync);
 const router = useRouter();
 const hideAuthGated = computed(
-  () => props.authenticate && !authStore.isAuthenticated,
+  () =>
+    props.authenticate &&
+    !authStore.isAuthenticated &&
+    !authStore.isGuest,
 );
 const colorMode = useColorMode();
 const { searchQuery, isOpen } = useAppSearch();
@@ -240,19 +243,36 @@ useEventListener("keydown", (e: KeyboardEvent) => {
         />
       </UTooltip>
 
-      <UUser
-        v-if="!hideAuthGated"
-        size="sm"
-        class="cursor-pointer"
-        :avatar="{
-          src: 'https://i.pravatar.cc/150?u=john-doe',
-        }"
-        :chip="{
-          color: isOnline ? 'success' : 'error',
-          position: 'top-right',
-        }"
-        @click="navigateTo('/settings?section=profile')"
-      />
+      <div v-if="!hideAuthGated" class="flex items-center gap-1.5">
+        <UTooltip
+          v-if="authStore.isGuest"
+          text="Guest mode - sign in to sync your data"
+        >
+          <span
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+            @click="navigateTo('/auth/login')"
+          >
+            Guest
+          </span>
+        </UTooltip>
+
+        <UUser
+          size="sm"
+          class="cursor-pointer"
+          :avatar="{
+            src: 'https://i.pravatar.cc/150?u=john-doe',
+          }"
+          :chip="{
+            color: isOnline ? 'success' : 'error',
+            position: 'top-right',
+          }"
+          @click="
+            authStore.isGuest
+              ? navigateTo('/auth/login')
+              : navigateTo('/settings?section=profile')
+          "
+        />
+      </div>
     </div>
   </div>
 </template>

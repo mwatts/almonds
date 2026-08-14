@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use almond_kernel::{
+use lunar::{
     entities,
     repositories::bookmarks::{BookmarkRepository, BookmarkRepositoryExt},
     sync_engine::EntitySyncResult,

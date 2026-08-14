@@ -18,9 +18,9 @@ RUN set -e && \
 
 WORKDIR /app
 
-COPY . .
-
 RUN cargo install cargo-watch
+
+COPY . .
 
 WORKDIR /app/server
 

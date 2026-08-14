@@ -1,4 +1,4 @@
-use almond_kernel::entities;
+use lunar::entities;
 use seaography::{
     async_graphql::{self, Context},
     CustomFields,

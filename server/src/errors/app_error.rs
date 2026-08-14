@@ -27,7 +27,7 @@ pub enum AppError {
     InternalError(String),
 
     #[error(transparent)]
-    KernelError(#[from] almond_kernel::error::KernelError),
+    KernelError(#[from] lunar::error::KernelError),
 
     #[error(transparent)]
     FileSystemError(#[from] std::io::Error),

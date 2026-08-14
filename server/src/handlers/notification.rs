@@ -1,4 +1,4 @@
-use almond_kernel::entities::notifications;
+use lunar::entities::notifications;
 use axum::{
     extract::{Path, Query, State, WebSocketUpgrade},
     response::Response,

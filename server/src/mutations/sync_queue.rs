@@ -1,5 +1,5 @@
-use almond_kernel::entities;
-use almond_kernel::sync_engine::DataQueue;
+use lunar::entities;
+use lunar::sync_engine::DataQueue;
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, FromQueryResult, Statement};
 use seaography::{
     async_graphql::{self, Context},

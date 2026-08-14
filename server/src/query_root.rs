@@ -1,4 +1,4 @@
-use almond_kernel::entities::{register_active_enums, register_entity_modules};
+use lunar::entities::{register_active_enums, register_entity_modules};
 use async_graphql::dynamic::*;
 use sea_orm::DatabaseConnection;
 use seaography::{
@@ -51,7 +51,7 @@ pub fn schema_builder(
         ]
     );
 
-    seaography::register_custom_outputs!(builder, [almond_kernel::sync_engine::EntitySyncResult,]);
+    seaography::register_custom_outputs!(builder, [lunar::sync_engine::EntitySyncResult,]);
 
     seaography::register_custom_mutations!(
         builder,

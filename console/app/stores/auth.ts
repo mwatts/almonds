@@ -7,11 +7,14 @@ export const useAuthStore = defineStore("auth_store", {
     tokenExpiry: 0,
     /** Transient token used mid-flow for account verification / password reset. */
     pendingToken: "",
+    /** Local guest session without a cloud account. */
+    guestMode: false,
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.accessToken,
     hasPendingToken: (state) => !!state.pendingToken,
+    isGuest: (state) => state.guestMode,
   },
 
   actions: {
@@ -38,6 +41,18 @@ export const useAuthStore = defineStore("auth_store", {
       this.refreshToken = "";
       this.tokenExpiry = 0;
       this.pendingToken = "";
+    },
+
+    enterGuestMode() {
+      this.accessToken = "";
+      this.refreshToken = "";
+      this.tokenExpiry = 0;
+      this.pendingToken = "";
+      this.guestMode = true;
+    },
+
+    exitGuestMode() {
+      this.guestMode = false;
     },
   },
 
