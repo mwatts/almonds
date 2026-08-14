@@ -2,6 +2,8 @@ pub mod adapters;
 pub mod data_engine;
 pub mod entities;
 pub mod error;
+#[cfg(feature = "markdown2pdf")]
+pub mod markdown2pdf;
 pub mod repositories;
 pub mod utils;
 pub use data_engine::DataEngine;

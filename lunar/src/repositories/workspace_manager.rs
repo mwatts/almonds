@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::error::KernelError;
+use crate::error::LunarError;
 
 #[async_trait::async_trait]
 pub trait TransferRecord {
@@ -9,7 +9,7 @@ pub trait TransferRecord {
         record_identifier: &Uuid,
         previous_workspace_identifier: &Uuid,
         target_workspace_identifier: &Uuid,
-    ) -> Result<(), KernelError>;
+    ) -> Result<(), LunarError>;
 }
 
 #[async_trait::async_trait]
@@ -19,7 +19,7 @@ pub trait DuplicateRecord {
         record_identifier: &Uuid,
         previous_workspace_identifier: &Uuid,
         target_workspace_identifier: &Uuid,
-    ) -> Result<(), KernelError>;
+    ) -> Result<(), LunarError>;
 }
 
 #[async_trait::async_trait]
@@ -28,5 +28,5 @@ pub trait RecordExistInWorkspace {
         &self,
         record_identifier: &Uuid,
         workspace_identifier: &Uuid,
-    ) -> Result<bool, KernelError>;
+    ) -> Result<bool, LunarError>;
 }

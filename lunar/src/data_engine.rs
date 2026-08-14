@@ -1,22 +1,31 @@
 use std::time::Duration;
 
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use sea_orm::{
+    ConnectOptions, Database, DatabaseConnection,
+    sqlx::{self, postgres::PgConnectOptions},
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 use migration::{Migrator, MigratorTrait};
 
-use crate::error::KernelError;
+use crate::error::LunarError;
 
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
 pub struct DataEngine {
     database_connection: DatabaseConnection,
 }
 
-/// Deprecated: use [`DataEngine`] instead.
-#[deprecated(since = "0.1.0", note = "renamed to `DataEngine`")]
-pub type Kernel = DataEngine;
-
 impl DataEngine {
-    pub async fn new(database_url: &str) -> Result<Self, KernelError> {
+    pub async fn new(database_url: &str) -> Result<Self, LunarError> {
+        let pool = sqlx::postgres::PgPoolOptions::new()
+            .max_connections(1)
+            .connect(&database_url)
+            .await
+            .map_err(|e| LunarError::DbConnectError(e.to_string()))?;
+
+        // let mut opt = PgConnectOptions::new();
         let mut opt = ConnectOptions::new(database_url);
         opt.max_connections(100)
             .min_connections(5)
@@ -27,9 +36,9 @@ impl DataEngine {
             .sqlx_logging(false) // disable SQLx logging
             .sqlx_logging_level(log::LevelFilter::Info); // set default Postgres schema
 
-        let db = Database::connect(opt)
+        let db = Database::connect(database_url)
             .await
-            .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
+            .map_err(|e| LunarError::DbConnectError(e.to_string()))?;
 
         Ok(Self {
             database_connection: db,
@@ -41,10 +50,10 @@ impl DataEngine {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    pub async fn run_migrations(&self) -> Result<(), KernelError> {
+    pub async fn run_migrations(&self) -> Result<(), LunarError> {
         Migrator::up(&self.database_connection, None)
             .await
-            .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
+            .map_err(|e| LunarError::DbConnectError(e.to_string()))?;
 
         Ok(())
     }

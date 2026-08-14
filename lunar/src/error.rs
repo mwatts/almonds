@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, thiserror::Error)]
-pub enum KernelError {
+pub enum LunarError {
     #[error("failed to connect to database due to {0}")]
     DbConnectError(String),
 
@@ -31,4 +31,11 @@ pub enum KernelError {
 
     #[error("Notification does not exist: {0}")]
     NotificationNotFound(String),
+
+    #[error("Failed to read download Directory")]
+    DownloadDirNotFound,
+
+    #[cfg(feature = "markdown2pdf")]
+    #[error("Failed to parse markdown: {0}")]
+    Markdown2Pdf(String),
 }

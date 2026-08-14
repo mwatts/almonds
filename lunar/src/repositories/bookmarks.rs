@@ -7,6 +7,7 @@ use sea_orm::{
     IntoActiveModel, QueryFilter, QueryOrder, QuerySelect,
 };
 use uuid::Uuid;
+use wasm_bindgen::prelude::*;
 
 use crate::entities::sea_orm_active_enums::{ItemType, Tag};
 use crate::{
@@ -15,17 +16,18 @@ use crate::{
         meta::RequestMeta,
         recycle_bin::CreateRecycleBinEntry,
     },
-    entities::bookmark,
-    error::KernelError,
+    entities::{bookmark, sync_queue},
+    error::LunarError,
     repositories::{
         prelude::WorkspaceRepositoryExt,
         recycle_bin::{RecycleBinRepository, RecycleBinRepositoryExt},
         workspace::WorkspaceRepository,
         workspace_manager::{DuplicateRecord, RecordExistInWorkspace, TransferRecord},
     },
-    utils::extract_req_meta,
+    utils::{extract_req_meta, js_err, mock_connection, to_js},
 };
 
+#[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct BookmarkRepository {
     conn: Arc<DatabaseConnection>,
@@ -40,44 +42,48 @@ pub trait BookmarkRepositoryExt {
         &self,
         payload: &CreateBookmark,
         meta: &Option<RequestMeta>,
-    ) -> Result<bookmark::Model, KernelError>;
+    ) -> Result<bookmark::Model, LunarError>;
 
     async fn find_by_id(
         &self,
         identifier: &Uuid,
         meta: &Option<RequestMeta>,
-    ) -> Result<Option<bookmark::Model>, KernelError>;
+    ) -> Result<Option<bookmark::Model>, LunarError>;
 
     async fn find_all(
         &self,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError>;
+    ) -> Result<Vec<bookmark::Model>, LunarError>;
 
     async fn find_by_tag(
         &self,
         tag: &Tag,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError>;
+    ) -> Result<Vec<bookmark::Model>, LunarError>;
 
     async fn recently_added(
         &self,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError>;
+    ) -> Result<Vec<bookmark::Model>, LunarError>;
 
     async fn update(
         &self,
         identifier: &Uuid,
         payload: &UpdateBookmark,
         meta: &Option<RequestMeta>,
-    ) -> Result<bookmark::Model, KernelError>;
+    ) -> Result<bookmark::Model, LunarError>;
 
     async fn delete(
         &self,
         identifier: &Uuid,
         meta: &Option<RequestMeta>,
-    ) -> Result<(), KernelError>;
+    ) -> Result<(), LunarError>;
 
-    async fn exists(&self, identifier: &Uuid) -> Result<bool, KernelError>;
+    async fn exists(&self, identifier: &Uuid) -> Result<bool, LunarError>;
+
+    async fn extract_unsynced(&self) -> Result<Vec<bookmark::Model>, LunarError>;
+
+    async fn clear_synced(&self, identifiers: Vec<String>) -> Result<(), LunarError>;
 }
 
 #[async_trait]
@@ -93,13 +99,13 @@ impl BookmarkRepositoryExt for BookmarkRepository {
         &self,
         payload: &CreateBookmark,
         meta: &Option<RequestMeta>,
-    ) -> Result<bookmark::Model, KernelError> {
+    ) -> Result<bookmark::Model, LunarError> {
         let mut active_model: bookmark::ActiveModel = payload.to_owned().into();
 
         if let Some(meta) = meta {
             active_model.workspace_identifier = Set(Some(meta.workspace_identifier));
         } else {
-            return Err(KernelError::DbOperationError(
+            return Err(LunarError::DbOperationError(
                 "workspace identifier is required".into(),
             ));
         };
@@ -107,14 +113,14 @@ impl BookmarkRepositoryExt for BookmarkRepository {
         active_model
             .insert(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn find_by_id(
         &self,
         identifier: &Uuid,
         meta: &Option<RequestMeta>,
-    ) -> Result<Option<bookmark::Model>, KernelError> {
+    ) -> Result<Option<bookmark::Model>, LunarError> {
         let meta = extract_req_meta(meta)?;
 
         bookmark::Entity::find()
@@ -122,27 +128,27 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn find_all(
         &self,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError> {
+    ) -> Result<Vec<bookmark::Model>, LunarError> {
         let meta = extract_req_meta(meta)?;
 
         bookmark::Entity::find()
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .all(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn find_by_tag(
         &self,
         tag: &Tag,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError> {
+    ) -> Result<Vec<bookmark::Model>, LunarError> {
         let meta = extract_req_meta(meta)?;
 
         bookmark::Entity::find()
@@ -150,13 +156,13 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .all(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn recently_added(
         &self,
         meta: &Option<RequestMeta>,
-    ) -> Result<Vec<bookmark::Model>, KernelError> {
+    ) -> Result<Vec<bookmark::Model>, LunarError> {
         let meta = extract_req_meta(meta)?;
 
         bookmark::Entity::find()
@@ -165,7 +171,7 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .order_by_desc(bookmark::Column::CreatedAt)
             .all(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn update(
@@ -173,7 +179,7 @@ impl BookmarkRepositoryExt for BookmarkRepository {
         identifier: &Uuid,
         payload: &UpdateBookmark,
         meta: &Option<RequestMeta>,
-    ) -> Result<bookmark::Model, KernelError> {
+    ) -> Result<bookmark::Model, LunarError> {
         let meta = extract_req_meta(meta)?;
 
         let model = bookmark::Entity::find()
@@ -181,8 +187,8 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?
-            .ok_or_else(|| KernelError::DbOperationError("bookmark not found".to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?
+            .ok_or_else(|| LunarError::DbOperationError("bookmark not found".to_string()))?;
 
         let mut active_model = model.into_active_model();
 
@@ -201,14 +207,14 @@ impl BookmarkRepositoryExt for BookmarkRepository {
         active_model
             .update(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
     }
 
     async fn delete(
         &self,
         identifier: &Uuid,
         meta: &Option<RequestMeta>,
-    ) -> Result<(), KernelError> {
+    ) -> Result<(), LunarError> {
         let meta = extract_req_meta(meta)?;
 
         let model = bookmark::Entity::find()
@@ -216,11 +222,11 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?
-            .ok_or_else(|| KernelError::DbOperationError("bookmark not found".to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?
+            .ok_or_else(|| LunarError::DbOperationError("bookmark not found".to_string()))?;
 
         let payload = serde_json::to_string(&model)
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
 
         RecycleBinRepository::new(self.conn.clone())
             .store(
@@ -239,19 +245,56 @@ impl BookmarkRepositoryExt for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
             .exec(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
         Ok(())
     }
 
-    async fn exists(&self, identifier: &Uuid) -> Result<bool, KernelError> {
+    async fn exists(&self, identifier: &Uuid) -> Result<bool, LunarError> {
         let result = bookmark::Entity::find()
             .filter(bookmark::Column::Identifier.eq(*identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
             .ok();
 
         Ok(result.is_some())
+    }
+
+    async fn extract_unsynced(&self) -> Result<Vec<bookmark::Model>, LunarError> {
+        let queue_entries = sync_queue::Entity::find()
+            // .filter(sync_queue::Column::TableName.eq("bookmarks"))
+            .limit(25)
+            .all(self.conn.as_ref())
+            .await
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
+
+        let identifiers = queue_entries
+            .iter()
+            .map(|entry| {
+                Uuid::parse_str(&entry.record_identifier)
+                    .map_err(|err| LunarError::DbOperationError(err.to_string()))
+            })
+            .collect::<Result<Vec<Uuid>, LunarError>>()?;
+
+        if identifiers.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        bookmark::Entity::find()
+            .filter(bookmark::Column::Identifier.is_in(identifiers))
+            .all(self.conn.as_ref())
+            .await
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))
+    }
+
+    async fn clear_synced(&self, identifiers: Vec<String>) -> Result<(), LunarError> {
+        sync_queue::Entity::delete_many()
+            .filter(sync_queue::Column::TableName.eq("bookmark"))
+            .filter(sync_queue::Column::RecordIdentifier.is_in(identifiers))
+            .exec(self.conn.as_ref())
+            .await
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
+        Ok(())
     }
 }
 
@@ -262,7 +305,7 @@ impl TransferRecord for BookmarkRepository {
         record_identifier: &Uuid,
         previous_workspace_identifier: &Uuid,
         target_workspace_identifier: &Uuid,
-    ) -> Result<(), KernelError> {
+    ) -> Result<(), LunarError> {
         let (prev_exists_res, target_exists_res) = tokio::join!(
             self.workspace_repository
                 .exists(previous_workspace_identifier),
@@ -274,13 +317,13 @@ impl TransferRecord for BookmarkRepository {
         let target_exists = target_exists_res?;
 
         if !prev_exists {
-            return Err(KernelError::WorkspaceNotFound(
+            return Err(LunarError::WorkspaceNotFound(
                 previous_workspace_identifier.to_string(),
             ));
         }
 
         if !target_exists {
-            return Err(KernelError::WorkspaceNotFound(
+            return Err(LunarError::WorkspaceNotFound(
                 target_workspace_identifier.to_string(),
             ));
         }
@@ -289,16 +332,16 @@ impl TransferRecord for BookmarkRepository {
             .record_exists_in_workspace(record_identifier, previous_workspace_identifier)
             .await?
         {
-            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
+            return Err(LunarError::BookmarkNotFound(record_identifier.to_string()));
         }
 
         let Some(record) = bookmark::Entity::find()
             .filter(bookmark::Column::Identifier.eq(*record_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
+            return Err(LunarError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut active_model = record.into_active_model();
@@ -309,7 +352,7 @@ impl TransferRecord for BookmarkRepository {
         active_model
             .update(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
 
         Ok(())
     }
@@ -320,13 +363,13 @@ impl RecordExistInWorkspace for BookmarkRepository {
         &self,
         record_identifier: &Uuid,
         workspace_identifier: &Uuid,
-    ) -> Result<bool, KernelError> {
+    ) -> Result<bool, LunarError> {
         let record = bookmark::Entity::find()
             .filter(bookmark::Column::Identifier.eq(*record_identifier))
             .filter(bookmark::Column::WorkspaceIdentifier.eq(*workspace_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
 
         Ok(record.is_some())
     }
@@ -339,7 +382,7 @@ impl DuplicateRecord for BookmarkRepository {
         record_identifier: &Uuid,
         previous_workspace_identifier: &Uuid,
         target_workspace_identifier: &Uuid,
-    ) -> Result<(), KernelError> {
+    ) -> Result<(), LunarError> {
         let (prev_exists_res, target_exists_res) = tokio::join!(
             self.workspace_repository
                 .exists(previous_workspace_identifier),
@@ -351,13 +394,13 @@ impl DuplicateRecord for BookmarkRepository {
         let target_exists = target_exists_res?;
 
         if !prev_exists {
-            return Err(KernelError::WorkspaceNotFound(
+            return Err(LunarError::WorkspaceNotFound(
                 previous_workspace_identifier.to_string(),
             ));
         }
 
         if !target_exists {
-            return Err(KernelError::WorkspaceNotFound(
+            return Err(LunarError::WorkspaceNotFound(
                 target_workspace_identifier.to_string(),
             ));
         }
@@ -367,9 +410,9 @@ impl DuplicateRecord for BookmarkRepository {
             .filter(bookmark::Column::WorkspaceIdentifier.eq(*previous_workspace_identifier))
             .one(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?
         else {
-            return Err(KernelError::BookmarkNotFound(record_identifier.to_string()));
+            return Err(LunarError::BookmarkNotFound(record_identifier.to_string()));
         };
 
         let mut new_record = record.into_active_model();
@@ -382,8 +425,147 @@ impl DuplicateRecord for BookmarkRepository {
         new_record
             .insert(self.conn.as_ref())
             .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
+            .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
 
         Ok(())
+    }
+}
+
+#[wasm_bindgen]
+impl BookmarkRepository {
+    #[wasm_bindgen(constructor)]
+    pub fn new_wasm() -> Self {
+        Self::new(mock_connection())
+    }
+
+    #[wasm_bindgen(js_name = "create")]
+    pub async fn create_js(&self, payload: JsValue, meta: JsValue) -> Result<JsValue, JsValue> {
+        let payload: CreateBookmark = serde_wasm_bindgen::from_value(payload).map_err(js_err)?;
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let model = <Self as BookmarkRepositoryExt>::create(self, &payload, &meta).await?;
+        to_js(&model)
+    }
+
+    #[wasm_bindgen(js_name = "find_by_id")]
+    pub async fn find_by_id_js(&self, identifier: &str, meta: JsValue) -> Result<JsValue, JsValue> {
+        let id = Uuid::parse_str(identifier).map_err(js_err)?;
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let model = <Self as BookmarkRepositoryExt>::find_by_id(self, &id, &meta).await?;
+        to_js(&model)
+    }
+
+    #[wasm_bindgen(js_name = "find_all")]
+    pub async fn find_all_js(&self, meta: JsValue) -> Result<JsValue, JsValue> {
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let models = <Self as BookmarkRepositoryExt>::find_all(self, &meta).await?;
+        to_js(&models)
+    }
+
+    #[wasm_bindgen(js_name = "find_by_tag")]
+    pub async fn find_by_tag_js(
+        &self,
+        tag: JsValue,
+        meta: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let tag: Tag = serde_wasm_bindgen::from_value(tag).map_err(js_err)?;
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let models = <Self as BookmarkRepositoryExt>::find_by_tag(self, &tag, &meta).await?;
+        to_js(&models)
+    }
+
+    #[wasm_bindgen(js_name = "recently_added")]
+    pub async fn recently_added_js(&self, meta: JsValue) -> Result<JsValue, JsValue> {
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let models = <Self as BookmarkRepositoryExt>::recently_added(self, &meta).await?;
+        to_js(&models)
+    }
+
+    #[wasm_bindgen(js_name = "update")]
+    pub async fn update_js(
+        &self,
+        identifier: &str,
+        payload: JsValue,
+        meta: JsValue,
+    ) -> Result<JsValue, JsValue> {
+        let id = Uuid::parse_str(identifier).map_err(js_err)?;
+        let payload: UpdateBookmark = serde_wasm_bindgen::from_value(payload).map_err(js_err)?;
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        let model = <Self as BookmarkRepositoryExt>::update(self, &id, &payload, &meta).await?;
+        to_js(&model)
+    }
+
+    #[wasm_bindgen(js_name = "delete")]
+    pub async fn delete_js(&self, identifier: &str, meta: JsValue) -> Result<JsValue, JsValue> {
+        let id = Uuid::parse_str(identifier).map_err(js_err)?;
+        let meta: Option<RequestMeta> = serde_wasm_bindgen::from_value(meta).map_err(js_err)?;
+        <Self as BookmarkRepositoryExt>::delete(self, &id, &meta).await?;
+        Ok(JsValue::UNDEFINED)
+    }
+
+    #[wasm_bindgen(js_name = "exists")]
+    pub async fn exists_js(&self, identifier: &str) -> Result<bool, JsValue> {
+        let id = Uuid::parse_str(identifier).map_err(js_err)?;
+        <Self as BookmarkRepositoryExt>::exists(self, &id).await.map_err(JsValue::from)
+    }
+
+    #[wasm_bindgen(js_name = "transfer_record")]
+    pub async fn transfer_record_js(
+        &self,
+        record_identifier: &str,
+        previous_workspace_identifier: &str,
+        target_workspace_identifier: &str,
+    ) -> Result<JsValue, JsValue> {
+        let record_identifier = Uuid::parse_str(record_identifier).map_err(js_err)?;
+        let previous_workspace_identifier =
+            Uuid::parse_str(previous_workspace_identifier).map_err(js_err)?;
+        let target_workspace_identifier =
+            Uuid::parse_str(target_workspace_identifier).map_err(js_err)?;
+        <Self as TransferRecord>::transfer_record(
+            self,
+            &record_identifier,
+            &previous_workspace_identifier,
+            &target_workspace_identifier,
+        )
+        .await?;
+        Ok(JsValue::UNDEFINED)
+    }
+
+    #[wasm_bindgen(js_name = "duplicate_record")]
+    pub async fn duplicate_record_js(
+        &self,
+        record_identifier: &str,
+        previous_workspace_identifier: &str,
+        target_workspace_identifier: &str,
+    ) -> Result<JsValue, JsValue> {
+        let record_identifier = Uuid::parse_str(record_identifier).map_err(js_err)?;
+        let previous_workspace_identifier =
+            Uuid::parse_str(previous_workspace_identifier).map_err(js_err)?;
+        let target_workspace_identifier =
+            Uuid::parse_str(target_workspace_identifier).map_err(js_err)?;
+        <Self as DuplicateRecord>::duplicate_record(
+            self,
+            &record_identifier,
+            &previous_workspace_identifier,
+            &target_workspace_identifier,
+        )
+        .await?;
+        Ok(JsValue::UNDEFINED)
+    }
+
+    #[wasm_bindgen(js_name = "record_exists_in_workspace")]
+    pub async fn record_exists_in_workspace_js(
+        &self,
+        record_identifier: &str,
+        workspace_identifier: &str,
+    ) -> Result<bool, JsValue> {
+        let record_identifier = Uuid::parse_str(record_identifier).map_err(js_err)?;
+        let workspace_identifier = Uuid::parse_str(workspace_identifier).map_err(js_err)?;
+        <Self as RecordExistInWorkspace>::record_exists_in_workspace(
+            self,
+            &record_identifier,
+            &workspace_identifier,
+        )
+        .await
+        .map_err(JsValue::from)
     }
 }
