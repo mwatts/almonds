@@ -31,11 +31,4 @@ pub enum KernelError {
 
     #[error("Notification does not exist: {0}")]
     NotificationNotFound(String),
-
-    #[error("Failed to read download Directory")]
-    DownloadDirNotFound,
-
-    #[cfg(feature = "markdown2pdf")]
-    #[error("Failed to parse markdown: {0}")]
-    Markdown2Pdf(String),
 }

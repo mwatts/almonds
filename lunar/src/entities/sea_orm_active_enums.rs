@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 #[derive(
     Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
 )]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "item_type")]
+#[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "item_type")]
 #[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum ItemType {
     #[sea_orm(string_value = "todo")]
@@ -23,7 +23,7 @@ pub enum ItemType {
 #[derive(
     Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
 )]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "notification_type")]
+#[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "notification_type")]
 #[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum NotificationType {
     #[sea_orm(string_value = "backup_failed")]
@@ -54,7 +54,7 @@ pub enum NotificationType {
 #[derive(
     Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
 )]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "priority")]
+#[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "priority")]
 #[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum Priority {
     #[sea_orm(string_value = "high")]
@@ -67,7 +67,7 @@ pub enum Priority {
 #[derive(
     Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ts_rs :: TS,
 )]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "tag")]
+#[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "tag")]
 #[ts(export, export_to = "sea_orm_active_enums.ts")]
 pub enum Tag {
     #[sea_orm(string_value = "development")]

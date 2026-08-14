@@ -5,18 +5,15 @@ use chrono::Utc;
 use sea_orm::prelude::Expr;
 use sea_orm::{
     ActiveModelTrait, ActiveValue::Set, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
-    QuerySelect,
 };
 use uuid::Uuid;
 
-#[cfg(feature = "sync_engine")]
-use crate::types::EntitySyncResult;
 use crate::{
     adapters::{
         meta::RequestMeta,
         workspace::{CreateWorkspace, UpdateWorkspace, hash_password, verify_password},
     },
-    entities::{sync_queue, workspaces},
+    entities::workspaces,
     error::KernelError,
     utils::extract_req_meta,
 };
@@ -58,16 +55,6 @@ pub trait WorkspaceRepositoryExt {
     ) -> Result<bool, KernelError>;
 
     async fn exists(&self, id: &Uuid) -> Result<bool, KernelError>;
-
-    async fn extract_unsynced(&self) -> Result<Vec<workspaces::Model>, KernelError>;
-
-    async fn clear_synced(&self, identifiers: Vec<String>) -> Result<(), KernelError>;
-
-    #[cfg(feature = "sync_engine")]
-    async fn upsert_many(
-        &self,
-        models: Vec<workspaces::Model>,
-    ) -> Result<Vec<EntitySyncResult>, KernelError>;
 }
 
 #[async_trait]
@@ -224,93 +211,5 @@ impl WorkspaceRepositoryExt for WorkspaceRepository {
     async fn exists(&self, id: &Uuid) -> Result<bool, KernelError> {
         let result = self.get_workspace_by_id(id.to_owned()).await.ok();
         Ok(result.is_some())
-    }
-
-    async fn extract_unsynced(&self) -> Result<Vec<workspaces::Model>, KernelError> {
-        let queue_entries = sync_queue::Entity::find()
-            .filter(sync_queue::Column::TableName.eq("workspaces"))
-            .limit(25)
-            .all(self.conn.as_ref())
-            .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
-
-        let identifiers = queue_entries
-            .iter()
-            .map(|entry| {
-                Uuid::parse_str(&entry.record_identifier)
-                    .map_err(|err| KernelError::DbOperationError(err.to_string()))
-            })
-            .collect::<Result<Vec<Uuid>, KernelError>>()?;
-
-        if identifiers.is_empty() {
-            return Ok(Vec::new());
-        }
-
-        workspaces::Entity::find()
-            .filter(workspaces::Column::Identifier.is_in(identifiers))
-            .all(self.conn.as_ref())
-            .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))
-    }
-
-    async fn clear_synced(&self, identifiers: Vec<String>) -> Result<(), KernelError> {
-        sync_queue::Entity::delete_many()
-            .filter(sync_queue::Column::TableName.eq("workspaces"))
-            .filter(sync_queue::Column::RecordIdentifier.is_in(identifiers))
-            .exec(self.conn.as_ref())
-            .await
-            .map_err(|err| KernelError::DbOperationError(err.to_string()))?;
-        Ok(())
-    }
-
-    #[cfg(feature = "sync_engine")]
-    async fn upsert_many(
-        &self,
-        models: Vec<workspaces::Model>,
-    ) -> Result<Vec<EntitySyncResult>, KernelError> {
-        let mut sync_results: Vec<EntitySyncResult> = Vec::new();
-        for chunk in models.chunks(20) {
-            let futures: Vec<_> = chunk
-                .iter()
-                .map(|model| {
-                    let conn = self.conn.clone();
-                    let model = model.clone();
-                    async move {
-                        let identifier = model.identifier.to_string();
-                        let op_result: Result<(), KernelError> = async {
-                            let exists = workspaces::Entity::find()
-                                .filter(workspaces::Column::Identifier.eq(model.identifier))
-                                .one(conn.as_ref())
-                                .await
-                                .map_err(|err| KernelError::DbOperationError(err.to_string()))?
-                                .is_some();
-
-                            let active_model: workspaces::ActiveModel = model.into();
-
-                            if exists {
-                                active_model.update(conn.as_ref()).await.map_err(|err| {
-                                    KernelError::DbOperationError(err.to_string())
-                                })?;
-                            } else {
-                                active_model.insert(conn.as_ref()).await.map_err(|err| {
-                                    KernelError::DbOperationError(err.to_string())
-                                })?;
-                            }
-                            Ok(())
-                        }
-                        .await;
-                        EntitySyncResult {
-                            identifier,
-                            success: op_result.is_ok(),
-                            error_message: op_result.err().map(|e| e.to_string()),
-                        }
-                    }
-                })
-                .collect();
-
-            let chunk_results = futures::future::join_all(futures).await;
-            sync_results.extend(chunk_results);
-        }
-        Ok(sync_results)
     }
 }

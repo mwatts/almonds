@@ -2,7 +2,8 @@ use std::time::Duration;
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
-// use migration::{Migrator, MigratorTrait};
+#[cfg(not(target_arch = "wasm32"))]
+use migration::{Migrator, MigratorTrait};
 
 use crate::error::KernelError;
 
@@ -39,11 +40,12 @@ impl DataEngine {
         &self.database_connection
     }
 
-    // pub async fn run_migrations(&self) -> Result<(), KernelError> {
-    //     Migrator::up(&self.database_connection, None)
-    //         .await
-    //         .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
+    #[cfg(not(target_arch = "wasm32"))]
+    pub async fn run_migrations(&self) -> Result<(), KernelError> {
+        Migrator::up(&self.database_connection, None)
+            .await
+            .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
 
-    //     Ok(())
-    // }
+        Ok(())
+    }
 }

@@ -8,10 +8,7 @@ use sea_orm::{
 };
 use uuid::Uuid;
 
-#[cfg(feature = "postgres")]
 use crate::entities::sea_orm_active_enums::NotificationType;
-#[cfg(feature = "sqlite")]
-use crate::enums::NotificationType;
 use crate::{
     adapters::{meta::RequestMeta, notifications::CreateNotification},
     entities::notifications,
@@ -122,26 +119,13 @@ impl NotificationRepositoryExt for NotificationRepository {
     ) -> Result<Vec<notifications::Model>, KernelError> {
         let meta = extract_req_meta(meta)?;
 
-        #[cfg(feature = "sqlite")]
-        {
-            notifications::Entity::find()
-                .filter(notifications::Column::NotificationType.eq(notification_type.to_string()))
-                .filter(notifications::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
-                .order_by_desc(notifications::Column::CreatedAt)
-                .all(self.conn.as_ref())
-                .await
-                .map_err(|err| KernelError::DbOperationError(err.to_string()))
-        }
-        #[cfg(feature = "postgres")]
-        {
-            notifications::Entity::find()
-                .filter(notifications::Column::NotificationType.eq(notification_type.to_owned()))
-                .filter(notifications::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
-                .order_by_desc(notifications::Column::CreatedAt)
-                .all(self.conn.as_ref())
-                .await
-                .map_err(|err| KernelError::DbOperationError(err.to_string()))
-        }
+        notifications::Entity::find()
+            .filter(notifications::Column::NotificationType.eq(notification_type.to_owned()))
+            .filter(notifications::Column::WorkspaceIdentifier.eq(meta.workspace_identifier))
+            .order_by_desc(notifications::Column::CreatedAt)
+            .all(self.conn.as_ref())
+            .await
+            .map_err(|err| KernelError::DbOperationError(err.to_string()))
     }
 
     async fn mark_as_read(
