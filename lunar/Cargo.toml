@@ -12,9 +12,6 @@ async-trait = "0.1.89"
 chrono = { version = "0.4", features = ["serde"] }
 dirs = { version = "6.0.0", optional = true }
 futures = "0.3.32"
-graphql-ws-client = { version = "0.12.1", features = [
-    "client-graphql-client",
-], optional = true }
 graphql_client = { version = "0.16.0", optional = true }
 log = "0.4.29"
 markdown2pdf = { version = "0.2.2", optional = true }
@@ -31,6 +28,7 @@ sea-orm = { version = "2.0.0-rc.37", features = [
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 thiserror = "2.0.18"
+tokio = { version = "1.53.1", features = ["macros", "rt"] }
 ts-rs = { version = "12.0.1", features = ["uuid-impl", "chrono-impl", "serde-json-impl", "format"] }
 uuid = { version = "1.21.0", features = ["v4", "js"] }
 validator = { version = "0.20.0", features = ["derive"] }
