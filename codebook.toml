@@ -1,0 +1,8 @@
+words = [
+    "cdylib",
+    "rustls",
+    "serde",
+    "sqlx",
+    "staticlib",
+    "vorbis",
+]

@@ -54,8 +54,7 @@ db-clean:
 [working-directory: 'kernel']
 @migrate-up:
 	just migrate-up-postgres
-	just migrate-up-sqlite
-	just migrate-up-mysql
+
 
 # --- Entity generation ------------------------------------------------
 
@@ -68,17 +67,8 @@ db-clean:
 		-o src/entities \
 		--seaography
 
-# Pull schema and generate entities for SQLite (feature: sqlite)
-[working-directory: 'kernel']
-@db-pull-sqlite:
-	sea-orm-cli generate entity \
-		--database-url {{SQLITE_URL}} \
-		--with-serde both \
-		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		-o src/entities/sqlite
-
 # Pull schema and generate entities for PostgreSQL using docker defaults (feature: postgres)
-[working-directory: 'kernel']
+[working-directory: 'lunar']
 @db-pull-postgres:
 	sea-orm-cli generate entity \
 		--database-url {{POSTGRES_URL}} \
@@ -88,20 +78,12 @@ db-clean:
 		--model-extra-attributes 'ts(export)' \
 		--enum-extra-derives 'ts_rs::TS' \
 		--enum-extra-attributes 'ts(export)' \
-		-o src/entities/postgres \
-		--seaography
-	python3 ../scripts/fix-ts-exports.py src/entities/postgres
-	cargo test --no-default-features --features postgres -- export_bindings
+		-o src/entities 
+	python3 ../scripts/fix-ts-exports.py src/entities
+	cargo test --no-default-features  -- export_bindings
 	npm run build
 	
-# Pull schema and generate entities for MySQL using docker defaults (feature: mysql)
-[working-directory: 'kernel']
-@db-pull-mysql:
-	sea-orm-cli generate entity \
-		--database-url {{MYSQL_URL}} \
-		--with-serde both \
-		--model-extra-attributes 'serde(rename_all="camelCase")' \
-		-o src/entities/mysql
+
 
 # Generate entities for all backends.
 # Starts docker, waits for postgres, runs migrations (postgres + sqlite), then generates entities.
@@ -112,11 +94,8 @@ db-clean:
 db-pull:
 	just db-up
 	@echo "Waiting for PostgreSQL to be ready..."
-	@until pg_isready -h localhost -p 5433 -U almond -q; do sleep 1; done
 	just migrate-up
-	just db-pull-sqlite
 	just db-pull-postgres
-	just db-pull-mysql  
 	just db-pull-server
 
 [working-directory: 'server']
@@ -134,8 +113,6 @@ test-kernel:
 db-pull-server:
 	just migrate-up-server
 	just generate-server-entities
-
-
 
 	
 [working-directory:'kernel']

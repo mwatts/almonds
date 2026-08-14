@@ -7,3 +7,6 @@ almonds.db
 
 backup.sql 
  sqlite3 almonds.db .dump > backup.sql
+
+ almonds-pglite
+ desktop/src-tauri/almonds-pglite

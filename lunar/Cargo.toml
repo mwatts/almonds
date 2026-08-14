@@ -26,7 +26,8 @@ sea-orm = { version = "2.0.0-rc.37", features = [
     "debug-print",
     "with-uuid",
     "with-chrono",
-    "runtime-tokio-rustls"
+    "runtime-tokio-rustls", 
+    "sqlx-sqlite"
 ] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
@@ -51,5 +52,3 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [dev-dependencies]
 lazy_static = "1.5.0"
-
-

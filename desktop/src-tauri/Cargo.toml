@@ -17,12 +17,10 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [dependencies]
-
 base64 = "0.22"
 chrono = { version = "0.4.43", features = ["serde"] }
 log = "0.4"
 lunar = { version = "0.1.0", path = "../../lunar", features = ["markdown2pdf"] }
-pglite-rs = "0.2.7"
 rodio = { version = "0.19", features = ["mp3", "wav", "vorbis", "flac"] }
 sanitizer = { version = "1.0.0", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
