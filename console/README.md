@@ -1,6 +1,6 @@
-# Almonds
+# Lunar
 
-A personal productivity console app built with Tauri, Nuxt 4, and Vue 3. Almonds brings your notes, snippets, bookmarks, tasks, and AI conversations into one unified workspace.
+A personal productivity console app built with Tauri, Nuxt 4, and Vue 3. Lunar brings your notes, snippets, bookmarks, tasks, and AI conversations into one unified workspace.
 
 ---
 
@@ -43,8 +43,8 @@ A personal productivity console app built with Tauri, Nuxt 4, and Vue 3. Almonds
 
 ```bash
 # Clone the repository
-git clone https://github.com/opeolluwa/almonds.git
-cd almonds
+git clone https://github.com/opeolluwa/lunar.git
+cd lunar
 
 # Install dependencies
 npm install

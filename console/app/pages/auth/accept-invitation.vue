@@ -36,7 +36,7 @@ async function handleAccept() {
         You're invited!
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        You've been invited to join a workspace on Almonds.
+        You've been invited to join a workspace on Lunar.
       </p>
     </div>
 

@@ -15,7 +15,7 @@ use crate::state::scheduler::SchedulerState;
 /// Spawned once at app startup. Wakes at every clock-minute boundary and fires
 /// any reminders whose adjusted fire time (remind_at − lead_time) falls in the
 /// current minute. Deduplicates via `SchedulerState::fired_keys`.
-pub async fn _run(app: AppHandle, meta: Option<RequestMeta>) {
+pub async fn run(app: AppHandle, meta: Option<RequestMeta>) {
     loop {
         log::info!("[Scheduler] Checked reminders at {}", chrono::Utc::now());
 
@@ -34,7 +34,7 @@ pub async fn _run(app: AppHandle, meta: Option<RequestMeta>) {
     }
 }
 
-async fn _check_and_fire(app: &AppHandle, meta: Option<RequestMeta>) {
+async fn check_and_fire(app: &AppHandle, meta: Option<RequestMeta>) {
     // Snapshot settings without holding the lock across await points.
     let (lead_time_minutes, default_sound) = {
         let sched = app.state::<SchedulerState>();

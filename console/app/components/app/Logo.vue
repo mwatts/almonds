@@ -8,7 +8,7 @@
       <UIcon name="heroicons:bolt-solid" class="size-6 text-white" />
     </div>
     <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
-      Almonds
+      Lunar
     </h1>
   </div>
 </template>

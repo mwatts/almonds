@@ -63,7 +63,7 @@ function continueWithoutLogin() {
           Welcome back
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Sign in to your Almonds account to continue.
+          Sign in to your Lunar account to continue.
         </p>
       </div>
 

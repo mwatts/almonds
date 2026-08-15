@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Wild almonds",
+  "productName": "Lunar",
   "version": "0.8.27",
   "identifier": "com.wild.almonds",
   "build": {
@@ -12,7 +12,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Wild almonds",
+        "title": "Lunar",
         "width": 1200,
         "height": 800,
         "resizable": true,
