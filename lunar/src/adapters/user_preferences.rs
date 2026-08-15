@@ -5,8 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, user_preferences::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "user_preferences.ts")]
 pub struct CreateUserPreferences {
     pub master_first_name: String,
     pub master_last_name: String,
@@ -26,8 +27,9 @@ impl Into<entities::user_preferences::ActiveModel> for CreateUserPreferences {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "user_preferences.ts")]
 pub struct UpdateUserPreferences {
     pub master_first_name: Option<String>,
     pub master_last_name: Option<String>,

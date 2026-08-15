@@ -1,0 +1,32 @@
+{
+  "name": "lunar",
+  "version": "0.1.0",
+  "description": "TypeScript type bindings for the lunar Rust data-access layer.",
+  "type": "module",
+  "types": "index.ts",
+  "scripts": {
+    "prebuild": "node ../scripts/fix-ts-exports.mjs src/entities",
+    "build": "cargo run --quiet --manifest-path migration/Cargo.toml --bin migration-export -- generated/pglite/migrations && wasm-pack build --target web --dev",
+    "prepare": "npm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.ts"
+    },
+    "./index": {
+      "types": "./index.ts"
+    },
+    "./bindings": {
+      "types": "./bindings/index.ts"
+    },
+    "./pkg": "./pkg/lunar.js",
+    "./pkg/*": "./pkg/*"
+  },
+  "files": [
+    "index.ts",
+    "bindings",
+    "pkg"
+  ],
+  "keywords": [],
+  "license": "ISC"
+}

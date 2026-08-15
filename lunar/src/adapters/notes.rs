@@ -5,7 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, notes::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "notes.ts")]
 pub struct CreateNote {
     pub title: String,
     pub content: String,
@@ -28,7 +30,9 @@ impl Into<entities::notes::ActiveModel> for CreateNote {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "notes.ts")]
 pub struct UpdateNote {
     pub title: Option<String>,
     pub content: Option<String>,

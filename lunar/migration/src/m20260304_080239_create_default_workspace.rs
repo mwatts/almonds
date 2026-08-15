@@ -10,7 +10,8 @@ impl MigrationTrait for Migration {
         let db_connection = manager.get_connection();
         let db_backend = manager.get_database_backend();
 
-        let workspace_identifier = Uuid::new_v4();
+        let workspace_identifier =
+            Uuid::parse_str("85b49460-f44a-47f4-930a-8d0b45ec34be").expect("valid default workspace uuid");
 
         // Use the raw bytes, formatted as a SQLite blob literal X'...'
         let uuid_hex = hex::encode(workspace_identifier.as_bytes());

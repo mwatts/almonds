@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke } from "~/utils/invoke";
 import { getWorkspaceMeta } from "~/composables/getWorkspaceMeta";
 
 export interface UserPreference {

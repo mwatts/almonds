@@ -79,6 +79,12 @@ export default defineNuxtConfig({
         "@nuxt/ui > prosemirror-gapcursor",
         "rehackt",
       ],
+      // PGlite ships its own wasm + FS assets; pre-bundling it breaks
+      // `new PGlite("idb://lunar")` in dev ("Invalid FS bundle size").
+      exclude: ["@electric-sql/pglite"],
+    },
+    worker: {
+      format: "es",
     },
   },
   devServer: {

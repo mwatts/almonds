@@ -30,3 +30,4 @@ prod.db
 backup.sql
 pgdump.sql
 console/src-tauri/almonds-pglite
+console/app/assets/lunar/

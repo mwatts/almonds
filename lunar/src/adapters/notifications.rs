@@ -5,8 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, notifications::ActiveModel, sea_orm_active_enums::NotificationType};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "notifications.ts")]
 pub struct CreateNotification {
     pub title: String,
     pub body: String,

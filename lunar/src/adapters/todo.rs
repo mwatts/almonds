@@ -6,8 +6,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, sea_orm_active_enums::Priority, todo::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "todo.ts")]
 pub struct CreateTodo {
     pub title: String,
     pub description: Option<String>,
@@ -32,8 +33,9 @@ impl Into<entities::todo::ActiveModel> for CreateTodo {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "todo.ts")]
 pub struct UpdateTodo {
     pub title: Option<String>,
     pub description: Option<String>,

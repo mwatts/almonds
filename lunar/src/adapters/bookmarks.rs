@@ -5,8 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, bookmark::ActiveModel, sea_orm_active_enums::Tag};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "bookmark.ts")]
 pub struct CreateBookmark {
     pub title: String,
     pub url: String,
@@ -27,8 +28,9 @@ impl Into<entities::bookmark::ActiveModel> for CreateBookmark {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "bookmarks.ts")]
 pub struct UpdateBookmark {
     pub title: Option<String>,
     pub url: Option<String>,

@@ -3,6 +3,7 @@ name = "migration"
 version = "0.1.0"
 edition = "2021"
 publish = false
+default-run = "migration"
 
 [lib]
 name = "migration"
@@ -28,6 +29,7 @@ sea-orm = { version = "2.0.0-rc.37", features = [
     "seaography"
 ] }
 tokio = { version = "1.53.1", features = ["macros", "rt"] }
+lunar_macros = { version = "0.1.0", path = "../macros" }
 
 [dependencies.sea-orm-migration]
 version = "~2.0.0-rc.37"
