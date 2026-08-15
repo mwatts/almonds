@@ -19,6 +19,7 @@ const { searchQuery, isOpen } = useAppSearch();
 const appWindow = getCurrentWindow();
 const searchInputRef = ref<HTMLInputElement | null>(null);
 const currentPlatform = platform();
+const { toggleMobileNav } = useMobileNav();
 
 const themeLabel = computed(() => (isDark.value ? "Light mode" : "Dark mode"));
 const isMacOS = computed(() => {
@@ -68,10 +69,21 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
 <template>
   <div
-    class="titlebar flex items-center gap-2 px-2"
+    class="titlebar flex items-center gap-2 px-2 h-12"
     data-tauri-drag-region
     :class="{ 'rounded-t-lg': !IS_WEB }"
   >
+    <!-- mobile nav toggle -->
+    <UButton
+      size="lg"
+      color="neutral"
+      variant="ghost"
+      class="md:hidden"
+      icon="heroicons:bars-3"
+      aria-label="Open menu"
+      @click="toggleMobileNav"
+    />
+
     <!-- mac os controls-->
     <div v-if="isMacOS && !IS_WEB" class="traffic-lights shrink-0">
       <span class="btn close" @click="appWindow.close()" />
@@ -94,20 +106,18 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
       <!-- web control/mobile -->
 
-      <UTooltip text="Maximize">
-        <UButton
-          size="sm"
-          color="neutral"
-          variant="ghost"
-          icon="lucide:maximize"
-          aria-label="Maximize"
-          @click="appWindow.maximize()"
-        />
-      </UTooltip>
+      <AppButton
+        size="xl"
+        color="neutral"
+        variant="ghost"
+        icon="lucide:maximize"
+        aria-label="Maximize"
+        @click="appWindow.maximize()"
+      />
 
       <UTooltip text="Close">
         <UButton
-          size="sm"
+          size="xl"
           color="neutral"
           variant="ghost"
           icon="heroicons:x-mark"
@@ -117,7 +127,10 @@ useEventListener("keydown", (e: KeyboardEvent) => {
       </UTooltip>
     </div>
 
-    <WorkspaceSelect v-if="!hideAuthGated" class="shrink-0" />
+    <WorkspaceSelect
+      v-if="!hideAuthGated"
+      class="cursor-pointer hidden md:block"
+    />
 
     <UButton
       size="sm"
@@ -137,15 +150,15 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
     <!-- Search -->
     <div
-      :class="[
-        hideAuthGated ? 'ml-6' : 'flex-1 flex max-w-sm mx-auto relative',
-      ]"
+      v-if="!hideAuthGated"
+      class="flex-1 min-w-0 flex items-center md:max-w-sm md:mx-auto md:relative"
     >
       <div class="inline-flex items-center shrink-0 mr-5">
         <UButton
           size="sm"
           color="neutral"
           variant="ghost"
+          class="cursor-pointer hidden md:block"
           icon="heroicons:chevron-left"
           aria-label="Go back"
           @click="router.back()"
@@ -155,14 +168,14 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           size="sm"
           color="neutral"
           variant="ghost"
+          class="cursor-pointer hidden md:block"
           icon="heroicons:chevron-right"
           aria-label="Go forward"
           @click="router.forward()"
         />
       </div>
       <div
-        v-if="!hideAuthGated"
-        class="flex items-center gap-2 px-3 py-2.5 transition-colors bg-none dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"
+        class="flex items-center gap-2 h-9 px-3 w-full rounded-md transition-colors bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"
       >
         <UIcon
           name="heroicons:magnifying-glass"
@@ -175,7 +188,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           autocapitalize="off"
           autocorrect="off"
           spellcheck="false"
-          class="flex-1 min-w-0 outline-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
+          class="flex-1 w-full md:min-w-0 outline-none text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500"
           @input="onSearchInput(($event.target as HTMLInputElement).value)"
           @keydown.escape="
             isOpen = false;
@@ -235,24 +248,13 @@ useEventListener("keydown", (e: KeyboardEvent) => {
         />
       </UTooltip>
 
-      <UTooltip text="Open panel">
-        <UButton
-          class="flex md:hidden"
-          size="sm"
-          color="neutral"
-          variant="ghost"
-          icon="heroicons:bars-3-bottom-right"
-          aria-label="Open panel"
-        />
-      </UTooltip>
-
-      <div v-if="!hideAuthGated" class="flex items-center gap-1.5">
+      <div v-if="!hideAuthGated" class="items-center gap-1.5 flex">
         <UTooltip
           v-if="authStore.isGuest"
           text="Guest mode - sign in to sync your data"
         >
           <span
-            class="text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer"
+            class="text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer hidden md:flex"
             @click="navigateTo('/auth/login')"
           >
             Guest

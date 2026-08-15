@@ -32,7 +32,7 @@ function isActive(path: string): boolean {
 }
 
 const asideOpen = ref(false);
-const mobileNavOpen = ref(false);
+const { mobileNavOpen } = useMobileNav();
 
 const pageTitle = computed(() => {
   const raw = route.name?.toString().replaceAll("-", " ") ?? "";
