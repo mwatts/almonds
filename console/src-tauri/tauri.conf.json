@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Lunar",
-  "version": "0.8.27",
+  "version": "0.8.28",
   "identifier": "com.wild.almonds",
   "build": {
     "frontendDist": "../dist",
