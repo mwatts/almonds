@@ -1,9 +1,9 @@
 <template>
   <div
     id="auth_layout"
-    class="min-h-screen w-full bg-gray-50 dark:bg-surface-950 flex items-center justify-center p-6 relative flex-col overflow-hidden"
+    class="min-h-screen w-full bg-gray-50 dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
   >
-    <!-- <AppLogo />    -->
+     <!-- <AppLogo />     -->
 
     <div
       class="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-accent-300/20 dark:bg-accent-500/10 blur-3xl"
@@ -14,7 +14,7 @@
     />
 
     <div
-      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl p-8"
+      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl px-8"
     >
       <Transition
         enter-active-class="transition-opacity duration-200"
@@ -40,7 +40,7 @@
 }
 
 #auth_layout h2 {
-  @apply text-2xl font-bold text-gray-800 dark:text-white mt-4 text-center;
+  @apply text-2xl font-bold text-gray-800 dark:text-white md:mt-4 text-center;
 }
 #auth_layout h2 + p {
   @apply text-gray-600 dark:text-gray-400  text-center;

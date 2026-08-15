@@ -67,7 +67,7 @@ onMounted(async () => {
 
   <Body>
     <UApp>
-      <AppTitlebar :authenticate="authenticated" />
+      <AppTitlebar :authenticated="authenticated" />
     </UApp>
   </Body>
 </template>

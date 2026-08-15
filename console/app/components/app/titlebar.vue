@@ -5,14 +5,15 @@ import { useEventListener } from "@vueuse/core";
 import { computed, onMounted, watch } from "vue";
 import { IS_WEB } from "~/plugins/lunar.client";
 
-const props = defineProps<{ authenticate?: boolean }>();
+const props = defineProps<{ authenticated?: boolean }>();
 const authStore = useAuthStore();
 const syncQueueStore = useSyncQueueStore();
 const isOnline = computed(() => syncQueueStore.isOnline);
 const runningSync = computed(() => syncQueueStore.runningSync);
 const router = useRouter();
 const hideAuthGated = computed(
-  () => props.authenticate && !authStore.isAuthenticated && !authStore.isGuest,
+  () =>
+    props.authenticated && !authStore.isauthenticatedd && !authStore.isGuest,
 );
 const colorMode = useColorMode();
 const { searchQuery, isOpen } = useAppSearch();
@@ -74,15 +75,17 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     :class="{ 'rounded-t-lg': !IS_WEB }"
   >
     <!-- mobile nav toggle -->
-    <UButton
-      size="lg"
-      color="neutral"
-      variant="ghost"
-      class="md:hidden"
-      icon="heroicons:bars-3"
-      aria-label="Open menu"
-      @click="toggleMobileNav"
-    />
+    <div v-if="authenticated">
+      <UButton
+        size="lg"
+        color="neutral"
+        variant="ghost"
+        class="md:hidden"
+        icon="heroicons:bars-3"
+        aria-label="Open menu"
+        @click="toggleMobileNav"
+      />
+    </div>
 
     <!-- mac os controls-->
     <div v-if="isMacOS && !IS_WEB" class="traffic-lights shrink-0">
@@ -225,7 +228,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     <div class="flex items-center gap-1 ml-auto">
       <UTooltip :text="themeLabel">
         <UButton
-          size="sm"
+          size="lg"
           color="neutral"
           class="cursor-pointer"
           variant="ghost"
