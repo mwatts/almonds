@@ -3,8 +3,8 @@
     id="auth_layout"
     class="min-h-screen w-full bg-gray-50 dark:bg-surface-950 flex items-center justify-center p-6 relative flex-col overflow-hidden"
   >
-      <!-- <AppLogo />    -->
-      
+    <!-- <AppLogo />    -->
+
     <div
       class="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-accent-300/20 dark:bg-accent-500/10 blur-3xl"
     />
@@ -16,7 +16,14 @@
     <div
       class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl p-8"
     >
-      <slot />
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        leave-active-class="transition-opacity duration-300"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0"
+      >
+        <slot />
+      </Transition>
     </div>
 
     <slot name="below-card" />
@@ -40,6 +47,6 @@
 }
 
 #auth_layout button {
-  @apply text-center first-letter:uppercase;
+  @apply text-center first-letter:uppercase justify-center items-center;
 }
 </style>

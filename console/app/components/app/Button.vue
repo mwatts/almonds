@@ -5,7 +5,7 @@
     :loading="loading"
     :size="size"
     :disabled="disabled || loading"
-    class="dark:text-gray-200 rounded:md disabled:bg-primary-200"
+    class="w-full py-3 bg-accent-500 text-center hover:bg-accent-600 cursor-pointer text-white font-medium disabled:opacity-50"
   >
     <slot />
   </UButton>

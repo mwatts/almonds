@@ -11,10 +11,7 @@ const isOnline = computed(() => syncQueueStore.isOnline);
 const runningSync = computed(() => syncQueueStore.runningSync);
 const router = useRouter();
 const hideAuthGated = computed(
-  () =>
-    props.authenticate &&
-    !authStore.isAuthenticated &&
-    !authStore.isGuest,
+  () => props.authenticate && !authStore.isAuthenticated && !authStore.isGuest,
 );
 const colorMode = useColorMode();
 const { searchQuery, isOpen } = useAppSearch();
@@ -72,15 +69,9 @@ useEventListener("keydown", (e: KeyboardEvent) => {
   <div class="titlebar flex items-center gap-2 px-2" data-tauri-drag-region>
     <!-- mac os controls-->
     <div v-if="isMacOS" class="traffic-lights shrink-0">
-      <UTooltip text="Close">
         <span class="btn close" @click="appWindow.close()" />
-      </UTooltip>
-      <UTooltip text="Minimize">
         <span class="btn minimize" @click="appWindow.minimize()" />
-      </UTooltip>
-      <UTooltip text="Maximize">
         <span class="btn maximize" @click="appWindow.toggleMaximize()" />
-      </UTooltip>
     </div>
 
     <!-- Windows controls -->
@@ -138,7 +129,10 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     </UButton>
 
     <!-- Search -->
-    <div v-if="!hideAuthGated" class="flex-1 flex max-w-sm mx-auto relative">
+    <div
+     
+      :class="[hideAuthGated ?'ml-6':'flex-1 flex max-w-sm mx-auto relative']"
+    >
       <div class="inline-flex items-center shrink-0 mr-5">
         <UButton
           size="sm"
@@ -159,6 +153,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
         />
       </div>
       <div
+        v-if="!hideAuthGated"
         class="flex items-center gap-2 px-3 py-2.5 transition-colors bg-none dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"
       >
         <UIcon

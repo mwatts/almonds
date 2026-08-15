@@ -1,5 +1,6 @@
 use lunar::{
-    adapters::meta::RequestMeta, entities::recycle_bin, entities::sea_orm_active_enums::ItemType as RecycleBinItemType,
+    adapters::meta::RequestMeta, entities::recycle_bin,
+    entities::sea_orm_active_enums::ItemType as RecycleBinItemType,
     repositories::recycle_bin::RecycleBinRepositoryExt,
 };
 use tauri::State;
