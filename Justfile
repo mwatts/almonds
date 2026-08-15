@@ -73,7 +73,7 @@ release target:
 
 [working-directory:'.']
 clean target:
-	lua scripts/clean.lua {{target}}
+	node scripts/clean.mjs {{target}}
 
 
 sync:

@@ -40,7 +40,7 @@ db-up:
 		--enum-extra-attributes 'ts(export)' \
 		-o src/entities \
 		--seaography
-	python3 ../scripts/fix-ts-exports.py src/entities
+	node ../scripts/fix-ts-exports.mjs src/entities
 	
 # Generate entities for all backends.
 # Starts docker, runs migrations, then generates entities.
