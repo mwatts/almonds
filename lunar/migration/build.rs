@@ -9,7 +9,7 @@ fn main() {
         PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
 
     let output_dir =
-        manifest_dir.join("generated/pglite/migrations");
+        manifest_dir.join("../generated/pglite/migrations");
 
     let status = Command::new("cargo")
         .args([
