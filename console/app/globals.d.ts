@@ -25,4 +25,6 @@ declare interface Window {
   __TAURI_EVENT_PLUGIN_INTERNALS__?: {
     unregisterListener: (event: string, eventId: number) => void;
   };
+  // Injected by plugins/lunar.client.ts (web builds only)
+  lunar?: import("./utils/lunar").LunarConsoleApi;
 }
