@@ -15,3 +15,24 @@ pub mod todo;
 pub mod user_preferences;
 pub mod workspace_preferences;
 pub mod workspaces;
+
+seaography::register_entity_modules!([
+    bookmark,
+    note_categories,
+    notes,
+    notifications,
+    recycle_bin,
+    reminder,
+    snippets,
+    sync_queue,
+    todo,
+    user_preferences,
+    workspace_preferences,
+    workspaces,
+]);
+seaography::register_active_enums!([
+    sea_orm_active_enums::ItemType,
+    sea_orm_active_enums::NotificationType,
+    sea_orm_active_enums::Priority,
+    sea_orm_active_enums::Tag,
+]);

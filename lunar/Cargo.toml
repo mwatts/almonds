@@ -11,13 +11,15 @@ markdown2pdf = ["dep:markdown2pdf", "dirs"]
 
 [dependencies]
 argon2 = "0.5"
+async-graphql = { version = "7.0.17", features = ["apollo_tracing", "raw_value", "tracing", "uuid"] }
 async-trait = "0.1.89"
 chrono = { version = "0.4", features = ["serde"] }
 dirs = { version = "6.0.0", optional = true }
+futures = "0.3.32"
+graphql_client = "0.16.0"
 log = "0.4.29"
 markdown2pdf = { version = "0.2.2", optional = true }
 rand_core = { version = "0.6", features = ["getrandom"] }
-reqwest = { version = "0.13.2", features = ["json"] }
 sanitizer = { version = "1.0.0", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 sea-orm = { version = "2.0.0-rc.37", features = [
@@ -26,8 +28,7 @@ sea-orm = { version = "2.0.0-rc.37", features = [
     "debug-print",
     "with-uuid",
     "with-chrono",
-    "runtime-tokio-rustls", 
-    "sqlx-sqlite"
+    "seaography"
 ] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
@@ -39,11 +40,24 @@ validator = { version = "0.20.0", features = ["derive"] }
 wasm-bindgen = "0.2.127"
 wasm-bindgen-futures = "0.4"
 
+[dependencies.seaography]
+version = "~2.0.0-rc.8"
+features = [
+    "graphql-playground",
+    "with-decimal",
+    "with-chrono",
+    "with-uuid",
+    "with-postgres-array",
+]
+
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 migration = { version = "0.1.0", path = "migration" }
+reqwest = { version = "0.13.2", features = ["json"] }
 sea-orm = { version = "2.0.0-rc.37", features = [
-    "sqlx-postgres"
+    "sqlx-postgres",
+    "sqlx-sqlite",
+    "runtime-tokio-rustls",
 ] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

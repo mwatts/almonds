@@ -42,3 +42,9 @@ impl Related<super::workspaces::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
+pub enum RelatedEntity {
+    #[sea_orm(entity = "super::workspaces::Entity")]
+    Workspaces,
+}

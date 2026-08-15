@@ -27,7 +27,7 @@ pub enum AppError {
     InternalError(String),
 
     #[error(transparent)]
-    KernelError(#[from] lunar::error::KernelError),
+    LunarError(#[from] lunar::error::LunarError),
 
     #[error(transparent)]
     FileSystemError(#[from] std::io::Error),
@@ -43,7 +43,7 @@ impl AppError {
             AppError::EnvError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::StartupError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::InternalError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::KernelError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::LunarError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::FileSystemError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
