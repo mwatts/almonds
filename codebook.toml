@@ -1,4 +1,5 @@
 words = [
+    "TAURI",
     "cdylib",
     "rustls",
     "seaography",

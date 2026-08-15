@@ -116,7 +116,7 @@ body {
 }
 
 .titlebar {
-  @apply fixed top-0 left-0 right-0 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center p-2 rounded-t-lg;
+  @apply fixed top-0 left-0 right-0 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center p-2 ;
 }
 
 .scrollbar-config {

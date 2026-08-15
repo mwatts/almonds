@@ -3,6 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { platform } from "@tauri-apps/plugin-os";
 import { useEventListener } from "@vueuse/core";
 import { computed, onMounted, watch } from "vue";
+import { IS_WEB } from "~/plugins/lunar.client";
 
 const props = defineProps<{ authenticate?: boolean }>();
 const authStore = useAuthStore();
@@ -66,16 +67,20 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="titlebar flex items-center gap-2 px-2" data-tauri-drag-region>
+  <div
+    class="titlebar flex items-center gap-2 px-2"
+    data-tauri-drag-region
+    :class="{ 'rounded-t-lg': !IS_WEB }"
+  >
     <!-- mac os controls-->
-    <div v-if="isMacOS" class="traffic-lights shrink-0">
-        <span class="btn close" @click="appWindow.close()" />
-        <span class="btn minimize" @click="appWindow.minimize()" />
-        <span class="btn maximize" @click="appWindow.toggleMaximize()" />
+    <div v-if="isMacOS && !IS_WEB" class="traffic-lights shrink-0">
+      <span class="btn close" @click="appWindow.close()" />
+      <span class="btn minimize" @click="appWindow.minimize()" />
+      <span class="btn maximize" @click="appWindow.toggleMaximize()" />
     </div>
 
     <!-- Windows controls -->
-    <div v-else class="flex items-center shrink-0">
+    <div v-else-if="!isMacOS && IS_WEB" class="flex items-center shrink-0">
       <UTooltip text="Minimize">
         <UButton
           size="sm"
@@ -86,6 +91,8 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           @click="appWindow.minimize()"
         />
       </UTooltip>
+
+      <!-- web control/mobile -->
 
       <UTooltip text="Maximize">
         <UButton
@@ -130,8 +137,9 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
     <!-- Search -->
     <div
-     
-      :class="[hideAuthGated ?'ml-6':'flex-1 flex max-w-sm mx-auto relative']"
+      :class="[
+        hideAuthGated ? 'ml-6' : 'flex-1 flex max-w-sm mx-auto relative',
+      ]"
     >
       <div class="inline-flex items-center shrink-0 mr-5">
         <UButton
