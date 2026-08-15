@@ -36,7 +36,7 @@ async function handleAccept() {
         You're invited!
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        You've been invited to join a workspace on Almonds.
+        You've been invited to join a workspace on Lunar.
       </p>
     </div>
 
@@ -64,7 +64,7 @@ async function handleAccept() {
     <div v-if="token" class="flex flex-col gap-3">
       <AppButton
         color="primary"
-        class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
+        class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50 text-center"
         :loading="loading"
         :disabled="loading"
         @click="handleAccept"

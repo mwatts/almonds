@@ -32,7 +32,7 @@ mod m20260528_132342_notification;
 mod m20260528_200000_add_workspace_and_is_read_to_notifications;
 
 pub use sea_orm_migration::prelude::*;
-
+pub mod exporter;
 pub struct Migrator;
 
 #[async_trait::async_trait]

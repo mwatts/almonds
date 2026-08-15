@@ -63,7 +63,7 @@ function continueWithoutLogin() {
           Welcome back
         </h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          Sign in to your Almonds account to continue.
+          Sign in to your Lunar account to continue.
         </p>
       </div>
 
@@ -108,8 +108,6 @@ function continueWithoutLogin() {
 
         <AppButton
           type="submit"
-          color="primary"
-          class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
           :loading="loading"
           :disabled="loading"
         >
@@ -131,9 +129,9 @@ function continueWithoutLogin() {
     <template #below-card>
       <div class="flex flex-col items-center gap-2 mt-4">
         <NuxtLink
-          type="button"
+          type="link"
           color="neutral"
-          class="px-6 py-2.5 rounded-lg text-sm  text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+          class="px-6 py-2.5 rounded-lg text-sm  text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 cursor-pointer"
           :disabled="loading"
           @click="continueWithoutLogin"
         >

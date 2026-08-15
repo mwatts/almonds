@@ -24,9 +24,7 @@ function validatePassword(): boolean {
   errors.password =
     form.password.length >= 6 ? "" : "Password must be at least 6 characters";
   errors.confirmPassword =
-    form.confirmPassword === form.password
-      ? ""
-      : "Passwords do not match";
+    form.confirmPassword === form.password ? "" : "Passwords do not match";
   return !errors.password && !errors.confirmPassword;
 }
 
@@ -103,7 +101,9 @@ async function handleSetPassword() {
 
     <form
       class="flex flex-col gap-4"
-      @submit.prevent="step === 'email' ? handleRequestCode() : handleSetPassword()"
+      @submit.prevent="
+        step === 'email' ? handleRequestCode() : handleSetPassword()
+      "
     >
       <template v-if="step === 'email'">
         <AppInput
@@ -123,8 +123,6 @@ async function handleSetPassword() {
 
         <AppButton
           type="submit"
-          color="primary"
-          class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
           :loading="loading"
           :disabled="loading"
         >
@@ -164,7 +162,7 @@ async function handleSetPassword() {
         <AppButton
           type="submit"
           color="primary"
-          class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
+          class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50 text-center"
           :loading="loading"
           :disabled="loading"
         >

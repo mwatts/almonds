@@ -15,7 +15,7 @@
         <h1
           class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
         >
-          Wild almonds
+          Lunar
         </h1>
         <p class="text-sm text-gray-400 dark:text-gray-500">
           Loading your workspace…

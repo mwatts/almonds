@@ -4,7 +4,7 @@ use std::{
     time::Duration,
 };
 
-use lunar::{data_engine, error::KernelError};
+use lunar::{data_engine, error::LunarError};
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
@@ -80,19 +80,19 @@ async fn main() -> Result<(), AppError> {
             .allow_headers(Any)
     };
 
-    let kernel = data_engine::DataEngine::new(&app_config.database_url).await?;
+    let lunar = data_engine::DataEngine::new(&app_config.database_url).await?;
 
-    kernel
+    lunar
         .run_migrations()
         .await
-        .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
+        .map_err(|e| LunarError::DbConnectError(e.to_string()))?;
 
-    let db = kernel.connection().to_owned();
+    let db = lunar.connection().to_owned();
     let db_conn = Arc::new(db.clone());
 
     Migrator::up(&db, None)
         .await
-        .map_err(|e| KernelError::DbConnectError(e.to_string()))?;
+        .map_err(|e| LunarError::DbConnectError(e.to_string()))?;
 
     let schema = orchard_lib::query_root::schema(db, Some(100), app_config.complexity_limit)
         .map_err(|err| AppError::GraphQLError(err.to_string()))?;

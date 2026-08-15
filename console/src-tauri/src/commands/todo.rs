@@ -1,7 +1,7 @@
 use lunar::{
     adapters::meta::RequestMeta,
-    entities::todo,
     entities::sea_orm_active_enums::Priority as TodoPriority,
+    entities::todo,
     repositories::todo::TodoRepositoryExt,
     repositories::workspace_manager::{DuplicateRecord, TransferRecord},
 };

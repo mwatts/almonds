@@ -10,9 +10,7 @@ pub struct CreateUserPreference {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<CreateUserPreference>
-    for lunar::adapters::workspace_preferences::CreateUserPreference
-{
+impl From<CreateUserPreference> for lunar::adapters::workspace_preferences::CreateUserPreference {
     fn from(p: CreateUserPreference) -> Self {
         Self {
             first_name: p.first_name,
@@ -31,9 +29,7 @@ pub struct UpdateUserPreference {
     pub meta: Option<RequestMeta>,
 }
 
-impl From<UpdateUserPreference>
-    for lunar::adapters::workspace_preferences::UpdateUserPreference
-{
+impl From<UpdateUserPreference> for lunar::adapters::workspace_preferences::UpdateUserPreference {
     fn from(p: UpdateUserPreference) -> Self {
         Self {
             first_name: p.first_name,

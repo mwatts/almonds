@@ -8,10 +8,26 @@ publish = false
 name = "migration"
 path = "src/lib.rs"
 
+[[bin]]
+name = "migration-export"
+path = "src/bin/export.rs"
+
+
 [dependencies]
 async-std = { version = "1", features = ["attributes", "tokio1"] }
 hex = "0.4.3"
 uuid = { version = "1.21.0", features = ["v4", "js"] }
+sea-orm = { version = "2.0.0-rc.37", features = [
+    "macros",
+    "mock",
+    "debug-print",
+    "with-uuid",
+     "sqlx-postgres",
+     "runtime-tokio-rustls",
+    "with-chrono",
+    "seaography"
+] }
+tokio = { version = "1.53.1", features = ["macros", "rt"] }
 
 [dependencies.sea-orm-migration]
 version = "~2.0.0-rc.37"

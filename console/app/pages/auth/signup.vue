@@ -17,9 +17,7 @@ function validate(): boolean {
   errors.password =
     form.password.length >= 6 ? "" : "Password must be at least 6 characters";
   errors.confirmPassword =
-    form.confirmPassword === form.password
-      ? ""
-      : "Passwords do not match";
+    form.confirmPassword === form.password ? "" : "Passwords do not match";
   return !errors.email && !errors.password && !errors.confirmPassword;
 }
 
@@ -54,7 +52,7 @@ async function handleSubmit() {
         Create your account
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        Get started with Almonds in a few seconds.
+        Get started with Lunar in a few seconds.
       </p>
     </div>
 
@@ -80,6 +78,7 @@ async function handleSubmit() {
         hint="required"
         placeholder="At least 6 characters"
         :disabled="loading"
+        :enable-password-toggle="false"
       />
       <p v-if="errors.password" class="text-xs text-red-500 -mt-3">
         {{ errors.password }}
@@ -93,6 +92,7 @@ async function handleSubmit() {
         hint="required"
         placeholder="Repeat your password"
         :disabled="loading"
+        :enable-password-toggle="false"
       />
       <p v-if="errors.confirmPassword" class="text-xs text-red-500 -mt-3">
         {{ errors.confirmPassword }}
@@ -102,8 +102,6 @@ async function handleSubmit() {
 
       <AppButton
         type="submit"
-        color="primary"
-        class="w-full py-3 bg-accent-500 hover:bg-accent-600 rounded-lg text-white font-medium disabled:opacity-50"
         :loading="loading"
         :disabled="loading"
       >

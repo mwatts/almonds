@@ -1,6 +1,7 @@
 words = [
     "cdylib",
     "rustls",
+    "seaography",
     "serde",
     "sqlx",
     "staticlib",

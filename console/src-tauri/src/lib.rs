@@ -21,7 +21,9 @@ const EVENT_NOTIFICATION_RECEIVED: &str = "notification:received";
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
-    let mut builder = tauri::Builder::default().plugin(tauri_plugin_opener::init());
+    let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_window_state::Builder::new().build())
+        .plugin(tauri_plugin_opener::init());
 
     #[cfg(desktop)]
     {

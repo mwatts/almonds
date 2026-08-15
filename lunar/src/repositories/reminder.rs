@@ -9,6 +9,7 @@ use sea_orm::{
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
+use crate::types::EntitySyncResult;
 use crate::entities::sea_orm_active_enums::ItemType;
 use crate::{
     adapters::{
@@ -71,6 +72,10 @@ pub trait ReminderRepositoryExt {
     async fn extract_unsynced(&self) -> Result<Vec<reminder::Model>, LunarError>;
 
     async fn clear_synced(&self, identifiers: Vec<String>) -> Result<(), LunarError>;
+    async fn upsert_many(
+        &self,
+        models: Vec<reminder::Model>,
+    ) -> Result<Vec<EntitySyncResult>, LunarError>;
 }
 
 #[async_trait]
@@ -248,6 +253,55 @@ impl ReminderRepositoryExt for ReminderRepository {
             .await
             .map_err(|err| LunarError::DbOperationError(err.to_string()))?;
         Ok(())
+    }
+    async fn upsert_many(
+        &self,
+        models: Vec<reminder::Model>,
+    ) -> Result<Vec<EntitySyncResult>, LunarError> {
+        let mut sync_results: Vec<EntitySyncResult> = Vec::new();
+        for chunk in models.chunks(20) {
+            let futures: Vec<_> = chunk
+                .iter()
+                .map(|model| {
+                    let conn = self.conn.clone();
+                    let model = model.clone();
+                    async move {
+                        let identifier = model.identifier.to_string();
+                        let op_result: Result<(), LunarError> = async {
+                            let exists = reminder::Entity::find()
+                                .filter(reminder::Column::Identifier.eq(model.identifier))
+                                .one(conn.as_ref())
+                                .await
+                                .map_err(|err| LunarError::DbOperationError(err.to_string()))?
+                                .is_some();
+
+                            let active_model = model.into_active_model();
+
+                            if exists {
+                                active_model.update(conn.as_ref()).await.map_err(|err| {
+                                    LunarError::DbOperationError(err.to_string())
+                                })?;
+                            } else {
+                                active_model.insert(conn.as_ref()).await.map_err(|err| {
+                                    LunarError::DbOperationError(err.to_string())
+                                })?;
+                            }
+                            Ok(())
+                        }
+                        .await;
+                        EntitySyncResult {
+                            identifier,
+                            success: op_result.is_ok(),
+                            error_message: op_result.err().map(|e| e.to_string()),
+                        }
+                    }
+                })
+                .collect();
+
+            let chunk_results = futures::future::join_all(futures).await;
+            sync_results.extend(chunk_results);
+        }
+        Ok(sync_results)
     }
 }
 #[async_trait::async_trait]

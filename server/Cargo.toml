@@ -12,10 +12,6 @@ name = "orchard_lib"
 path = "src/lib.rs"
 
 [dependencies]
-# lunar = { version = "0.1.0", path = "../kernel", default-features = false, features = [
-#     "postgres",
-#     "sync_engine",
-# ] }
 async-graphql = { version = "7.0.17", features = ["apollo_tracing", "raw_value", "tracing", "uuid"] }
 async-graphql-axum = { version = "7.0" }
 async-trait = "0.1.89"

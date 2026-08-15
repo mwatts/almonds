@@ -1,11 +1,15 @@
 pub mod adapters;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod data_engine;
 pub mod entities;
 pub mod error;
 #[cfg(feature = "markdown2pdf")]
 pub mod markdown2pdf;
 pub mod repositories;
+pub mod sync_engine;
+pub mod types;
 pub mod utils;
+#[cfg(not(target_arch = "wasm32"))]
 pub use data_engine::DataEngine;
 pub use sea_orm;
 

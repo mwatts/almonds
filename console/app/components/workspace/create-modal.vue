@@ -84,7 +84,7 @@ async function handleSubmit() {
             hint="required"
             type="text"
             name="workspace-name"
-            placeholder="Almonds"
+            placeholder="Lunar"
             :error="errors.name"
             :disabled="loading"
           />
