@@ -1,4 +1,4 @@
-import 'scripts/kernel.just'
+import 'scripts/lunar.just'
 import 'scripts/misc.just'
 import 'scripts/console.just'
 import 'scripts/lint.just'
@@ -54,7 +54,7 @@ test target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
 		just test-console
-		just test-kernel
+		just test-lunar
 		just test-server
 		just test-console-tauri
 	else
