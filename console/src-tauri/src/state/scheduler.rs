@@ -3,7 +3,7 @@ use std::sync::{Mutex, RwLock};
 
 pub struct SchedulerState {
     /// Keys of reminders already fired: "<uuid>-<fire_minute>".
-    pub fired_keys: Mutex<HashSet<String>>,
+    pub _fired_keys: Mutex<HashSet<String>>,
     /// Lead time in minutes before remind_at to fire the alarm.
     pub lead_time_minutes: RwLock<i64>,
     /// Default alarm sound filename (None = silent).

@@ -126,7 +126,7 @@ pub async fn transfer_note(
 pub async fn export_notes_as_pdf(
     state: State<'_, AppState>,
     record_identifier: Uuid,
-    previous_workspace_identifier: Uuid,
+    _previous_workspace_identifier: Uuid,
     meta: Option<RequestMeta>,
 ) -> Result<(), AppError> {
     let note = state
