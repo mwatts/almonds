@@ -40,7 +40,7 @@ sudo apt install -y \
 just watch almond     # frontend + Tauri (recommended)
 just watch frontend   # Nuxt dev server only
 just watch tauri      # Tauri console only
-just watch kernel     # watch the kernel crate
+just watch lunar     # watch the lunar crate
 ```
 
 ## Android
