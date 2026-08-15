@@ -4,7 +4,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, sync_queue::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "sync_queue.ts")]
 pub struct SyncQueueEntry {
     pub table_name: String,
     pub record_identifier: String,

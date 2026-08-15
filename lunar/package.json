@@ -1,0 +1,21 @@
+{
+  "name": "lunar",
+  "version": "0.1.0",
+  "description": "TypeScript type bindings for the lunar Rust data-access layer.",
+  "type": "module",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts"
+    },
+    "./index": {
+      "types": "./index.ts"
+    }
+  },
+  "files": [
+    "index.ts",
+    "bindings"
+  ],
+  "keywords": [],
+  "license": "ISC"
+}

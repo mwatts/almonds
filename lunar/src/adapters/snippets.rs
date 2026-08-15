@@ -5,8 +5,10 @@ use uuid::Uuid;
 
 use crate::entities::{self, snippets::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[deprecated(since = "0.1.0", note = "use CreateSnippet ")]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "snippets.ts")]
 pub struct Snippet {
     pub title: Option<String>,
     pub language: Option<String>,
@@ -17,7 +19,9 @@ pub struct Snippet {
     pub updated_at: DateTimeWithTimeZone,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "snippets.ts")]
 pub struct CreateSnippet {
     pub title: Option<String>,
     pub language: Option<String>,
@@ -44,7 +48,9 @@ impl Into<entities::snippets::ActiveModel> for CreateSnippet {
         }
     }
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
+#[ts(rename_all = "camelCase")]
+#[ts(export, export_to = "snippets.ts")]
 pub struct UpdateSnippet {
     pub title: Option<String>,
     pub language: Option<String>,

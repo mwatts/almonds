@@ -5,8 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, workspace_preferences::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "workspace_preferences.ts")]
 pub struct CreateUserPreference {
     pub first_name: String,
     pub last_name: String,
@@ -26,8 +27,9 @@ impl Into<entities::workspace_preferences::ActiveModel> for CreateUserPreference
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "workspace_preferences.ts")]
 pub struct UpdateUserPreference {
     pub first_name: Option<String>,
     pub last_name: Option<String>,

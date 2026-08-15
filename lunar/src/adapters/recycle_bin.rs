@@ -5,8 +5,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, recycle_bin::ActiveModel, sea_orm_active_enums::ItemType};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "recycle_bin.ts")]
 pub struct CreateRecycleBinEntry {
     pub item_id: Uuid,
     pub item_type: ItemType,

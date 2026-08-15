@@ -25,8 +25,9 @@ pub fn verify_password(password: &str, hash: &str) -> Result<bool, argon2::passw
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "workspace.ts")]
 pub struct CreateWorkspace {
     pub name: String,
     pub description: String,
@@ -48,8 +49,9 @@ impl From<CreateWorkspace> for entities::workspaces::ActiveModel {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "workspace.ts")]
 pub struct UpdateWorkspace {
     pub name: Option<String>,
     pub description: Option<String>,

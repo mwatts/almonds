@@ -6,8 +6,9 @@ use uuid::Uuid;
 
 use crate::entities::{self, reminder::ActiveModel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "reminder.ts")]
 pub struct CreateReminder {
     pub title: String,
     pub description: Option<String>,
@@ -35,8 +36,9 @@ impl Into<entities::reminder::ActiveModel> for CreateReminder {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ts_rs::TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export, export_to = "reminder.ts")]
 pub struct UpdateReminder {
     pub title: Option<String>,
     pub description: Option<String>,
