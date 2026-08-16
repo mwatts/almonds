@@ -43,7 +43,10 @@ WORKDIR /repo
 COPY console/package.json console/package-lock.json ./console/
 COPY lunar ./lunar
 
-RUN cd console && npm ci --ignore-scripts --no-audit --no-fund
+# npm runs `prepare` for file: deps even with --ignore-scripts; lunar's prepare
+# invokes cargo + wasm-pack (not needed here), so neutralize it before install.
+RUN node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('lunar/package.json','utf8'));delete p.scripts.prepare;fs.writeFileSync('lunar/package.json',JSON.stringify(p,null,2)+'\n')" \
+ && cd console && npm ci --ignore-scripts --no-audit --no-fund
 
 # Overwrite the committed SQL with the freshly generated one.
 COPY --from=migrations /repo/lunar/generated ./lunar/generated
