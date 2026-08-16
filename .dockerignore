@@ -6,7 +6,6 @@
 !Cargo.lock
 
 # Allow the two crates
-!kernel/**
 !server/**
 !lunar/**
 
@@ -14,13 +13,11 @@
 !console/**
 
 # But ignore their build artifacts
-kernel/target
 server/target
-kernel/migration/target
 server/migration/target
 **/target
-kernel/node_modules
-kernel/dist
+lunar/node_modules
+lunar/dist
 
 # Console build artifacts (regenerated inside the image)
 console/node_modules

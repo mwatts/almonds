@@ -108,7 +108,7 @@ const goToMenu = () => router.push({ query: {} });
             @click="goToSection(s.key)"
           >
             <div
-              class="size-10 shrink-0 rounded-lg bg-accent-50 dark:bg-accent-950 flex items-center justify-center"
+              class="size-10 shrink-0 rounded-lg flex items-center justify-center"
             >
               <UIcon :name="s.icon" class="size-5 text-accent-700 dark:text-accent-300" />
             </div>

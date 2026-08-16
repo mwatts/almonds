@@ -8,11 +8,12 @@ watch-tauri:
 
 [working-directory: 'console']
 watch-mobile:
+    ./src-tauri/gen/android/gradlew --stop
     npm run tauri android dev 
 
 [working-directory: 'console']
-watch-mobile-device DEVICE HOST:
-    npm run tauri android dev {{DEVICE}} --host {{HOST}}
+watch-mobile-device HOST:
+    npm run tauri android dev --host {{HOST}}
 
 [working-directory: 'console']
 watch-ios:

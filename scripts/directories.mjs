@@ -1,1 +1,1 @@
-export const DIRECTORIES = ["console", "kernel", "server", "all"];
+export const DIRECTORIES = ["console", "server", "all"];

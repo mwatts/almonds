@@ -2,10 +2,10 @@
 watch-lunar:
 	cargo watch -qcx check
 
-# Start postgres and mysql containers (../kernel/docker/docker-compose.yml)
+# Start postgres and mysql containers (docker/docker-compose.yml)
 [working-directory: 'lunar']
 db-up:
-	docker compose -f ../kernel/docker/docker-compose.yml up -d
+	docker compose -f docker/docker-compose.yml up -d
 
 [working-directory: 'lunar']
 @migrate-add target:

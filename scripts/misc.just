@@ -4,7 +4,6 @@ install-dependencies:
 	cargo install cargo-group-imports
 	cargo install sea-orm-cli@^2.0.0-rc
 	cargo install seaography-cli@^2.0.0-rc
-	cargo install boltffi_cli
 	cargo install wasm-pack
 
 generate-bindings:
@@ -13,6 +12,3 @@ generate-bindings:
 	rm -rf app/app/bindings
 	cp -r server/bindings app/app/bindings
 	cp -r app/src-tauri/bindings/* app/app/bindings
-
-create-kernel-test-file:
-	touch kernel/test.sqlite

@@ -31,6 +31,5 @@ just lint all
 ```bash
 just clean all       # clean everything
 just clean almonds   # frontend only
-just clean kernel    # kernel crate only
 just clean orchard   # orchard crate only
 ```

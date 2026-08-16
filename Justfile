@@ -6,10 +6,8 @@ import 'scripts/test.just'
 import 'scripts/server.just'
 import 'scripts/website.just'
 import 'scripts/release.just'
-import 'scripts/mobile.just'
 
 
-DB_PATH := "sqlite://../../test.sqlite?mode=rwc"
 DOCKER_CMD := "docker compose -f docker-compose.yaml"
 POSTGRES_URL := "postgres://almond:almond@localhost:5433/almond"
 MYSQL_URL    := "mysql://almond:almond@localhost:3307/almond"
@@ -28,7 +26,6 @@ alias cfg := configure
 
 configure:
 	just install-dependencies
-	just create-kernel-test-file
 	just install-frontend-dependencies
 	chmod +x scripts/release.sh
 
@@ -42,7 +39,6 @@ lint target:
 	#!/usr/bin/env bash
 	if [ "{{target}}" = "all" ]; then
 		just lint-console
-		just lint-kernel
 		just lint-server
 		just lint-console-tauri
 	else
@@ -60,11 +56,6 @@ test target:
 	else
 		just test-{{target}}
 	fi
-
-[working-directory:'kernel']
-@migrate-run:
-	DATABASE_URL={{DB_PATH}} sea-orm-cli  migrate up
-
 
 [working-directory:'.']
 release target:
