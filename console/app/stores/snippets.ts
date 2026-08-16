@@ -1,25 +1,12 @@
+import type { CreateSnippet, Snippets, UpdateSnippet } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
-export interface Snippet {
-  identifier: string;
-  title: string | null;
-  language: string | null;
-  code: string;
-  description: string | null;
-  isPinned: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type Snippet = Snippets;
 
-export interface CreateSnippetPayload {
-  title: string | null;
-  language: string | null;
-  code: string;
-  description: string | null;
-}
+export type CreateSnippetPayload = Partial<CreateSnippet> & { code: string };
 
-export type UpdateSnippetPayload = Partial<CreateSnippetPayload>;
+export type UpdateSnippetPayload = Partial<UpdateSnippet>;
 
 export const useSnippetStore = defineStore("snippets_store", {
   state: () => ({

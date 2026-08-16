@@ -1,17 +1,7 @@
-import type { Bookmark, Tag } from "lunar";
+import type { Bookmark, CreateBookmark, Tag, UpdateBookmark } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateBookmark {
-  title: string;
-  url: string;
-  tag: Tag;
-}
-
-export interface UpdateBookmark {
-  title?: string;
-  url?: string;
-  tag?: Tag;
-}
+export type { CreateBookmark, UpdateBookmark };
 
 const COLUMNS = ["title", "url", "tag", "workspace_identifier", "created_at", "updated_at"];
 

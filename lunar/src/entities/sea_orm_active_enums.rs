@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 )]
 #[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "item_type")]
 #[ts(export)]
+#[serde(rename_all = "snake_case")]
 pub enum ItemType {
     #[sea_orm(string_value = "todo")]
     Todo,
@@ -25,6 +26,7 @@ pub enum ItemType {
 )]
 #[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "notification_type")]
 #[ts(export)]
+#[serde(rename_all = "snake_case")]
 pub enum NotificationType {
     #[sea_orm(string_value = "backup_failed")]
     BackupFailed,
@@ -56,6 +58,7 @@ pub enum NotificationType {
 )]
 #[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "priority")]
 #[ts(export)]
+#[serde(rename_all = "snake_case")]
 pub enum Priority {
     #[sea_orm(string_value = "high")]
     High,
@@ -69,6 +72,7 @@ pub enum Priority {
 )]
 #[sea_orm(rs_type = "Enum", db_type = "Enum", enum_name = "tag")]
 #[ts(export)]
+#[serde(rename_all = "snake_case")]
 pub enum Tag {
     #[sea_orm(string_value = "development")]
     Development,

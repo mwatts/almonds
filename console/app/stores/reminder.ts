@@ -1,35 +1,15 @@
+import type { CreateReminder, Reminder, UpdateReminder } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
-export interface Reminder {
-  identifier: string;
-  title: string;
-  description: string | null;
-  recurring: boolean;
-  recurrenceRule: string | null;
-  alarmSound: string | null;
-  remindAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Reminder };
 
-export interface CreateReminderPayload {
+export type CreateReminderPayload = Partial<CreateReminder> & {
   title: string;
-  description?: string;
-  recurring?: boolean;
-  recurrenceRule?: string;
-  alarmSound?: string;
   remindAt: string;
-}
+};
 
-export interface UpdateReminderPayload {
-  title?: string;
-  description?: string;
-  recurring?: boolean;
-  recurrenceRule?: string;
-  alarmSound?: string;
-  remindAt?: string;
-}
+export type UpdateReminderPayload = Partial<UpdateReminder>;
 
 export const useReminderStore = defineStore("reminder_store", {
   state: () => ({

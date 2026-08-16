@@ -1,18 +1,7 @@
-import type { Notes } from "lunar";
+import type { CreateNote, Notes, UpdateNote } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateNote {
-  title: string;
-  content: string;
-  categories?: string[];
-  workspaceIdentifier?: string;
-}
-
-export interface UpdateNote {
-  title?: string;
-  content?: string;
-  categories?: string[];
-}
+export type { CreateNote, UpdateNote };
 
 const COLUMNS = [
   "title",

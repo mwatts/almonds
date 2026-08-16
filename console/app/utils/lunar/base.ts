@@ -1,9 +1,8 @@
 import type { PGlite } from "@electric-sql/pglite";
+import type { RequestMeta } from "lunar";
 import { lunarDb } from "./pglite";
 
-export interface RequestMeta {
-  workspaceIdentifier: string;
-}
+export type { RequestMeta };
 
 interface DbRow {
   [column: string]: unknown;

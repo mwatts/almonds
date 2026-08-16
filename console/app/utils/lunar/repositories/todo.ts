@@ -1,17 +1,7 @@
-import type { Priority, Todo } from "lunar";
+import type { CreateTodo, Priority, Todo, UpdateTodo } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateTodo {
-  title: string;
-  description?: string | null;
-  dueDate?: string | null;
-  priority: Priority;
-}
-
-export interface UpdateTodo {
-  title?: string;
-  description?: string;
-}
+export type { CreateTodo, UpdateTodo };
 
 const COLUMNS = [
   "title",

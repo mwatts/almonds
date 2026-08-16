@@ -38,6 +38,7 @@ db-up:
 		--model-extra-attributes 'lunar_macros::ts_rs_export_sea_orm_entity_name' \
 		--enum-extra-derives 'ts_rs::TS' \
 		--enum-extra-attributes 'ts(export)' \
+		--enum-extra-attributes 'serde(rename_all="snake_case")' \
 		-o src/entities \
 		--seaography
 	node ../scripts/fix-ts-exports.mjs src/entities

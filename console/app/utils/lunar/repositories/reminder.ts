@@ -1,24 +1,7 @@
-import type { Reminder } from "lunar";
+import type { CreateReminder, Reminder, UpdateReminder } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateReminder {
-  title: string;
-  description?: string | null;
-  recurring?: boolean;
-  recurrenceRule?: string | null;
-  alarmSound?: string | null;
-  remindAt: string;
-  workspaceIdentifier?: string;
-}
-
-export interface UpdateReminder {
-  title?: string;
-  description?: string | null;
-  recurring?: boolean;
-  recurrenceRule?: string | null;
-  alarmSound?: string | null;
-  remindAt?: string;
-}
+export type { CreateReminder, UpdateReminder };
 
 const COLUMNS = [
   "title",

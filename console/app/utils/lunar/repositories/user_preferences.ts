@@ -1,17 +1,11 @@
-import type { UserPreferences } from "lunar";
+import type {
+  CreateUserPreferences,
+  UpdateUserPreferences,
+  UserPreferences,
+} from "lunar";
 import { BaseRepository } from "../base";
 
-export interface CreateUserPreferences {
-  masterFirstName: string;
-  masterLastName: string;
-  masterEmail: string;
-}
-
-export interface UpdateUserPreferences {
-  masterFirstName?: string;
-  masterLastName?: string;
-  masterEmail?: string;
-}
+export type { CreateUserPreferences, UpdateUserPreferences };
 
 export class UserPreferencesRepository extends BaseRepository {
   async create(payload: CreateUserPreferences): Promise<UserPreferences> {

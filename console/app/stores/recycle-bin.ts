@@ -1,26 +1,16 @@
+import type { CreateRecycleBinEntry, ItemType, RecycleBin } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
-export type RecycleBinItemType =
-  | "note"
-  | "todo"
-  | "bookmark"
-  | "reminder"
-  | "snippet";
+export type RecycleBinItemType = ItemType;
 
-export interface RecycleBinEntry {
-  identifier: string;
-  itemId: string;
-  itemType: RecycleBinItemType;
-  payload: string;
-  deletedAt: string;
-}
+export type RecycleBinEntry = RecycleBin;
 
-export interface CreateRecycleBinEntryPayload {
+export type CreateRecycleBinEntryPayload = Partial<CreateRecycleBinEntry> & {
   itemId: string;
-  itemType: RecycleBinItemType;
+  itemType: ItemType;
   payload: string;
-}
+};
 
 export const useRecycleBinStore = defineStore("recycle_bin_store", {
   state: () => ({

@@ -1,28 +1,14 @@
+import type { Bookmark, CreateBookmark, Tag, UpdateBookmark } from "lunar";
 import { invoke } from "~/utils/invoke";
 import { defineStore } from "pinia";
 
-export type BookmarkTag = "development" | "design" | "research" | "inspiration";
+export type BookmarkTag = Tag;
 
-export interface Bookmark {
-  identifier: string;
-  title: string;
-  url: string;
-  tag: BookmarkTag;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Bookmark };
 
-export interface CreateBookmarkPayload {
-  title: string;
-  url: string;
-  tag: BookmarkTag;
-}
+export type CreateBookmarkPayload = CreateBookmark;
 
-export interface UpdateBookmarkPayload {
-  title?: string;
-  url?: string;
-  tag?: BookmarkTag;
-}
+export type UpdateBookmarkPayload = Partial<UpdateBookmark>;
 
 export const useBookmarkStore = defineStore("bookmark_store", {
   state: () => ({

@@ -1,17 +1,11 @@
-import type { WorkspacePreferences } from "lunar";
+import type {
+  CreateUserPreference,
+  UpdateUserPreference,
+  WorkspacePreferences,
+} from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateUserPreference {
-  firstName: string;
-  lastName: string;
-  email?: string;
-}
-
-export interface UpdateUserPreference {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-}
+export type { CreateUserPreference, UpdateUserPreference };
 
 const COLUMNS = ["first_name", "last_name", "workspace_identifier", "created_at", "updated_at"];
 

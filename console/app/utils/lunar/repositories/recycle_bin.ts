@@ -1,12 +1,11 @@
-import type { ItemType, RecycleBin } from "lunar";
+import type {
+  CreateRecycleBinEntry,
+  ItemType,
+  RecycleBin,
+} from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateRecycleBinEntry {
-  itemId: string;
-  itemType: ItemType;
-  payload: string;
-  workspaceIdentifier?: string;
-}
+export type { CreateRecycleBinEntry };
 
 export class RecycleBinRepository extends BaseRepository {
   async store(payload: CreateRecycleBinEntry, meta?: RequestMeta): Promise<RecycleBin> {
