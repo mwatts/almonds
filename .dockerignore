@@ -10,6 +10,9 @@
 !server/**
 !lunar/**
 
+# Allow the console web app (docker/prod/Dockerfile.web)
+!console/**
+
 # But ignore their build artifacts
 kernel/target
 server/target
@@ -18,6 +21,20 @@ server/migration/target
 **/target
 kernel/node_modules
 kernel/dist
+
+# Console build artifacts (regenerated inside the image)
+console/node_modules
+console/.nuxt
+console/.output
+console/.nitro
+console/.data
+console/.cache
+console/dist
+console/src-tauri/target
+console/app/assets/lunar
+
+# lunar wasm bundle (not consumed by the web build)
+lunar/pkg
 
 # Optional common ignores
 **/*.db
