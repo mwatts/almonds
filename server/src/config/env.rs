@@ -1,8 +1,10 @@
-use std::env;
+use std::{env, str::FromStr};
 
-use lunar::{error::LunarError, utils::extract_env};
 use dotenv::dotenv;
+use lunar::{error::LunarError, utils::extract_env};
 use tower_http::cors::AllowOrigin;
+
+use crate::errors::app_error::AppError;
 
 pub struct AppConfig {
     pub database_url: String,
@@ -11,15 +13,32 @@ pub struct AppConfig {
     pub upload_path: String,
     pub export_path: String,
     pub port: u16,
-    pub environment: String,
     pub allowed_origins: AllowOrigin,
-
+    pub environment: Environment,
     // GraphQL / API settings
     pub graphql_endpoint: String,
     pub depth_limit: Option<usize>,
     pub complexity_limit: Option<usize>,
 
     pub base_url: String,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Environment {
+    Development,
+    Production,
+}
+
+impl FromStr for Environment {
+    type Err = AppError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "dev" | "development" => Ok(Environment::Development),
+            "prod" | "production" => Ok(Environment::Production),
+            _ => Err(AppError::InvalidEnv(s.to_string())),
+        }
+    }
 }
 
 impl std::fmt::Debug for AppConfig {

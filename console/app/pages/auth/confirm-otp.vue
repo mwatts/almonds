@@ -80,28 +80,16 @@ async function handleSubmit() {
     </div>
 
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-      <div>
-        <label
-          class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block"
-        >
-          Verification code
-        </label>
-        <UInput
-          v-model="otp"
-          name="otp"
-          type="text"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          maxlength="6"
-          placeholder="••••••"
-          :disabled="loading"
-          :ui="{ base: 'py-3 pl-4 bg-transparent' }"
-          class="w-full transition-colors border-gray-300 dark:border-gray-600 focus-within:border-accent-500 dark:focus-within:border-accent-400"
-        />
-        <p class="text-xs text-gray-400 mt-1.5 text-center tracking-[0.5em]">
-          6-digit code
-        </p>
-      </div>
+      <AppNumberInput
+        v-model="otp"
+        label="Verification code"
+        name="otp"
+        placeholder="••••••"
+        :disabled="loading"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        :maxlength="6"
+      />
       <p v-if="errors.otp" class="text-xs text-red-500 -mt-3">
         {{ errors.otp }}
       </p>
