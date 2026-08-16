@@ -77,6 +77,13 @@ pub struct VerifyAccountResponse {
     pub token: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct ResendOtpRequest {
+    #[validate(length(min = 1, message = "flow is required"))]
+    pub flow: String,
+}
+
 pub type RefreshTokenResponse = LoginResponse;
 
 #[derive(Debug, Serialize, Deserialize, Validate)]

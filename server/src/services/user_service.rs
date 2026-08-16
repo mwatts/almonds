@@ -22,6 +22,13 @@ pub struct UserService {
 }
 
 impl UserService {
+    pub fn new(user_repository: UserRepository) -> Self {
+        Self {
+            user_repository,
+            user_helper_service: ServiceHelpers::init(),
+        }
+    }
+
     pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
         Self {
             user_repository: <UserRepository as crate::repositories::base::Repository>::init(
@@ -89,7 +96,6 @@ impl UserServiceTrait for UserService {
         >,
         _user_identifier: &Uuid,
     ) -> Result<(), ServiceError> {
-        // tokio::task::spawn(async move {
         let file_name = image
             .metadata
             .file_name
@@ -109,28 +115,6 @@ impl UserServiceTrait for UserService {
             log::error!("error processing file due to {err}");
             return Err(ServiceError::OperationFailed);
         }
-
-        // let private_key: String =
-        //     extract_env("IMAGEKIT_PRIVATE_KEY").map_err(ServiceError::from).unwrap();
-        // let public_key: String = extract_env("IMAGEKIT_PUBLIC_KEY").map_err(ServiceError::from).unwrap();
-
-        // let client = ImagekitClient::new(&public_key, &private_key).map_err(|err| {
-        //     log::error!("ImageKit client creation failed: {err}");
-        //     ServiceError::OperationFailed
-        // })?;
-
-        // let url = client
-        //     .upload_file(file_path, &file_name)
-        //     .await
-        //     .map_err(|err| {
-        //         log::error!("MP3 upload failed: {err}");
-        //         ServiceError::OperationFailed
-        //     })
-        //     .map(|res| res.url)?;
-
-        // self.user_repository
-        //     .set_avatar_url(user_identifier, &url)
-        //     .await?;
 
         Ok(())
     }

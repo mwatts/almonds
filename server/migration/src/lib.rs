@@ -12,7 +12,6 @@ mod m20251227_225947_make_user_name_nullable;
 mod m20260517000000_create_revoked_tokens;
 mod m20260614_212029_create_invitation_table;
 
-#[allow(unused_imports)]
 pub use sea_orm_migration::prelude::*;
 
 pub struct Migrator;

@@ -8,10 +8,5 @@ use validator::Validate;
 #[ts(export, export_to = "meta.ts")]
 
 pub struct RequestMeta {
-    // #[sanitizer(trim)]
-    // #[validate(length(min = 1))]
     pub workspace_identifier: Uuid,
-    // #[sanitizer(trim)]
-    // #[validate(length(min = 1))]
-    // pub user_identifier: Uuid,
 }

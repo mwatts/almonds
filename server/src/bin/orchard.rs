@@ -4,7 +4,6 @@ use std::{
     time::Duration,
 };
 
-use lunar::{data_engine, error::LunarError};
 use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
@@ -15,9 +14,13 @@ use axum::{
     Router,
 };
 use dotenv::dotenv;
+use lunar::{data_engine, error::LunarError};
 use orchard_lib::{
-    config::AppConfig, errors::app_error::AppError, routes::router::load_routes,
-    shutdown::shutdown_signal, states::GraphQlState,
+    config::{AppConfig, Environment},
+    errors::app_error::AppError,
+    routes::router::load_routes,
+    shutdown::shutdown_signal,
+    states::GraphQlState,
 };
 use seaography::async_graphql;
 use tokio::net::TcpListener;
@@ -62,7 +65,7 @@ async fn main() -> Result<(), AppError> {
         .with_env_filter(EnvFilter::from_default_env().add_directive(Level::INFO.into()))
         .init();
 
-    let cors = if app_config.environment == "production" {
+    let cors = if app_config.environment == Environment::Production {
         CorsLayer::new()
             .allow_origin(app_config.allowed_origins.clone())
             .allow_methods([

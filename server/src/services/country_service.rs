@@ -18,6 +18,12 @@ pub struct CountryService {
 }
 
 impl CountryService {
+    pub fn new(country_repository: CountryRepository) -> Self {
+        Self {
+            country_repository,
+        }
+    }
+
     pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
         Self {
             country_repository: CountryRepository::init(db_conn),

@@ -19,6 +19,9 @@ server/migration/target
 lunar/node_modules
 lunar/dist
 
+# Tauri desktop app (not used by any Docker build)
+console/src-tauri
+
 # Console build artifacts (regenerated inside the image)
 console/node_modules
 console/.nuxt

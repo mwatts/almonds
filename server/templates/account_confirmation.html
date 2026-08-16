@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Verify your Almonds account{% endblock %}
+
+{% block content %}
+  <h1 style="margin: 0 0 16px; font-size: 24px; color: #1a1a1a; font-weight: bold;">
+    Verify your account
+  </h1>
+  <p style="margin: 0 0 16px; color: #55575d;">
+    Welcome to Almonds! Use the verification code below to confirm your email address:
+  </p>
+  <table
+    border="0"
+    cellpadding="0"
+    cellspacing="0"
+    role="presentation"
+    style="margin: 24px 0;"
+  >
+    <tbody>
+      <tr>
+        <td
+          style="
+            border-radius: 6px;
+            background-color: #8b5cf6;
+            text-align: center;
+          "
+        >
+          <span
+            style="
+              display: inline-block;
+              padding: 12px 28px;
+              font-family: 'Courier New', monospace;
+              font-size: 24px;
+              font-weight: bold;
+              letter-spacing: 4px;
+              color: #ffffff;
+              text-decoration: none;
+              border-radius: 6px;
+            "
+          >{{ otp }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin: 0 0 8px; color: #999999; font-size: 13px;">
+    This code expires in 25 minutes. If you did not create an account, please ignore this email.
+  </p>
+  <p style="margin: 0; color: #999999; font-size: 13px;">
+    If the code doesn't work, please contact support at
+    <a href="mailto:support@almonds.app" style="color: #8b5cf6; text-decoration: none;">support@almonds.app</a>.
+  </p>
+{% endblock %}

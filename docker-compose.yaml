@@ -1,15 +1,15 @@
 services:
-  web:
-    container_name: almonds-web
-    build:
-      context: .
-      dockerfile: docker/prod/Dockerfile.web
-      args:
-        SERVER_URL: ${SERVER_URL:-http://localhost:5006}
-        NUXT_PUBLIC_APOLLO_ENDPOINT: ${NUXT_PUBLIC_APOLLO_ENDPOINT:-http://localhost:8000/orchard}
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
+  # web:
+  #   container_name: almonds-web
+  #   build:
+  #     context: .
+  #     dockerfile: docker/prod/Dockerfile.web
+  #     args:
+  #       SERVER_URL: ${SERVER_URL:-http://localhost:5006}
+  #       NUXT_PUBLIC_APOLLO_ENDPOINT: ${NUXT_PUBLIC_APOLLO_ENDPOINT:-http://localhost:8000/orchard}
+  #   ports:
+  #     - "3000:3000"
+  #   restart: unless-stopped
 
   app:
     container_name: orchard
@@ -27,6 +27,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_started
       # redis:
         # condition: service_healthy
     networks:
@@ -169,26 +171,27 @@ services:
   #   ports:
   #     - 5540:5540
 
-  # maildev:
-  #   image: maildev/maildev
-  #   container_name: maildev
-  #   ports:
-  #     - "1080:1080"   # WEB UI
-  #     - "1025:1025"  #SMTP port 
-  #   environment:
-  #     - MAILDEV_OUTGOING_HOST=localhost
-  #     - MAILDEV_OUTGOING_PORT=3400
-  #     - MAILDEV_OUTGOING_USER=orchard
-  #     - MAILDEV_OUTGOING_PASS=orchard
-
-  #   networks:
-  #     - internal
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - mailpit-data:/data
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - internal
 
 volumes:
   cargo-target:
   rust-cache:
   postgres-data:
   pgadmin-data:
+  mailpit-data:
   # redis-data:
   # redisinsight-data:
 

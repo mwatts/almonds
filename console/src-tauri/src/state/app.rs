@@ -13,7 +13,6 @@ use lunar::{
     sea_orm::DatabaseConnection,
 };
 
-#[allow(unused)]
 pub struct AppState {
     pub bookmark_repository: BookmarkRepository,
     pub notes_repository: NotesRepository,

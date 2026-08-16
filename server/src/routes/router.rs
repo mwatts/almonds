@@ -9,23 +9,12 @@ use crate::{
         app::public_routes, auth::authentication_routes, country::country_routes,
         invitation::invitation_routes, notification::notification_routes, users::user_routes,
     },
-    services::{
-        authentication_service::AuthenticationService, country_service::CountryService,
-        invitation_service::InvitationService, notification_service::NotificationService,
-        root_service::RootService, user_service::UserService,
-    },
-    states::ServicesState,
+    states::AppState,
 };
 
 pub fn load_routes(db_conn: &Arc<DatabaseConnection>) -> Router {
-    let state = ServicesState {
-        user_service: UserService::init(db_conn),
-        root_service: RootService::init(),
-        auth_service: AuthenticationService::init(db_conn),
-        country_service: CountryService::init(db_conn),
-        notification_service: NotificationService::init(db_conn),
-        invitation_service: InvitationService::init(db_conn),
-    };
+    let app_state = AppState::new(db_conn).expect("Failed to initialize app state");
+    let state = Arc::new(app_state);
 
     Router::new()
         .merge(public_routes())

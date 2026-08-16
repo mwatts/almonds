@@ -52,7 +52,7 @@ async function handleSubmit() {
         Create your account
       </h2>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        Get started with Lunar in a few seconds.
+        Get started in a few seconds.
       </p>
     </div>
 

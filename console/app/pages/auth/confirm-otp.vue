@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCountdown } from "@vueuse/core";
+
 definePageMeta({ layout: "auth" });
 
 const route = useRoute();
@@ -15,10 +17,10 @@ const errors = reactive({ otp: "" });
 const loading = ref(false);
 const submitError = ref("");
 
+const { remaining, start: startCooldown } = useCountdown(120);
+
 const title = computed(() =>
-  flow.value === "reset"
-    ? "Verify reset code"
-    : "Confirm your email",
+  flow.value === "reset" ? "Verify reset code" : "Confirm your email",
 );
 
 const description = computed(() =>
@@ -28,10 +30,25 @@ const description = computed(() =>
 );
 
 function validate(): boolean {
-  errors.otp = /^\d{6}$/.test(otp.value.trim())
-    ? ""
-    : "Enter the 6-digit code";
+  errors.otp = /^\d{6}$/.test(otp.value.trim()) ? "" : "";
   return !errors.otp;
+}
+
+async function handleResend() {
+  if (remaining.value > 0 || !authStore.hasPendingToken) return;
+
+  submitError.value = "";
+  try {
+    const response = await authApi.resendOtp(
+      { flow: flow.value },
+      authStore.pendingToken,
+    );
+    authStore.setPendingToken(response.token);
+    startCooldown();
+    notify({ message: "New code sent to your email", type: "success" });
+  } catch (error) {
+    submitError.value = (error as Error).message;
+  }
 }
 
 async function handleSubmit() {
@@ -85,26 +102,30 @@ async function handleSubmit() {
 
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <div>
-        <label
-          class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 block"
-        >
-          Verification code
-        </label>
-        <UInput
+        <AppNumberInput
           v-model="otp"
+          label="Verification code"
           name="otp"
-          type="text"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          maxlength="6"
           placeholder="••••••"
           :disabled="loading"
-          :ui="{ base: 'py-3 pl-4 bg-transparent' }"
-          class="w-full transition-colors border-gray-300 dark:border-gray-600 focus-within:border-accent-500 dark:focus-within:border-accent-400"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          :maxlength="6"
         />
-        <p class="text-xs text-gray-400 mt-1.5 text-center tracking-[0.5em]">
-          6-digit code
-        </p>
+        <div class="flex justify-end mt-1">
+          <button
+            type="button"
+            :disabled="remaining > 0 || !authStore.hasPendingToken"
+            class="text-xs text-accent-500 hover:text-accent-600 font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+            @click="handleResend"
+          >
+            {{
+              remaining > 0
+                ? `Get new code after ${remaining}s`
+                : "Get new code"
+            }}
+          </button>
+        </div>
       </div>
       <p v-if="errors.otp" class="text-xs text-red-500 -mt-3">
         {{ errors.otp }}

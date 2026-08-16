@@ -28,6 +28,10 @@ export interface AcceptInvitationRequest {
   token: string;
 }
 
+export interface ResendOtpRequest {
+  flow: string;
+}
+
 export interface LoginResponse {
   message?: string;
   accessToken: string;
@@ -75,11 +79,9 @@ export function useAuthApi() {
       });
     } catch (error) {
       const err = error as FetchError;
-      const message =
-        (err.data as ApiErrorBody | undefined)?.message ??
-        err.message ??
-        "Something went wrong";
-      throw new Error(message);
+      const message = (err.data as ApiErrorBody | undefined)?.message;
+      if (message) throw new Error(message);
+      throw new Error("Something went wrong. Please try again.");
     }
   }
 
@@ -98,5 +100,7 @@ export function useAuthApi() {
       post<{ message?: string }>("/auth/reset-password", req, { token }),
     acceptInvitation: (req: AcceptInvitationRequest) =>
       post<{ message?: string }>("/invitations/accept", req),
+    resendOtp: (req: ResendOtpRequest, token: string) =>
+      post<TokenResponse>("/auth/resend-otp", req, { token }),
   };
 }

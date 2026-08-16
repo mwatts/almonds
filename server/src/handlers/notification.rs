@@ -1,8 +1,7 @@
+use std::sync::Arc;
+
+use axum::{extract::{Path, Query, State}};
 use lunar::entities::notifications;
-use axum::{
-    extract::{Path, Query, State, WebSocketUpgrade},
-    response::Response,
-};
 use uuid::Uuid;
 
 use crate::{
@@ -13,26 +12,18 @@ use crate::{
     dto::common::RowCount,
     errors::service_error::ServiceError,
     response::ApiResponse,
-    services::notification_service::{NotificationService, NotificationServiceExt},
+    services::notification_service::NotificationServiceExt,
+    states::AppState,
 };
 
-pub async fn listen_for_new_notifications(
-    State(notification_service): State<NotificationService>,
-    // claims: Claims,
-    ws: WebSocketUpgrade,
-) -> Response {
-    ws.on_upgrade(move |socket| {
-        let service = notification_service.clone();
-        async move { service.handle_web_socket_connection(socket).await }
-    })
-}
-
 pub async fn fetch_notifications(
-    State(notification_service): State<NotificationService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
     Query(pagination): Query<PaginationParams>,
 ) -> Result<ApiResponse<PaginatedResponse<Vec<notifications::Model>>>, ServiceError> {
-    let notifications = notification_service
+    let notifications = state
+        .services
+        .notification_service
         .fetch_notifications(&claims, &pagination)
         .await?;
 
@@ -43,20 +34,26 @@ pub async fn fetch_notifications(
 }
 
 pub async fn count_unread(
-    State(notification_service): State<NotificationService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
 ) -> Result<ApiResponse<RowCount>, ServiceError> {
-    let resp = notification_service.count_unread(&claims).await?;
+    let resp = state
+        .services
+        .notification_service
+        .count_unread(&claims)
+        .await?;
 
     Ok(ApiResponse::builder().data(resp).build())
 }
 
 pub async fn mark_read(
-    State(notification_service): State<NotificationService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
     Path(notification_identifier): Path<Uuid>,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    notification_service
+    state
+        .services
+        .notification_service
         .mark_read(&claims, &notification_identifier)
         .await?;
 

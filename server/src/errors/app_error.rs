@@ -31,20 +31,25 @@ pub enum AppError {
 
     #[error(transparent)]
     FileSystemError(#[from] std::io::Error),
+
+    #[error("invalid env was passed {0}")]
+    InvalidEnv(String),
 }
 
 impl AppError {
     pub fn status_code(&self) -> StatusCode {
         match self {
             AppError::InvalidToken => StatusCode::UNAUTHORIZED,
-            AppError::DatabaseError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+
             AppError::GraphQLError(_) => StatusCode::BAD_REQUEST,
             AppError::OperationFailed(_) => StatusCode::BAD_REQUEST,
-            AppError::EnvError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::StartupError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::InternalError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::LunarError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::FileSystemError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::EnvError(_)
+            | AppError::InvalidEnv(_)
+            | AppError::StartupError(_)
+            | AppError::InternalError(_)
+            | AppError::LunarError(_)
+            | AppError::DatabaseError(_)
+            | AppError::FileSystemError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

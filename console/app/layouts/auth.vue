@@ -1,7 +1,8 @@
 <template>
   <div
     id="auth_layout"
-    class="h-screen w-full bg-red-500 dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
+    class="h-screen bg-gray-50 w-full dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
+    :class="{ 'rounded-3xl': !IS_WEB }"
   >
 
     <div
@@ -13,7 +14,7 @@
     />
 
     <div
-      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 md:shadow-xl px-8 "
+      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 pb-8 pt-12 px-8 "
     >
       <Transition
         enter-active-class="transition-opacity duration-200"
@@ -29,7 +30,9 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { IS_WEB } from "~/plugins/lunar.client";
+</script>
 
 <style lang="css">
 @reference "@/assets/css/main.css";

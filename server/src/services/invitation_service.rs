@@ -18,6 +18,12 @@ pub struct InvitationService {
 }
 
 impl InvitationService {
+    pub fn new(invitation_repository: InvitationRepository) -> Self {
+        Self {
+            invitation_repository,
+        }
+    }
+
     pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
         Self {
             invitation_repository: InvitationRepository::init(db_conn),

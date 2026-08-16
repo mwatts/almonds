@@ -1,5 +1,4 @@
 pub mod bookmark;
-pub mod note_category;
 pub mod notes;
 pub mod preflight;
 pub mod recycle_bin;

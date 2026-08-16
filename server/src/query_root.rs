@@ -60,7 +60,6 @@ pub fn schema_builder(
             mutations::sync_queue::SyncQueue,
             mutations::bookmark::SyncBookmark,
             mutations::notes::SyncNote,
-            mutations::note_category::SyncNoteCategory,
             mutations::snippets::SyncSnippet,
             mutations::todo::SyncTodo,
             mutations::reminder::SyncReminder,
