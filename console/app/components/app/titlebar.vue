@@ -94,7 +94,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
   <div
     class="titlebar flex items-center gap-2 px-2 h-12"
     data-tauri-drag-region
-    :class="{ 'rounded-t-3xl': !IS_WEB }"
+    :class="{ 'rounded-t-xl': !IS_WEB }"
   >
     <!-- mobile nav toggle -->
     <div v-if="authenticated">
@@ -152,6 +152,27 @@ useEventListener("keydown", (e: KeyboardEvent) => {
       </UTooltip>
     </div>
 
+    <div class="inline-flex items-center shrink-0">
+      <UButton
+        size="sm"
+        color="neutral"
+        variant="ghost"
+        class="cursor-pointer hidden md:block"
+        icon="heroicons:chevron-left"
+        aria-label="Go back"
+        @click="router.back()"
+      />
+      <UButton
+        size="sm"
+        color="neutral"
+        variant="ghost"
+        class="cursor-pointer hidden md:block"
+        icon="heroicons:chevron-right"
+        aria-label="Go forward"
+        @click="router.forward()"
+      />
+    </div>
+
     <WorkspaceSelect
       v-if="!hideAuthGated"
       class="cursor-pointer hidden md:block"
@@ -178,27 +199,6 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
       class="flex-1 min-w-0 flex items-center md:max-w-sm md:mx-auto md:relative"
     >
-      <div class="inline-flex items-center shrink-0 mr-5">
-        <UButton
-          size="sm"
-          color="neutral"
-          variant="ghost"
-          class="cursor-pointer hidden md:block"
-          icon="heroicons:chevron-left"
-          aria-label="Go back"
-          @click="router.back()"
-        />
-
-        <UButton
-          size="sm"
-          color="neutral"
-          variant="ghost"
-          class="cursor-pointer hidden md:block"
-          icon="heroicons:chevron-right"
-          aria-label="Go forward"
-          @click="router.forward()"
-        />
-      </div>
       <div
             v-if="!hideAuthGated"
         class="flex items-center gap-2 h-9 px-3 w-full rounded-md transition-colors bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"

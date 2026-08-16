@@ -2,7 +2,7 @@
   <div
     id="auth_layout"
     class="h-screen bg-gray-50 w-full dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
-    :class="{ 'rounded-3xl': !IS_WEB }"
+    :class="{ 'rounded-xl': !IS_WEB }"
   >
 
     <div

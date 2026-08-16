@@ -16,7 +16,7 @@ pub struct SmtpEmailSender {
 impl SmtpEmailSender {
     pub fn new(
         host: &str,
-        _port: u16,
+        port: u16,
         username: &str,
         password: &str,
         encryption: &str,
@@ -24,16 +24,15 @@ impl SmtpEmailSender {
         let creds = Credentials::new(username.to_string(), password.to_string());
 
         let mailer = match encryption {
-            "none" => {
-                let relay = SmtpTransport::relay(host)
-                    .map_err(|e| ServiceError::InternalError(e.to_string()))?;
-                relay.credentials(creds).build()
-            }
-            _ => {
-                let relay = SmtpTransport::starttls_relay(host)
-                    .map_err(|e| ServiceError::InternalError(e.to_string()))?;
-                relay.credentials(creds).build()
-            }
+            "none" => SmtpTransport::builder_dangerous(host)
+                .port(port)
+                .credentials(creds)
+                .build(),
+            _ => SmtpTransport::relay(host)
+                .map_err(|e| ServiceError::InternalError(e.to_string()))?
+                .port(port)
+                .credentials(creds)
+                .build(),
         };
 
         Ok(Self { mailer })
