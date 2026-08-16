@@ -1,34 +1,40 @@
-
-
-
-[working-directory:'console']
+[working-directory: 'console']
 watch-frontend:
     npm run dev
 
-[working-directory:'console']
+[working-directory: 'console']
 watch-tauri:
     npm run tauri dev
 
-[working-directory:'console']
+[working-directory: 'console']
+watch-mobile:
+    ./src-tauri/gen/android/gradlew --stop
+    npm run tauri android dev 
+
+[working-directory: 'console']
+watch-mobile-device HOST:
+    npm run tauri android dev --host {{HOST}}
+
+[working-directory: 'console']
+watch-ios:
+    npm run tauri ios dev
+
+[working-directory: 'console']
 watch-console:
     npm run dev & npm run tauri dev
 
-[working-directory:'console']
+[working-directory: 'console']
 build-console:
     npm run tauri build
 
-
-[working-directory:'console']
+[working-directory: 'console']
 install-frontend-dependencies:
     npm install
 
-
-[working-directory:'console']
+[working-directory: 'console']
 test-console:
     echo "TBD"
 
-
-
-[working-directory:'console/src-tauri']
+[working-directory: 'console/src-tauri']
 test-tauri:
     echo "TBD"

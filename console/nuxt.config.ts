@@ -49,7 +49,9 @@ export default defineNuxtConfig({
   apollo: {
     clients: {
       default: {
-        httpEndpoint: "http://localhost:8000/orchard",
+        httpEndpoint:
+          process.env.NUXT_PUBLIC_APOLLO_ENDPOINT ||
+          "http://localhost:8000/orchard",
       },
     },
   },

@@ -18,6 +18,9 @@ const {
 useAlarmScheduler();
 const authenticated = ref(true);
 
+const route = useRoute();
+const isAuthRoute = computed(() => route.path.startsWith("/auth"));
+
 const showWorkspaceLock = ref(false);
 
 onMounted(async () => {
@@ -67,7 +70,7 @@ onMounted(async () => {
 
   <Body>
     <UApp>
-      <AppTitlebar :authenticated="authenticated" />
+        <AppTitlebar v-if="!isAuthRoute" :authenticated="authenticated" />  
     </UApp>
   </Body>
 </template>

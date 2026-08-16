@@ -18,10 +18,6 @@ function cleanConsole() {
   });
 }
 
-function cleanKernel() {
-  execSync("cargo clean", { cwd: resolve(ROOT, "kernel"), stdio: "inherit" });
-}
-
 function cleanServer() {
   execSync("cargo clean", { cwd: resolve(ROOT, "server"), stdio: "inherit" });
 }
@@ -31,7 +27,7 @@ function clean() {
 
   if (!contains(DIRECTORIES, target)) {
     console.error(
-      `Invalid target '${target ?? ""}'. Use one of: console, kernel, server, all`,
+      `Invalid target '${target ?? ""}'. Use one of: console, server, all`,
     );
     process.exit(1);
   }
@@ -41,13 +37,10 @@ function clean() {
   try {
     if (target === "console") {
       cleanConsole();
-    } else if (target === "kernel") {
-      cleanKernel();
     } else if (target === "server") {
       cleanServer();
     } else if (target === "all") {
       cleanConsole();
-      cleanKernel();
       cleanServer();
     }
   } catch (err) {

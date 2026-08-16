@@ -5,13 +5,11 @@ on:
     branches: [master]
     paths:
       - "server/**"
-      - "kernel/**"
       - ".github/workflows/server.yaml"
   pull_request:
     branches: [master]
     paths:
       - "server/**"
-      - "kernel/**"
       - ".github/workflows/server.yaml"
 
 jobs:
@@ -29,7 +27,6 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: |
-            kernel -> target
             server -> target
 
       - name: install system dependencies

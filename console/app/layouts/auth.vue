@@ -1,20 +1,19 @@
 <template>
   <div
     id="auth_layout"
-    class="min-h-screen w-full bg-gray-50 dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
+    class="h-screen w-full bg-red-500 dark:bg-surface-950 flex flex-col items-center justify-center  md:p-6 relative overflow-hidden"
   >
-     <!-- <AppLogo />     -->
 
     <div
-      class="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-accent-300/20 dark:bg-accent-500/10 blur-3xl"
+      class="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-accent-300/20 dark:bg-accent-500/10 blur-3xl hidden md:block"
     />
 
     <div
-      class="pointer-events-none absolute -bottom-24 -right-24 size-96 rounded-full bg-violet-300/20 dark:bg-violet-500/10 blur-3xl"
+      class="pointer-events-none absolute -bottom-24 -right-24 size-96 rounded-full bg-violet-300/20 dark:bg-violet-500/10 blur-3xl hidden md:block"
     />
 
     <div
-      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-xl px-8"
+      class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 md:shadow-xl px-8 "
     >
       <Transition
         enter-active-class="transition-opacity duration-200"

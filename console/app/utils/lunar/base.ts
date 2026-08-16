@@ -1,7 +1,7 @@
 import type { PGlite } from "@electric-sql/pglite";
 import type { RequestMeta } from "lunar";
 import { lunarDb } from "./pglite";
-
+import { v4 as uuidv4 } from 'uuid';
 export type { RequestMeta };
 
 interface DbRow {
@@ -158,7 +158,8 @@ export abstract class BaseRepository {
   }
 
   protected newUuid(): string {
-    return crypto.randomUUID();
+    return uuidv4();
+    
   }
 
   protected now(): string {
