@@ -8,7 +8,7 @@ use sea_orm::{
 use uuid::Uuid;
 
 use crate::{
-    adapters::{notification::CreateNotification, pagination::PaginationParams},
+    adapters::pagination::PaginationParams,
     dto::{common::RowCount, notifications::PaginatedNotification},
     errors::database_error::DatabaseError,
     repositories::base::Repository,
@@ -28,11 +28,6 @@ impl Repository for NotificationRepository {
 }
 
 pub(crate) trait NotificationRepositoryExt {
-    async fn create(
-        &self,
-        notification: &CreateNotification,
-    ) -> Result<notifications::Model, DatabaseError>;
-
     async fn mark_read(&self, notification_identifier: &Uuid) -> Result<(), DatabaseError>;
 
     async fn fetch_all(
@@ -43,24 +38,9 @@ pub(crate) trait NotificationRepositoryExt {
     async fn fetch_one(&self, notification_identifier: &Uuid) -> Option<notifications::Model>;
 
     async fn count_unread(&self) -> Result<RowCount, DatabaseError>;
-
-    #[allow(dead_code)]
-    async fn get_latest_unread_notifications(
-        &self,
-        pagination: &PaginationParams,
-    ) -> Result<PaginatedNotification, DatabaseError>;
 }
 
 impl NotificationRepositoryExt for NotificationRepository {
-    async fn create(
-        &self,
-        notification: &CreateNotification,
-    ) -> Result<notifications::Model, DatabaseError> {
-        let active: notifications::ActiveModel = notification.to_owned().into();
-        let model = active.insert(self.db_conn.as_ref()).await?;
-        Ok(model)
-    }
-
     async fn fetch_all(
         &self,
         pagination: &PaginationParams,
@@ -107,12 +87,5 @@ impl NotificationRepositoryExt for NotificationRepository {
             .await?;
 
         Ok(RowCount { count })
-    }
-
-    async fn get_latest_unread_notifications(
-        &self,
-        _pagination: &PaginationParams,
-    ) -> Result<PaginatedNotification, DatabaseError> {
-        todo!()
     }
 }

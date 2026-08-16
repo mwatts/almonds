@@ -1,5 +1,4 @@
 use std::env;
-use std::io;
 
 use async_trait::async_trait;
 use bcrypt::{hash, verify, DEFAULT_COST};
@@ -7,11 +6,8 @@ use lettre::{
     message::header::ContentType, message::Mailbox, transport::smtp::authentication::Credentials,
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
-use rand::RngExt;
 
 use crate::errors::service_error::ServiceError;
-
-pub struct PasswordUpdatedTemplate;
 
 #[derive(Clone)]
 pub struct ServiceHelpers {}
@@ -66,7 +62,6 @@ async fn dispatch_email(to: &str, subject: &str, body: String) -> Result<(), Ser
 pub trait ServiceHelpersTrait {
     fn hash_password(&self, raw_password: &str) -> Result<String, ServiceError>;
     fn validate_password(&self, raw_password: &str, hash: &str) -> Result<bool, ServiceError>;
-    fn delete_file_if_exists(path: &str) -> io::Result<()>;
 
     async fn send_account_confirmation_email(
         &self,
@@ -79,26 +74,6 @@ pub trait ServiceHelpersTrait {
         user_email: &str,
         otp: &str,
     ) -> Result<(), ServiceError>;
-
-    async fn send_password_updated_email(
-        &self,
-        user_email: &str,
-        template: PasswordUpdatedTemplate,
-    ) -> Result<(), ServiceError>;
-
-    async fn send_welcome_email(
-        &self,
-        user_email: &str,
-        user_name: &str,
-    ) -> Result<(), ServiceError>;
-
-    async fn send_wait_list_confirmation_email(
-        &self,
-        user_email: &str,
-        first_name: &str,
-    ) -> Result<(), ServiceError>;
-
-    fn generate_otp(&self, user_email: &str) -> Result<String, ServiceError>;
 }
 
 #[async_trait]
@@ -109,14 +84,6 @@ impl ServiceHelpersTrait for ServiceHelpers {
 
     fn validate_password(&self, password: &str, hash: &str) -> Result<bool, ServiceError> {
         verify(password, hash).map_err(|_| ServiceError::OperationFailed)
-    }
-
-    fn delete_file_if_exists(path: &str) -> io::Result<()> {
-        let p = std::path::Path::new(path);
-        if p.exists() {
-            std::fs::remove_file(p)?;
-        }
-        Ok(())
     }
 
     async fn send_account_confirmation_email(
@@ -147,49 +114,5 @@ impl ServiceHelpersTrait for ServiceHelpers {
             ),
         )
         .await
-    }
-
-    async fn send_password_updated_email(
-        &self,
-        user_email: &str,
-        _template: PasswordUpdatedTemplate,
-    ) -> Result<(), ServiceError> {
-        dispatch_email(
-            user_email,
-            "Your Daily password was changed",
-            "Your account password has been successfully updated.\n\nIf you did not make this change, please contact support immediately.".to_string(),
-        )
-        .await
-    }
-
-    async fn send_welcome_email(
-        &self,
-        user_email: &str,
-        user_name: &str,
-    ) -> Result<(), ServiceError> {
-        dispatch_email(
-            user_email,
-            "Welcome to Daily",
-            format!("Hi {user_name},\n\nWelcome to Daily! We're glad to have you on board.\n\nGet started by exploring your dashboard."),
-        )
-        .await
-    }
-
-    async fn send_wait_list_confirmation_email(
-        &self,
-        user_email: &str,
-        first_name: &str,
-    ) -> Result<(), ServiceError> {
-        dispatch_email(
-            user_email,
-            "You're on the Daily waitlist",
-            format!("Hi {first_name},\n\nThank you for joining the Daily waitlist! We'll notify you as soon as your spot is ready.\n\nStay tuned!"),
-        )
-        .await
-    }
-
-    fn generate_otp(&self, _user_email: &str) -> Result<String, ServiceError> {
-        let code: u32 = rand::rng().random_range(100_000..=999_999);
-        Ok(code.to_string())
     }
 }

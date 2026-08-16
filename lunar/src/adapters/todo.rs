@@ -13,7 +13,6 @@ pub struct CreateTodo {
     pub title: String,
     pub description: Option<String>,
     pub due_date: Option<Date>,
-    // pub due_time: Option<Time>,//TODO
     pub priority: Priority,
 }
 

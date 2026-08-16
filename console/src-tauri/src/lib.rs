@@ -1,7 +1,6 @@
 mod adapters;
 mod commands;
 mod errors;
-mod scheduler;
 mod state;
 mod utils;
 
@@ -21,7 +20,6 @@ const EVENT_NOTIFICATION_RECEIVED: &str = "notification:received";
 #[tokio::main]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
-    #[allow(unused_mut)]
     let mut builder = tauri::Builder::default().plugin(tauri_plugin_opener::init());
 
     #[cfg(desktop)]
@@ -46,14 +44,6 @@ pub async fn run() {
                     println!("downloading {:#?}", payload);
                 }
             });
-
-            // let salt_path = app
-            //     .path()
-            //     .app_local_data_dir()
-            //     .expect("could not resolve app local data path")
-            //     .join("salt.txt");
-            // app.handle()
-            //     .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
 
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -100,12 +90,6 @@ pub async fn run() {
                     app_handle.manage(SchedulerState::new());
                 })
             });
-
-            // Spawn the cron-style reminder scheduler after state is managed.
-            // let scheduler_handle = app.handle().clone();
-            // tauri::async_runtime::spawn(async move {
-            //     scheduler::run(scheduler_handle, None).await;
-            // });
 
             Ok(())
         })

@@ -24,7 +24,6 @@ impl Repository for OtpRepository {
     }
 }
 
-#[allow(dead_code)]
 pub(crate) trait OtpRepositoryExt {
     async fn new_with_user(&self, user_identifier: &str, code: &str) -> Result<(), DatabaseError>;
 

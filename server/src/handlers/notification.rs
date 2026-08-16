@@ -1,7 +1,6 @@
 use lunar::entities::notifications;
 use axum::{
-    extract::{Path, Query, State, WebSocketUpgrade},
-    response::Response,
+    extract::{Path, Query, State},
 };
 use uuid::Uuid;
 
@@ -15,17 +14,6 @@ use crate::{
     response::ApiResponse,
     services::notification_service::{NotificationService, NotificationServiceExt},
 };
-
-pub async fn listen_for_new_notifications(
-    State(notification_service): State<NotificationService>,
-    // claims: Claims,
-    ws: WebSocketUpgrade,
-) -> Response {
-    ws.on_upgrade(move |socket| {
-        let service = notification_service.clone();
-        async move { service.handle_web_socket_connection(socket).await }
-    })
-}
 
 pub async fn fetch_notifications(
     State(notification_service): State<NotificationService>,
