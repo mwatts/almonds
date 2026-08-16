@@ -21,6 +21,13 @@ pub struct AppConfig {
     pub complexity_limit: Option<usize>,
 
     pub base_url: String,
+
+    // SMTP
+    pub smtp_host: String,
+    pub smtp_port: u16,
+    pub smtp_username: String,
+    pub smtp_password: String,
+    pub smtp_encryption: String,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -122,6 +129,15 @@ impl AppConfig {
             depth_limit,
             complexity_limit,
             base_url,
+            smtp_host: env::var("SMTP_HOST").unwrap_or_default(),
+            smtp_port: env::var("SMTP_PORT")
+                .unwrap_or_else(|_| "587".into())
+                .parse()
+                .unwrap_or(587),
+            smtp_username: env::var("SMTP_AUTH_USERNAME").unwrap_or_default(),
+            smtp_password: env::var("SMTP_AUTH_PASSWORD").unwrap_or_default(),
+            smtp_encryption: env::var("SMTP_ENCRYPTION")
+                .unwrap_or_else(|_| "starttls".into()),
         })
     }
 }

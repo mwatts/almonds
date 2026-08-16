@@ -23,6 +23,10 @@ pub struct NotificationService {
 }
 
 impl NotificationService {
+    pub fn new(repository: NotificationRepository) -> Self {
+        Self { repository }
+    }
+
     pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
         Self {
             repository: NotificationRepository::init(db_conn),

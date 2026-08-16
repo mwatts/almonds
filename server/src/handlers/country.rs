@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::extract::{Path, State};
 
 use crate::{
@@ -5,13 +7,14 @@ use crate::{
     entities::countries,
     errors::service_error::ServiceError,
     response::ApiResponse,
-    services::country_service::{CountryService, CountryServiceExt},
+    services::country_service::CountryServiceExt,
+    states::AppState,
 };
 
 pub async fn fetch_all_countries(
-    State(country_service): State<CountryService>,
+    State(state): State<Arc<AppState>>,
 ) -> Result<ApiResponse<FetchCountriesResponse>, ServiceError> {
-    let countries = country_service.get_all_countries().await?;
+    let countries = state.services.country_service.get_all_countries().await?;
 
     Ok(ApiResponse::builder()
         .message("Countries fetched successfully")
@@ -20,10 +23,12 @@ pub async fn fetch_all_countries(
 }
 
 pub async fn fetch_country_by_identifier(
-    State(country_service): State<CountryService>,
+    State(state): State<Arc<AppState>>,
     Path(identifier): Path<String>,
 ) -> Result<ApiResponse<Option<countries::Model>>, ServiceError> {
-    let country = country_service
+    let country = state
+        .services
+        .country_service
         .get_country_by_identifier(&identifier)
         .await?;
 
@@ -34,10 +39,12 @@ pub async fn fetch_country_by_identifier(
 }
 
 pub async fn fetch_countries_by_currency_code(
-    State(country_service): State<CountryService>,
+    State(state): State<Arc<AppState>>,
     Path(currency_code): Path<String>,
 ) -> Result<ApiResponse<FetchCountriesResponse>, ServiceError> {
-    let countries = country_service
+    let countries = state
+        .services
+        .country_service
         .get_countries_by_currency_code(&currency_code)
         .await?;
 

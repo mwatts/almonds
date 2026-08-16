@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     routing::{get, patch},
     Router,
@@ -5,10 +7,10 @@ use axum::{
 
 use crate::{
     handlers::notification::{count_unread, fetch_notifications, mark_read},
-    states::ServicesState,
+    states::AppState,
 };
 
-pub(super) fn notification_routes(state: ServicesState) -> Router {
+pub(super) fn notification_routes(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/", get(fetch_notifications))
         .route("/unread", get(count_unread))

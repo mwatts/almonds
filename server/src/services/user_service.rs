@@ -22,6 +22,13 @@ pub struct UserService {
 }
 
 impl UserService {
+    pub fn new(user_repository: UserRepository) -> Self {
+        Self {
+            user_repository,
+            user_helper_service: ServiceHelpers::init(),
+        }
+    }
+
     pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
         Self {
             user_repository: <UserRepository as crate::repositories::base::Repository>::init(

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     routing::{get, post},
     Router,
@@ -8,10 +10,10 @@ use crate::{
         change_password, create_account, forgotten_password, login, logout, onboard_user,
         request_refresh_token, set_new_password, verify_account, verify_reset_otp,
     },
-    states::ServicesState,
+    states::AppState,
 };
 
-pub(super) fn authentication_routes(state: ServicesState) -> Router {
+pub(super) fn authentication_routes(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/signup", post(create_account))
         .route("/login", post(login))

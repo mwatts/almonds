@@ -1,7 +1,6 @@
-use std::sync::Arc;
 use std::time::Duration;
 
-use sea_orm::DatabaseConnection;
+use askama::Template;
 use uuid::Uuid;
 
 use crate::adapters::authentication::ChangePasswordRequest;
@@ -13,10 +12,13 @@ use crate::adapters::jwt::TWENTY_FIVE_MINUTES;
 use crate::adapters::repository::DatabaseInsertResult;
 use crate::errors::database_error::DatabaseError;
 use crate::errors::service_error::ServiceError;
-use crate::repositories::base::Repository;
 use crate::repositories::revoked_tokens::{
     TokenBlacklistRepository, TokenBlacklistRepositoryTrait,
 };
+use crate::services::mailer::email_sender::{EmailMessage, EmailSender};
+use crate::services::mailer::smtp::SmtpEmailSender;
+use crate::services::mailer::templates::account_confirmation::AccountConfirmationTemplate;
+use crate::services::mailer::templates::password_reset::PasswordResetTemplate;
 use crate::services::otp_service::OtpService;
 use crate::services::otp_service::OtpServiceExt;
 use crate::{
@@ -36,18 +38,26 @@ pub struct AuthenticationService {
     user_helper_service: ServiceHelpers,
     otp_service: OtpService,
     token_blacklist_repository: TokenBlacklistRepository,
+    email_sender: SmtpEmailSender,
 }
 
 impl AuthenticationService {
-    pub fn init(db_conn: &Arc<DatabaseConnection>) -> Self {
+    pub fn new(
+        user_repository: UserRepository,
+        otp_service: OtpService,
+        token_blacklist_repository: TokenBlacklistRepository,
+        email_sender: SmtpEmailSender,
+    ) -> Self {
         Self {
-            user_repository: UserRepository::init(db_conn),
+            user_repository,
             user_helper_service: ServiceHelpers::init(),
-            otp_service: OtpService::init(db_conn),
-            token_blacklist_repository: TokenBlacklistRepository::init(db_conn),
+            otp_service,
+            token_blacklist_repository,
+            email_sender,
         }
     }
 }
+
 pub trait AuthenticationServiceTrait {
     fn create_account(
         &self,
@@ -161,15 +171,24 @@ impl AuthenticationServiceTrait for AuthenticationService {
             .otp_service
             .new_otp_for_user(&user_identifier.to_string())
             .await?;
-        tokio::task::spawn(async move {
-            let service_helpers = ServiceHelpers::init();
-            service_helpers
-                .send_account_confirmation_email(&user.email, &otp)
-                .await
-                .unwrap_or_else(|err| {
-                    log::error!("Failed to send confirmation email: {err}");
-                });
+
+        let template = AccountConfirmationTemplate { otp: &otp };
+        let html_body = template.render().unwrap_or_else(|_| {
+            format!("Your verification code is: {otp}")
         });
+
+        let message = EmailMessage {
+            from_address: "noreply@almonds.app".to_string(),
+            from_name: "Almonds".to_string(),
+            to_address: user.email.clone(),
+            to_name: user.email.split('@').next().unwrap_or(&user.email).to_string(),
+            subject: "Verify your Almonds account".to_string(),
+            html_body,
+        };
+
+        if let Err(err) = self.email_sender.send_email(message) {
+            log::error!("Failed to send confirmation email: {err}");
+        }
 
         Ok(CreateUserResponse { token })
     }
@@ -200,7 +219,6 @@ impl AuthenticationServiceTrait for AuthenticationService {
             .validity(Duration::from_secs(7 * 60 * 60 /*7 hours */))
             .build()?;
 
-        //TODO:
         let refresh_token_out = refresh_token.generate_token()?;
 
         Ok(LoginResponse {
@@ -233,15 +251,23 @@ impl AuthenticationServiceTrait for AuthenticationService {
             .new_otp_for_user(&user.identifier.to_string())
             .await?;
 
-        tokio::task::spawn(async move {
-            let service_helpers = ServiceHelpers::init();
-            service_helpers
-                .send_forgotten_password_email(&user.email, &otp)
-                .await
-                .unwrap_or_else(|err| {
-                    log::error!("Failed to send confirmation email: {err}");
-                });
+        let template = PasswordResetTemplate { otp: &otp };
+        let html_body = template.render().unwrap_or_else(|_| {
+            format!("Your password reset code is: {otp}")
         });
+
+        let message = EmailMessage {
+            from_address: "noreply@almonds.app".to_string(),
+            from_name: "Almonds".to_string(),
+            to_address: user.email.clone(),
+            to_name: user.email.split('@').next().unwrap_or(&user.email).to_string(),
+            subject: "Reset your Almonds password".to_string(),
+            html_body,
+        };
+
+        if let Err(err) = self.email_sender.send_email(message) {
+            log::error!("Failed to send password reset email: {err}");
+        }
 
         Ok(ForgottenPasswordResponse { token })
     }

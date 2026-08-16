@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::extract::State;
 use axum::http::StatusCode;
 
@@ -10,6 +12,7 @@ use crate::adapters::request::AuthenticatedRequest;
 use crate::errors::service_error::ServiceError;
 use crate::middlewares::validator::ValidatedRequest;
 use crate::response::ApiResponseBuilder;
+use crate::states::AppState;
 use crate::{
     adapters::authentication::{
         CreateUserRequest, CreateUserResponse, ForgottenPasswordRequest, LoginRequest,
@@ -20,10 +23,10 @@ use crate::{
 };
 
 pub async fn create_account(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     ValidatedRequest(request): ValidatedRequest<CreateUserRequest>,
 ) -> Result<ApiResponse<CreateUserResponse>, ServiceError> {
-    let resp = auth_service.create_account(&request).await?;
+    let resp = state.services.auth_service.create_account(&request).await?;
 
     Ok(ApiResponseBuilder::new()
         .status_code(StatusCode::CREATED)
@@ -32,10 +35,10 @@ pub async fn create_account(
         .build())
 }
 pub async fn login(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     ValidatedRequest(request): ValidatedRequest<LoginRequest>,
 ) -> Result<ApiResponse<LoginResponse>, ServiceError> {
-    let login_response = auth_service.login(&request).await?;
+    let login_response = state.services.auth_service.login(&request).await?;
     Ok(ApiResponseBuilder::new()
         .status_code(StatusCode::OK)
         .data(login_response)
@@ -43,10 +46,11 @@ pub async fn login(
         .build())
 }
 pub async fn verify_account(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<VerifyAccountRequest>,
 ) -> Result<ApiResponse<VerifyAccountResponse>, ServiceError> {
-    let verify_account_response = auth_service.verify_account(&claims, &data).await?;
+    let verify_account_response =
+        state.services.auth_service.verify_account(&claims, &data).await?;
     Ok(ApiResponseBuilder::new()
         .status_code(StatusCode::OK)
         .data(verify_account_response)
@@ -54,10 +58,11 @@ pub async fn verify_account(
         .build())
 }
 pub async fn forgotten_password(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     ValidatedRequest(request): ValidatedRequest<ForgottenPasswordRequest>,
 ) -> Result<ApiResponse<ForgottenPasswordResponse>, ServiceError> {
-    let forgotten_password_response = auth_service.forgotten_password(&request).await?;
+    let forgotten_password_response =
+        state.services.auth_service.forgotten_password(&request).await?;
 
     Ok(ApiResponseBuilder::new()
         .data(forgotten_password_response)
@@ -66,10 +71,14 @@ pub async fn forgotten_password(
 }
 
 pub async fn set_new_password(
-    State(auth_service): State<AuthenticationService>,
-    AuthenticatedRequest { data, claims }: AuthenticatedRequest<SetNewPasswordRequest>, // claims: Claims,
+    State(state): State<Arc<AppState>>,
+    AuthenticatedRequest { data, claims }: AuthenticatedRequest<SetNewPasswordRequest>,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    let _ = auth_service.set_new_password(&data, &claims).await?;
+    let _ = state
+        .services
+        .auth_service
+        .set_new_password(&data, &claims)
+        .await?;
 
     Ok(ApiResponseBuilder::new()
         .data(())
@@ -78,10 +87,14 @@ pub async fn set_new_password(
 }
 
 pub async fn request_refresh_token(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
 ) -> Result<ApiResponse<RefreshTokenResponse>, ServiceError> {
-    let refresh_token_response = auth_service.request_refresh_token(&claims).await?;
+    let refresh_token_response = state
+        .services
+        .auth_service
+        .request_refresh_token(&claims)
+        .await?;
 
     Ok(ApiResponseBuilder::new()
         .data(refresh_token_response)
@@ -90,20 +103,24 @@ pub async fn request_refresh_token(
 }
 
 pub async fn logout(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    auth_service.logout(&claims).await?;
+    state.services.auth_service.logout(&claims).await?;
     Ok(ApiResponseBuilder::new()
         .message("logged out successfully")
         .build())
 }
 
 pub async fn onboard_user(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<OnboardingRequest>,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    auth_service.onboard_user(&claims, &data).await?;
+    state
+        .services
+        .auth_service
+        .onboard_user(&claims, &data)
+        .await?;
 
     Ok(ApiResponseBuilder::new()
         .message("profile updated successfully")
@@ -111,10 +128,14 @@ pub async fn onboard_user(
 }
 
 pub async fn verify_reset_otp(
-    State(auth_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<VerifyAccountRequest>,
 ) -> Result<ApiResponse<VerifyAccountResponse>, ServiceError> {
-    let verify_account_response = auth_service.verify_reset_otp(&claims, &data).await?;
+    let verify_account_response = state
+        .services
+        .auth_service
+        .verify_reset_otp(&claims, &data)
+        .await?;
     Ok(ApiResponseBuilder::new()
         .status_code(StatusCode::OK)
         .data(verify_account_response)
@@ -123,10 +144,14 @@ pub async fn verify_reset_otp(
 }
 
 pub async fn change_password(
-    State(user_service): State<AuthenticationService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<ChangePasswordRequest>,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    user_service.change_password(&data, &claims).await?;
+    state
+        .services
+        .auth_service
+        .change_password(&data, &claims)
+        .await?;
 
     Ok(ApiResponseBuilder::new()
         .message("User's password changed successfully")

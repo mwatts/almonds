@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::extract::State;
 use axum_typed_multipart::TypedMultipart;
 
@@ -10,14 +12,16 @@ use crate::{
     entities::users,
     errors::service_error::ServiceError,
     response::{ApiResponse, ApiResponseBuilder},
-    services::user_service::UserService,
+    states::AppState,
 };
 
 pub async fn retrieve_information(
-    State(user_service): State<UserService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
 ) -> Result<ApiResponse<users::Model>, ServiceError> {
-    let user_data = user_service
+    let user_data = state
+        .services
+        .user_service
         .retrieve_information(claims.user_identifier)
         .await?;
 
@@ -28,10 +32,12 @@ pub async fn retrieve_information(
 }
 
 pub async fn update_password(
-    State(user_service): State<UserService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<SetNewPasswordRequest>,
 ) -> Result<ApiResponse<()>, ServiceError> {
-    user_service
+    state
+        .services
+        .user_service
         .update_password(&data, &claims.user_identifier)
         .await?;
 
@@ -41,15 +47,19 @@ pub async fn update_password(
 }
 
 pub async fn update_profile_picture(
-    State(user_service): State<UserService>,
+    State(state): State<Arc<AppState>>,
     claims: Claims,
     request: TypedMultipart<UploadProfilePictureRequest>,
 ) -> Result<ApiResponse<users::Model>, ServiceError> {
-    user_service
+    state
+        .services
+        .user_service
         .update_profile_picture(request, &claims.user_identifier)
         .await?;
 
-    let updated_profile = user_service
+    let updated_profile = state
+        .services
+        .user_service
         .retrieve_information(claims.user_identifier)
         .await?;
 
@@ -60,10 +70,12 @@ pub async fn update_profile_picture(
 }
 
 pub async fn update_profile(
-    State(user_service): State<UserService>,
+    State(state): State<Arc<AppState>>,
     AuthenticatedRequest { data, claims }: AuthenticatedRequest<PartialUserProfile>,
 ) -> Result<ApiResponse<users::Model>, ServiceError> {
-    let updated_profile = user_service
+    let updated_profile = state
+        .services
+        .user_service
         .update_profile(&data, &claims.user_identifier)
         .await?;
 
