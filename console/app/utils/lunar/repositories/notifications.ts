@@ -1,13 +1,11 @@
-import type { NotificationType, Notifications } from "lunar";
+import type {
+  CreateNotification,
+  NotificationType,
+  Notifications,
+} from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateNotification {
-  title: string;
-  body: string;
-  notificationType: NotificationType;
-  isRead?: boolean;
-  workspaceIdentifier?: string;
-}
+export type { CreateNotification };
 
 export class NotificationRepository extends BaseRepository {
   async create(payload: CreateNotification, meta?: RequestMeta): Promise<Notifications> {

@@ -1,24 +1,7 @@
-import type { Snippets } from "lunar";
+import type { CreateSnippet, Snippets, UpdateSnippet } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateSnippet {
-  title?: string | null;
-  language?: string | null;
-  code: string;
-  description?: string | null;
-  isPinned?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  workspaceIdentifier?: string;
-}
-
-export interface UpdateSnippet {
-  title?: string | null;
-  language?: string | null;
-  code?: string;
-  description?: string | null;
-  isPinned?: boolean;
-}
+export type { CreateSnippet, UpdateSnippet };
 
 const COLUMNS = [
   "title",

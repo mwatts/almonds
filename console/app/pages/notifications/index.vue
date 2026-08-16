@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NotificationType } from "almond_kernel";
+import type { NotificationType } from "lunar";
 
 definePageMeta({ layout: false });
 
@@ -30,8 +30,8 @@ const categoryConfig: Record<
 };
 
 function getCategory(type: NotificationType): NotificationCategory {
-  if (type === "BackupFailed") return "alert";
-  if (type.startsWith("WorkspaceInvite") || type.startsWith("Item"))
+  if (type === "backup_failed") return "alert";
+  if (type.startsWith("workspace_invite") || type.startsWith("item"))
     return "activity";
   return "system";
 }

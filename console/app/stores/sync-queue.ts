@@ -40,7 +40,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
           await useNotificationStore().createNotification({
             title: "Workspace Sync Successful",
             body: "Your data has been synced successfully.",
-            notificationType: "BackupSuccess",
+            notificationType: "backup_success",
           });
         });
       await Promise.all([
@@ -50,7 +50,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Bookmark Sync Successful",
               body: "Your bookmark data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useNoteStore()
@@ -59,7 +59,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Note Sync Successful",
               body: "Your note data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useTodoStore()
@@ -68,7 +68,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Todo Sync Successful",
               body: "Your todo data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useReminderStore()
@@ -77,7 +77,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Reminder Sync Successful",
               body: "Your reminder data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useUserPreferenceStore()
@@ -86,7 +86,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "User Preference Sync Successful",
               body: "Your user preference data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useSnippetStore()
@@ -95,7 +95,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Snippet Sync Successful",
               body: "Your snippet data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
         useRecycleBinStore()
@@ -104,7 +104,7 @@ export const useSyncQueueStore = defineStore("sync_queue_store", () => {
             await useNotificationStore().createNotification({
               title: "Recycle Bin Sync Successful",
               body: "Your recycle bin data has been synced successfully.",
-              notificationType: "BackupSuccess",
+              notificationType: "backup_success",
             });
           }),
       ]);

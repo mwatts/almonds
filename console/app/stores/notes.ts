@@ -1,3 +1,4 @@
+import type { CreateNote, Notes, UpdateNote } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
@@ -7,22 +8,14 @@ type _SyncResult = {
   identifier: string;
 };
 
-export interface Note {
-  identifier: string;
+export type Note = Omit<Notes, "categories"> & { categories: string[] };
+
+export type CreateNotePayload = Partial<CreateNote> & {
   title: string;
   content: string;
-  categories: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+};
 
-export interface CreateNotePayload {
-  title: string;
-  content: string;
-  categories?: string[];
-}
-
-export type UpdateNotePayload = Partial<CreateNotePayload>;
+export type UpdateNotePayload = Partial<UpdateNote>;
 
 export const useNoteStore = defineStore("notes_store", {
   state: () => ({

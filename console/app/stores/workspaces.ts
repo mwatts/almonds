@@ -1,31 +1,12 @@
+import type { CreateWorkspace, UpdateWorkspace, Workspaces } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
-export interface Workspace {
-  identifier: string;
-  name: string;
-  description: string;
-  isDefault: boolean;
-  isHidden: boolean;
-  isSecured: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type Workspace = Workspaces;
 
-export interface CreateWorkspacePayload {
-  name: string;
-  description: string;
-}
+export type CreateWorkspacePayload = CreateWorkspace;
 
-export interface UpdateWorkspacePayload {
-  name?: string;
-  description?: string;
-  isDefault?: boolean;
-  isHidden?: boolean;
-  isSecured?: boolean;
-  /** Plain-text password; pass empty string to remove the password. */
-  password?: string;
-}
+export type UpdateWorkspacePayload = Partial<UpdateWorkspace>;
 
 const resolvedWorkspaceIds = new Set<string>();
 

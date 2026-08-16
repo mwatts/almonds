@@ -1,20 +1,7 @@
-import type { Workspaces } from "lunar";
+import type { CreateWorkspace, UpdateWorkspace, Workspaces } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
-export interface CreateWorkspace {
-  name: string;
-  description: string;
-}
-
-export interface UpdateWorkspace {
-  name?: string;
-  description?: string;
-  isDefault?: boolean;
-  isHidden?: boolean;
-  isSecured?: boolean;
-  /** Plain-text password to be hashed; set to "" to remove the password. */
-  password?: string;
-}
+export type { CreateWorkspace, UpdateWorkspace };
 
 /**
  * NOTE: the Rust backend hashes workspace passwords with Argon2id. The browser

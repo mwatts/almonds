@@ -1,28 +1,17 @@
+import type {
+  CreateUserPreference,
+  UpdateUserPreference,
+  WorkspacePreferences,
+} from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 import { getWorkspaceMeta } from "~/composables/getWorkspaceMeta";
 
-export interface UserPreference {
-  identifier: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  workspaceIdentifier: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+export type UserPreference = WorkspacePreferences & { email: string };
 
-export interface CreateUserPreferencePayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+export type CreateUserPreferencePayload = CreateUserPreference;
 
-export interface UpdateUserPreferencePayload {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-}
+export type UpdateUserPreferencePayload = Partial<UpdateUserPreference>;
 
 export const useUserPreferenceStore = defineStore("user_preference_store", {
   state: () => ({

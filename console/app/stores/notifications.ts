@@ -1,25 +1,18 @@
+import type {
+  CreateNotification,
+  NotificationType,
+  Notifications,
+} from "lunar";
 import { invoke } from "~/utils/invoke";
 import { defineStore } from "pinia";
-import type { NotificationType } from "almond_kernel";
 
-export interface Notification {
-  identifier: string;
+export type Notification = Notifications;
+
+export type CreateNotificationPayload = Partial<CreateNotification> & {
   title: string;
   body: string;
   notificationType: NotificationType;
-  isRead: boolean;
-  createdAt: string;
-  updatedAt: string;
-  workspaceIdentifier: string | null;
-}
-
-export interface CreateNotificationPayload {
-  title: string;
-  body: string;
-  notificationType: NotificationType;
-  workspaceIdentifier?: string | null;
-  isRead?: boolean;
-}
+};
 
 export const useNotificationStore = defineStore("notification_store", {
   state: () => ({

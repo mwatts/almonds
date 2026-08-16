@@ -1,30 +1,13 @@
+import type { CreateTodo, Todo, UpdateTodo } from "lunar";
 import { defineStore } from "pinia";
 import { invoke } from "~/utils/invoke";
 
-export interface Todo {
-  identifier: string;
-  title: string;
-  description: string | null;
-  dueDate: string | null;
-  time: string | null;
-  priority: "high" | "medium" | "low";
-  done: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Todo };
 
-export interface CreateTodoPayload {
-  title: string;
-  description?: string;
-  dueDate?: string;
-  time?: string;
-  priority: "high" | "medium" | "low";
-}
+export type CreateTodoPayload = Partial<CreateTodo> &
+  Pick<CreateTodo, "title" | "priority"> & { time?: string };
 
-export interface UpdateTodoPayload {
-  title?: string;
-  description?: string;
-}
+export type UpdateTodoPayload = Partial<UpdateTodo>;
 
 export const useTodoStore = defineStore("todo_store", {
   state: () => ({
@@ -191,7 +174,7 @@ export const useTodoStore = defineStore("todo_store", {
         done: t.done,
         created_at: t.createdAt,
         updated_at: t.updatedAt,
-        due_time: t.time ?? null,
+        due_time: t.dueTime ?? null,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         workspace_identifier: (t as any).workspaceIdentifier ?? null,
       }));
