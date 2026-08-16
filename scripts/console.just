@@ -8,7 +8,11 @@ watch-tauri:
 
 [working-directory: 'console']
 watch-mobile:
-    npm run tauri android dev
+    npm run tauri android dev 
+
+[working-directory: 'console']
+watch-mobile-device DEVICE HOST:
+    npm run tauri android dev {{DEVICE}} --host {{HOST}}
 
 [working-directory: 'console']
 watch-ios:
