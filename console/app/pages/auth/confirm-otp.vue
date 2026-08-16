@@ -16,9 +16,7 @@ const loading = ref(false);
 const submitError = ref("");
 
 const title = computed(() =>
-  flow.value === "reset"
-    ? "Verify reset code"
-    : "Confirm your email",
+  flow.value === "reset" ? "Verify reset code" : "Confirm your email",
 );
 
 const description = computed(() =>
@@ -28,9 +26,7 @@ const description = computed(() =>
 );
 
 function validate(): boolean {
-  errors.otp = /^\d{6}$/.test(otp.value.trim())
-    ? ""
-    : "Enter the 6-digit code";
+  errors.otp = /^\d{6}$/.test(otp.value.trim()) ? "" : "";
   return !errors.otp;
 }
 

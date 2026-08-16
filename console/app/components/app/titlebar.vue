@@ -12,8 +12,7 @@ const isOnline = computed(() => syncQueueStore.isOnline);
 const runningSync = computed(() => syncQueueStore.runningSync);
 const router = useRouter();
 const hideAuthGated = computed(
-  () =>
-    props.authenticated && !authStore.isauthenticatedd && !authStore.isGuest,
+  () => props.authenticated && !authStore.isAuthenticated && !authStore.isGuest,
 );
 const colorMode = useColorMode();
 const { searchQuery, isOpen } = useAppSearch();
@@ -36,6 +35,29 @@ const isDark = computed({
 const themeIcon = computed(() =>
   isDark.value ? "heroicons:sun" : "heroicons:moon",
 );
+
+const userMenuItems = computed(() => [
+  {
+    label: "Account",
+    icon: "heroicons:user-circle",
+    class:
+      "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+    onSelect: () =>
+      authStore.isGuest
+        ? navigateTo("/auth/login")
+        : navigateTo("/settings?section=profile"),
+  },
+  {
+    label: "Logout",
+    icon: "heroicons:arrow-right-start-on-rectangle",
+    class: "text-red-500 dark:text-red-400",
+    onSelect: () => {
+      authStore.clearSession();
+      authStore.exitGuestMode();
+      navigateTo("/auth/login");
+    },
+  },
+]);
 
 function onSearchInput(val: string) {
   searchQuery.value = val;
@@ -72,7 +94,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
   <div
     class="titlebar flex items-center gap-2 px-2 h-12"
     data-tauri-drag-region
-    :class="{ 'rounded-t-lg': !IS_WEB }"
+    :class="{ 'rounded-t-3xl': !IS_WEB }"
   >
     <!-- mobile nav toggle -->
     <div v-if="authenticated">
@@ -252,34 +274,23 @@ useEventListener("keydown", (e: KeyboardEvent) => {
       </UTooltip>
 
       <div v-if="!hideAuthGated" class="items-center gap-1.5 flex">
-        <UTooltip
-          v-if="authStore.isGuest"
-          text="Guest mode - sign in to sync your data"
+        <UDropdownMenu
+          :items="userMenuItems"
+          :ui="{
+            content:
+              'min-w-48 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-1.5',
+            item: 'rounded-lg mx-1 px-3 py-2 gap-2.5 text-sm transition-colors duration-150',
+            separator: 'my-1 mx-2',
+          }"
         >
-          <span
-            class="text-xs font-medium text-gray-500 dark:text-gray-400 cursor-pointer hidden md:flex"
-            @click="navigateTo('/auth/login')"
-          >
-            Guest
-          </span>
-        </UTooltip>
-
-        <UUser
-          size="sm"
-          class="cursor-pointer"
-          :avatar="{
-            src: 'https://i.pravatar.cc/150?u=john-doe',
-          }"
-          :chip="{
-            color: isOnline ? 'success' : 'error',
-            position: 'top-right',
-          }"
-          @click="
-            authStore.isGuest
-              ? navigateTo('/auth/login')
-              : navigateTo('/settings?section=profile')
-          "
-        />
+          <UUser
+            size="sm"
+            class="cursor-pointer"
+            :avatar="{
+              src: 'https://i.pravatar.cc/150?u=john-doe',
+            }"
+          />
+        </UDropdownMenu>
       </div>
     </div>
   </div>

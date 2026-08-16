@@ -75,11 +75,9 @@ export function useAuthApi() {
       });
     } catch (error) {
       const err = error as FetchError;
-      const message =
-        (err.data as ApiErrorBody | undefined)?.message ??
-        err.message ??
-        "Something went wrong";
-      throw new Error(message);
+      const message = (err.data as ApiErrorBody | undefined)?.message;
+      if (message) throw new Error(message);
+      throw new Error("Something went wrong. Please try again.");
     }
   }
 

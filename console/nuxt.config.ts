@@ -61,7 +61,7 @@ export default defineNuxtConfig({
       serverUrl:
         process.env.SERVER_URL ||
         process.env.NUXT_PUBLIC_SERVER_URL ||
-        "http://localhost:5006",
+        "http://localhost:8000",
     },
   },
 

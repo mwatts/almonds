@@ -1,15 +1,15 @@
 services:
-  web:
-    container_name: almonds-web
-    build:
-      context: .
-      dockerfile: docker/prod/Dockerfile.web
-      args:
-        SERVER_URL: ${SERVER_URL:-http://localhost:5006}
-        NUXT_PUBLIC_APOLLO_ENDPOINT: ${NUXT_PUBLIC_APOLLO_ENDPOINT:-http://localhost:8000/orchard}
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
+  # web:
+  #   container_name: almonds-web
+  #   build:
+  #     context: .
+  #     dockerfile: docker/prod/Dockerfile.web
+  #     args:
+  #       SERVER_URL: ${SERVER_URL:-http://localhost:5006}
+  #       NUXT_PUBLIC_APOLLO_ENDPOINT: ${NUXT_PUBLIC_APOLLO_ENDPOINT:-http://localhost:8000/orchard}
+  #   ports:
+  #     - "3000:3000"
+  #   restart: unless-stopped
 
   app:
     container_name: orchard

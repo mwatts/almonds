@@ -5,6 +5,7 @@ import {
 } from "@tauri-apps/plugin-notification";
 import { useAlarmScheduler } from "~/composables/useAlarmScheduler";
 import { useWorkspaceSetup } from "~/composables/useWorkspaceSetup";
+import { IS_WEB } from "~/plugins/lunar.client";
 import "@domternal/theme";
 const { init: initFontSize } = useFontSize();
 const { init: initDarkTheme } = useDarkTheme();
@@ -70,7 +71,7 @@ onMounted(async () => {
 
   <Body>
     <UApp>
-        <AppTitlebar v-if="!isAuthRoute" :authenticated="authenticated" />  
+        <AppTitlebar v-if="!isAuthRoute || !IS_WEB" :authenticated="authenticated" />
     </UApp>
   </Body>
 </template>
