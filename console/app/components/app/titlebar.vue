@@ -175,7 +175,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
     <!-- Search -->
     <div
-      v-if="!hideAuthGated"
+
       class="flex-1 min-w-0 flex items-center md:max-w-sm md:mx-auto md:relative"
     >
       <div class="inline-flex items-center shrink-0 mr-5">
@@ -200,6 +200,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
         />
       </div>
       <div
+            v-if="!hideAuthGated"
         class="flex items-center gap-2 h-9 px-3 w-full rounded-md transition-colors bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"
       >
         <UIcon

@@ -130,6 +130,12 @@ pub trait AuthenticationServiceTrait {
         &self,
         claims: &Claims,
     ) -> impl std::future::Future<Output = Result<bool, ServiceError>> + Send;
+
+    fn resend_otp(
+        &self,
+        claims: &Claims,
+        flow: &str,
+    ) -> impl std::future::Future<Output = Result<CreateUserResponse, ServiceError>> + Send;
 }
 
 impl AuthenticationServiceTrait for AuthenticationService {
@@ -464,5 +470,70 @@ impl AuthenticationServiceTrait for AuthenticationService {
             return Ok(false);
         };
         Ok(self.token_blacklist_repository.is_revoked(&jti).await?)
+    }
+
+    async fn resend_otp(
+        &self,
+        claims: &Claims,
+        flow: &str,
+    ) -> Result<CreateUserResponse, ServiceError> {
+        let user = self
+            .user_repository
+            .find_by_identifier(&claims.user_identifier)
+            .await
+            .ok_or(AuthenticationError::InvalidToken)?;
+
+        let otp = self
+            .otp_service
+            .new_otp_for_user(&user.identifier.to_string())
+            .await?;
+
+        let html_body = match flow {
+            "reset" => {
+                let template = PasswordResetTemplate { otp: &otp };
+                template.render().unwrap_or_else(|_| {
+                    format!("Your password reset code is: {otp}")
+                })
+            }
+            _ => {
+                let template = AccountConfirmationTemplate { otp: &otp };
+                template.render().unwrap_or_else(|_| {
+                    format!("Your verification code is: {otp}")
+                })
+            }
+        };
+
+        let (subject, default_msg) = match flow {
+            "reset" => (
+                "Reset your Almonds password",
+                format!("Your password reset code is: {otp}"),
+            ),
+            _ => (
+                "Verify your Almonds account",
+                format!("Your verification code is: {otp}"),
+            ),
+        };
+
+        let message = EmailMessage {
+            from_address: "noreply@almonds.app".to_string(),
+            from_name: "Almonds".to_string(),
+            to_address: user.email.clone(),
+            to_name: user.email.split('@').next().unwrap_or(&user.email).to_string(),
+            subject: subject.to_string(),
+            html_body,
+        };
+
+        if let Err(err) = self.email_sender.send_email(message) {
+            log::error!("Failed to send OTP email: {err}");
+        }
+
+        let token = Claims::builder()
+            .email(&user.email)
+            .user_identifier(&user.identifier)
+            .validity(TWENTY_FIVE_MINUTES)
+            .build()?
+            .generate_token()?;
+
+        Ok(CreateUserResponse { token })
     }
 }

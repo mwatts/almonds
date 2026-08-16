@@ -6,7 +6,7 @@ use axum::http::StatusCode;
 use crate::adapters::authentication::{
     ChangePasswordRequest, ForgottenPasswordResponse, RefreshTokenResponse,
 };
-use crate::adapters::authentication::{OnboardingRequest, VerifyAccountRequest};
+use crate::adapters::authentication::{OnboardingRequest, ResendOtpRequest, VerifyAccountRequest};
 use crate::adapters::jwt::Claims;
 use crate::adapters::request::AuthenticatedRequest;
 use crate::errors::service_error::ServiceError;
@@ -155,5 +155,22 @@ pub async fn change_password(
 
     Ok(ApiResponseBuilder::new()
         .message("User's password changed successfully")
+        .build())
+}
+
+pub async fn resend_otp(
+    State(state): State<Arc<AppState>>,
+    AuthenticatedRequest { data, claims }: AuthenticatedRequest<ResendOtpRequest>,
+) -> Result<ApiResponse<crate::adapters::authentication::CreateUserResponse>, ServiceError> {
+    let resp = state
+        .services
+        .auth_service
+        .resend_otp(&claims, &data.flow)
+        .await?;
+
+    Ok(ApiResponseBuilder::new()
+        .status_code(StatusCode::OK)
+        .data(resp)
+        .message("New code sent successfully")
         .build())
 }

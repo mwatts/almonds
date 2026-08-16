@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCountdown } from "@vueuse/core";
+
 definePageMeta({ layout: "auth" });
 
 const route = useRoute();
@@ -15,6 +17,8 @@ const errors = reactive({ otp: "" });
 const loading = ref(false);
 const submitError = ref("");
 
+const { remaining, start: startCooldown } = useCountdown(120);
+
 const title = computed(() =>
   flow.value === "reset" ? "Verify reset code" : "Confirm your email",
 );
@@ -28,6 +32,23 @@ const description = computed(() =>
 function validate(): boolean {
   errors.otp = /^\d{6}$/.test(otp.value.trim()) ? "" : "";
   return !errors.otp;
+}
+
+async function handleResend() {
+  if (remaining.value > 0 || !authStore.hasPendingToken) return;
+
+  submitError.value = "";
+  try {
+    const response = await authApi.resendOtp(
+      { flow: flow.value },
+      authStore.pendingToken,
+    );
+    authStore.setPendingToken(response.token);
+    startCooldown();
+    notify({ message: "New code sent to your email", type: "success" });
+  } catch (error) {
+    submitError.value = (error as Error).message;
+  }
 }
 
 async function handleSubmit() {
@@ -80,16 +101,32 @@ async function handleSubmit() {
     </div>
 
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
-      <AppNumberInput
-        v-model="otp"
-        label="Verification code"
-        name="otp"
-        placeholder="••••••"
-        :disabled="loading"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        :maxlength="6"
-      />
+      <div>
+        <AppNumberInput
+          v-model="otp"
+          label="Verification code"
+          name="otp"
+          placeholder="••••••"
+          :disabled="loading"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          :maxlength="6"
+        />
+        <div class="flex justify-end mt-1">
+          <button
+            type="button"
+            :disabled="remaining > 0 || !authStore.hasPendingToken"
+            class="text-xs text-accent-500 hover:text-accent-600 font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+            @click="handleResend"
+          >
+            {{
+              remaining > 0
+                ? `Get new code after ${remaining}s`
+                : "Get new code"
+            }}
+          </button>
+        </div>
+      </div>
       <p v-if="errors.otp" class="text-xs text-red-500 -mt-3">
         {{ errors.otp }}
       </p>

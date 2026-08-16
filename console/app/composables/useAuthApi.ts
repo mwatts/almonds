@@ -28,6 +28,10 @@ export interface AcceptInvitationRequest {
   token: string;
 }
 
+export interface ResendOtpRequest {
+  flow: string;
+}
+
 export interface LoginResponse {
   message?: string;
   accessToken: string;
@@ -96,5 +100,7 @@ export function useAuthApi() {
       post<{ message?: string }>("/auth/reset-password", req, { token }),
     acceptInvitation: (req: AcceptInvitationRequest) =>
       post<{ message?: string }>("/invitations/accept", req),
+    resendOtp: (req: ResendOtpRequest, token: string) =>
+      post<TokenResponse>("/auth/resend-otp", req, { token }),
   };
 }

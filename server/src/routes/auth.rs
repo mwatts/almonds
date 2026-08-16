@@ -8,7 +8,7 @@ use axum::{
 use crate::{
     handlers::auth::{
         change_password, create_account, forgotten_password, login, logout, onboard_user,
-        request_refresh_token, set_new_password, verify_account, verify_reset_otp,
+        request_refresh_token, resend_otp, set_new_password, verify_account, verify_reset_otp,
     },
     states::AppState,
 };
@@ -24,6 +24,7 @@ pub(super) fn authentication_routes(state: Arc<AppState>) -> Router {
         .route("/onboard", post(onboard_user))
         .route("/verify", post(verify_reset_otp))
         .route("/change-password", post(change_password))
+        .route("/resend-otp", post(resend_otp))
         .route("/logout", post(logout))
         .with_state(state)
 }
