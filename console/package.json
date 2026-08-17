@@ -85,5 +85,8 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.7.4",
     "vue-eslint-parser": "^10.2.0"
+  },
+  "overrides": {
+    "oxc-parser": "^0.144.0"
   }
 }
