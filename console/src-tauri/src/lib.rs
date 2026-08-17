@@ -40,7 +40,7 @@ pub async fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
             app.listen(EVENT_NOTIFICATION_RECEIVED, |event| {
-                if let Ok(payload) = serde_json::from_str::<CreateNotification>(&event.payload()) {
+                if let Ok(payload) = serde_json::from_str::<CreateNotification>(event.payload()) {
                     println!("downloading {:#?}", payload);
                 }
             });
