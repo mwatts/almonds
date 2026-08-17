@@ -145,6 +145,11 @@ body {
   --dm-border-color: var(--color-surface-700);
 }
 
+.notes-editor .dm-editor .ProseMirror {
+  padding-top: 0;
+  min-height: auto;
+}
+
 /* Custom toolbar */
 .dm-toolbar {
   --dm-toolbar-bg: transparent;

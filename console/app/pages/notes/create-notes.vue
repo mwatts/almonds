@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { onBeforeRouteLeave } from "vue-router";
 
-definePageMeta({ layout: false, name: "Create note", keepalive: true });
+definePageMeta({ layout: false, name: "New note", keepalive: true });
 
 const router = useRouter();
 const noteStore = useNoteStore();
 
 const title = ref("");
 const content = ref("");
-const categories = ref<string[]>([]);
-const tagInput = ref("");
 const submitting = ref(false);
 const saved = ref(false);
 const error = ref<string | null>(null);
@@ -17,8 +15,6 @@ const error = ref<string | null>(null);
 onActivated(() => {
   title.value = "";
   content.value = "";
-  categories.value = [];
-  tagInput.value = "";
   error.value = null;
   submitting.value = false;
   saved.value = false;
@@ -43,32 +39,6 @@ const hasContent = computed(
   () => !!title.value.trim() || !!content.value.trim(),
 );
 
-// ── tags ──────────────────────────────────────────────────────────────────────
-function addTag() {
-  const tag = tagInput.value.trim().toLowerCase();
-  if (tag && !categories.value.includes(tag)) {
-    categories.value.push(tag);
-  }
-  tagInput.value = "";
-}
-
-function removeTag(tag: string) {
-  categories.value = categories.value.filter((t) => t !== tag);
-}
-
-function onTagKeydown(e: KeyboardEvent) {
-  if (e.key === "Enter" || e.key === ",") {
-    e.preventDefault();
-    addTag();
-  } else if (
-    e.key === "Backspace" &&
-    !tagInput.value &&
-    categories.value.length
-  ) {
-    categories.value.pop();
-  }
-}
-
 // ── save ──────────────────────────────────────────────────────────────────────
 async function handleSave() {
   if (!hasContent.value) return;
@@ -78,7 +48,6 @@ async function handleSave() {
     await noteStore.createNote({
       title: title.value.trim() || "Untitled",
       content: content.value,
-      categories: categories.value,
     });
     saved.value = true;
     lastSaved.value = new Date();
@@ -103,7 +72,6 @@ onBeforeRouteLeave(async () => {
     await noteStore.createNote({
       title: title.value.trim() || "Untitled",
       content: content.value,
-      categories: categories.value,
     });
   } catch (e) {
     console.error(e);
@@ -113,55 +81,21 @@ onBeforeRouteLeave(async () => {
 
 <template>
   <NuxtLayout name="default">
-    <template #page_title>
-      <!-- Title -->
-      <textarea
-        v-model="title"
-        placeholder="Title"
-        rows="1"
-        :disabled="submitting"
-        autofocus
-        class="w-full resize-none bg-transparent outline-none text-3xl font-bold text-gray-900 dark:text-gray-50 placeholder:text-gray-400 dark:placeholder:text-gray-500 leading-snug mb-2 overflow-hidden"
-        @input="
-          ($event.target as HTMLTextAreaElement).style.height = 'auto';
-          ($event.target as HTMLTextAreaElement).style.height =
-            ($event.target as HTMLTextAreaElement).scrollHeight + 'px';
-        "
-      />
-
-      <!-- Tags row -->
-      <div class="flex flex-wrap items-center gap-1.5 mb-8 min-h-5">
-        <span
-          v-for="tag in categories"
-          :key="tag"
-          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-50 dark:bg-accent-950 text-accent-600 dark:text-accent-300 text-xs font-medium"
-        >
-          {{ tag }}
-          <button
-            class="text-accent-400 hover:text-accent-600 dark:hover:text-accent-200 transition-colors leading-none"
-            @click="removeTag(tag)"
-          >
-            <UIcon name="heroicons:x-mark" class="size-3" />
-          </button>
-        </span>
-        <input
-          v-model="tagInput"
-          placeholder="Add tag…"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          class="bg-transparent outline-none text-xs text-gray-400 dark:text-gray-500 placeholder:text-gray-300 dark:placeholder:text-gray-400 w-20 min-w-0"
-          @keydown="onTagKeydown"
-          @blur="addTag"
-        />
-      </div>
-    </template>
-
     <template #main_content>
-      <div class="pb-20">
-        <!-- Editor -->
+      <div class="pb-60">
+        <textarea
+          v-model="title"
+          placeholder="Untitled"
+          rows="1"
+          :disabled="submitting"
+          class="w-full resize-none bg-transparent outline-none text-3xl font-bold text-gray-900 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 leading-tight mb-0 overflow-hidden"
+          @input="
+            ($event.target as HTMLTextAreaElement).style.height = 'auto';
+            ($event.target as HTMLTextAreaElement).style.height =
+              ($event.target as HTMLTextAreaElement).scrollHeight + 'px';
+          "
+        />
         <NotesEditor v-model="content" />
-
         <p v-if="error" class="text-xs text-red-500 mt-6">
           {{ error }}
         </p>
@@ -209,7 +143,6 @@ onBeforeRouteLeave(async () => {
           v-for="stat in [
             { label: 'Words', value: wordCount },
             { label: 'Characters', value: charCount },
-            { label: 'Tags', value: categories.length },
           ]"
           :key="stat.label"
           class="flex items-center justify-between py-2 border-b border-gray-50 dark:border-gray-800/60 text-xs"

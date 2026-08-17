@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { marked } from "marked";
-import { Domternal } from "@domternal/vue";
 import DOMPurify from "dompurify";
+import { Domternal, useCurrentEditor } from "@domternal/vue";
 import { Details } from "@domternal/extension-details";
 import { CodeBlockLowlight } from "@domternal/extension-code-block-lowlight";
 import { createLowlight, all } from "lowlight";
@@ -21,9 +21,14 @@ import {
   OrderedList,
   Link,
   Placeholder,
+  UniqueID,
+  BlockColor,
+  ListIndent,
+  Print,
 } from "@domternal/core";
 import { Table } from "@domternal/extension-table";
 import { Image } from "@domternal/extension-image";
+
 import {
   Emoji,
   emojis,
@@ -32,11 +37,10 @@ import {
 import {
   BlockContextMenu,
   BlockHandle,
-  FloatingMenu,
   KeyboardReorder,
   SlashCommand,
   SmartPaste,
-} from "@domternal/extension-block-menu";
+} from "@domternal/extension-block-controls";
 
 const colorMode = useColorMode();
 const isDark = computed(() => colorMode.value === "dark");
@@ -57,12 +61,17 @@ const dmVars = computed(() =>
         "--dm-accent-hover": "var(--color-accent-600)",
         "--dm-accent-surface":
           "color-mix(in srgb, var(--color-accent-500) 10%, transparent)",
+        "--dm-block-handle-gutter": 0,
       },
 );
 
 const extensions = [
   StarterKit,
   BubbleMenu,
+  UniqueID,
+  BlockColor,
+  ListIndent,
+  Print,
   Table,
   ListItem.configure({
     HTMLAttributes: { class: "notes_list_item" },
@@ -102,10 +111,6 @@ const extensions = [
     linkOnPaste: true,
     defaultProtocol: "https",
   }),
-  FloatingMenu.configure({
-    element: document.getElementById("floating-menu")!,
-    requireExplicitTrigger: false,
-  }),
   Image.configure({
     //TODO: replace with actual upload handler that uploads to server and returns URL
     uploadHandler: async (file) => {
@@ -129,6 +134,12 @@ const extensions = [
 
 const model = defineModel<string>();
 
+const { editor } = useCurrentEditor();
+
+defineExpose({
+  editor,
+});
+
 // Old notes were saved as Markdown (UEditor content-type="markdown").
 // Domternal expects HTML, so detect and convert on the way in.
 function isHtml(s: string): boolean {
@@ -149,13 +160,12 @@ function handleUpdate({ editor }: { editor: any }) {
 </script>
 
 <template>
-  <div :class="{ 'dm-theme-dark': isDark }" :style="dmVars">
+  <div :class="{ 'dm-theme-dark': isDark }" :style="dmVars" class="notes-editor -ml-12">
     <Domternal
       :extensions="extensions"
       :content="initialContent"
       :on-update="handleUpdate"
     >
-      <Domternal.Toolbar class="mb-12 -mt-5" />
       <Domternal.Content class="bg-transparent" />
       <Domternal.BubbleMenu class="mb-5" />
     </Domternal>

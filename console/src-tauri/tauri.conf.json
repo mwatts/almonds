@@ -5,7 +5,7 @@
   "identifier": "com.wild.almonds",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:3001",
     "beforeBuildCommand": "npm run generate"
   },
   "app": {

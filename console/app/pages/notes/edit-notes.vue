@@ -14,8 +14,6 @@ const original = computed(
 
 const title = ref("");
 const content = ref("");
-const categories = ref<string[]>([]);
-const tagInput = ref("");
 const submitting = ref(false);
 const saved = ref(false);
 const error = ref<string | null>(null);
@@ -26,7 +24,6 @@ watch(
     if (note && !saved.value) {
       title.value = note.title === "Untitled" ? "" : note.title;
       content.value = note.content;
-      categories.value = note.categories ?? [];
     }
   },
   { immediate: true },
@@ -40,6 +37,7 @@ const wordCount = computed(() => {
 });
 
 const lastSaved = ref<Date | null>(null);
+const notesEditor = ref<InstanceType<typeof NotesEditor> | null>(null);
 
 const hasChanges = computed(() => {
   if (!original.value) return false;
@@ -47,37 +45,9 @@ const hasChanges = computed(() => {
     original.value.title === "Untitled" ? "" : original.value.title;
   return (
     title.value !== origTitle ||
-    content.value !== original.value.content ||
-    JSON.stringify(categories.value) !==
-      JSON.stringify(original.value.categories ?? [])
+    content.value !== original.value.content
   );
 });
-
-// ── tags ──────────────────────────────────────────────────────────────────────
-function addTag() {
-  const tag = tagInput.value.trim().toLowerCase();
-  if (tag && !categories.value.includes(tag)) {
-    categories.value.push(tag);
-  }
-  tagInput.value = "";
-}
-
-function removeTag(tag: string) {
-  categories.value = categories.value.filter((t) => t !== tag);
-}
-
-function onTagKeydown(e: KeyboardEvent) {
-  if (e.key === "Enter" || e.key === ",") {
-    e.preventDefault();
-    addTag();
-  } else if (
-    e.key === "Backspace" &&
-    !tagInput.value &&
-    categories.value.length
-  ) {
-    categories.value.pop();
-  }
-}
 
 // ── save ──────────────────────────────────────────────────────────────────────
 async function handleSave() {
@@ -88,7 +58,6 @@ async function handleSave() {
     await noteStore.updateNote(original.value.identifier, {
       title: title.value.trim() || "Untitled",
       content: content.value,
-      categories: categories.value,
     });
     saved.value = true;
     lastSaved.value = new Date();
@@ -114,7 +83,6 @@ onBeforeRouteLeave(async () => {
     await noteStore.updateNote(original.value!.identifier, {
       title: title.value.trim() || "Untitled",
       content: content.value,
-      categories: categories.value,
     });
   } catch (e) {
     console.error(e);
@@ -136,65 +104,8 @@ function downloadMarkdown() {
   URL.revokeObjectURL(url);
 }
 
-function escapeHtml(str: string) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 function downloadPdf() {
-  if (!original.value) return;
-  const safeTitle = escapeHtml(title.value || "Untitled");
-  const tags = categories.value
-    .map((t) => `<span class="tag">${escapeHtml(t)}</span>`)
-    .join("");
-
-  const doc = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>${safeTitle}</title>
-  <style>
-    body { font-family: Georgia, serif; max-width: 680px; margin: 48px auto; color: #1a1a1a; line-height: 1.7; font-size: 16px; }
-    h1.note-title { font-size: 2rem; font-weight: 700; margin: 0 0 0.75rem; }
-    .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-    .tag { background: #f0f0f0; padding: 2px 10px; border-radius: 9999px; font-size: 0.75rem; font-family: sans-serif; }
-    .divider { border: none; border-top: 1px solid #e5e5e5; margin: 1.25rem 0 1.5rem; }
-    .content h1 { font-size: 1.5rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
-    .content h2 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
-    .content h3 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.3rem; }
-    .content p { margin: 0.75rem 0; }
-    .content ul, .content ol { padding-left: 1.5rem; margin: 0.75rem 0; }
-    .content li { margin: 0.25rem 0; }
-    .content code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 0.875em; font-family: monospace; }
-    .content pre { background: #f4f4f4; padding: 1rem; border-radius: 6px; overflow: auto; }
-    .content pre code { background: none; padding: 0; }
-    .content blockquote { border-left: 3px solid #ccc; padding-left: 1rem; color: #555; margin: 1rem 0; }
-    .content strong { font-weight: 700; }
-    .content em { font-style: italic; }
-    @media print { body { margin: 0; } }
-  </style>
-</head>
-<body>
-  <h1 class="note-title">${safeTitle}</h1>
-  ${tags ? `<div class="tags">${tags}</div>` : ""}
-  <hr class="divider">
-  <div class="content">${content.value}</div>
-</body>
-</html>`;
-
-  const iframe = document.createElement("iframe");
-  iframe.style.cssText =
-    "position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;";
-  iframe.srcdoc = doc;
-  iframe.onload = () => {
-    iframe.contentWindow!.print();
-    iframe.contentWindow!.onafterprint = () =>
-      document.body.removeChild(iframe);
-  };
-  document.body.appendChild(iframe);
+  notesEditor.value?.editor?.commands.printDocument();
 }
 
 onMounted(async () => {
@@ -207,46 +118,18 @@ onMounted(async () => {
 <template>
   <NuxtLayout name="default">
     <template #page_title>
-      <!-- Title -->
       <textarea
         v-model="title"
         placeholder="Untitled"
         rows="1"
         :disabled="submitting"
-        class="w-full resize-none bg-transparent outline-none text-3xl font-bold text-gray-900 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600 leading-tight mb-4 overflow-hidden"
+          class="w-full resize-none bg-transparent outline-none text-3xl font-bold text-gray-900 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 leading-tight mb-0 overflow-hidden"
         @input="
           ($event.target as HTMLTextAreaElement).style.height = 'auto';
           ($event.target as HTMLTextAreaElement).style.height =
             ($event.target as HTMLTextAreaElement).scrollHeight + 'px';
         "
       />
-
-      <!-- Tags row -->
-      <div class="flex flex-wrap items-center gap-1.5 mb-5 min-h-6">
-        <span
-          v-for="tag in categories"
-          :key="tag"
-          class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-50 dark:bg-accent-950 text-accent-600 dark:text-accent-300 text-xs font-medium"
-        >
-          {{ tag }}
-          <button
-            class="text-accent-400 hover:text-accent-600 dark:hover:text-accent-200 transition-colors leading-none"
-            @click="removeTag(tag)"
-          >
-            <UIcon name="heroicons:x-mark" class="size-3" />
-          </button>
-        </span>
-        <input
-          v-model="tagInput"
-          placeholder="Add tag…"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          class="bg-transparent outline-none text-xs text-gray-400 dark:text-gray-300 placeholder:text-gray-300 dark:placeholder:text-gray-600 w-20 min-w-0"
-          @keydown="onTagKeydown"
-          @blur="addTag"
-        />
-      </div>
     </template>
     <template #main_content>
       <!-- Not found -->
@@ -280,11 +163,8 @@ onMounted(async () => {
 
       <div v-else-if="original">
         <div class="mx-auto pb-20">
-          <!-- Divider -->
-          <div class="border-t border-gray-100 dark:border-gray-800 mb-5" />
-
           <!-- Editor -->
-          <NotesEditor v-model="content" />
+          <NotesEditor ref="notesEditor" v-model="content" />
 
           <p v-if="error" class="text-xs text-red-500 mt-4">{{ error }}</p>
         </div>
@@ -308,13 +188,6 @@ onMounted(async () => {
               <span
                 class="font-medium text-gray-700 dark:text-gray-300 tabular-nums"
                 >{{ wordCount }}</span
-              >
-            </div>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-400">Categories</span>
-              <span
-                class="font-medium text-gray-700 dark:text-gray-300 tabular-nums"
-                >{{ categories.length }}</span
               >
             </div>
             <div class="flex items-center justify-between text-xs">
