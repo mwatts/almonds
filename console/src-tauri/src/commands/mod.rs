@@ -1,4 +1,4 @@
-pub mod alarm;
+// pub mod alarm;
 pub mod bookmarks;
 pub mod moodboard;
 pub mod notes;

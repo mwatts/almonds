@@ -31,7 +31,7 @@ const sidebarCollapsed = ref(false);
   <UDashboardSidebar
     v-model:collapsed="sidebarCollapsed"
     class="hidden md:flex"
-    :collapsible="false"
+    :collapsible="true"
     :collapsed-size="4"
     :default-size="18"
     :resizable="true"
