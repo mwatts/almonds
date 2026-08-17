@@ -10,7 +10,6 @@ export const IS_TAURI = !IS_WEB;
 export const LUNAR_API = IS_WEB ? window.lunar : undefined;
 export const LUNAR_EXISTS = IS_WEB && window.lunar !== undefined;
 
-
 export default defineNuxtPlugin(async () => {
   if (!IS_WEB) return;
 

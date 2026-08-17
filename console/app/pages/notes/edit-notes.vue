@@ -245,7 +245,7 @@ onMounted(async () => {
           class="bg-transparent outline-none text-xs text-gray-400 dark:text-gray-300 placeholder:text-gray-300 dark:placeholder:text-gray-600 w-20 min-w-0"
           @keydown="onTagKeydown"
           @blur="addTag"
-        >
+        />
       </div>
     </template>
     <template #main_content>

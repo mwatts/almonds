@@ -1,7 +1,7 @@
 import type { PGlite } from "@electric-sql/pglite";
 import type { RequestMeta } from "lunar";
 import { lunarDb } from "./pglite";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 export type { RequestMeta };
 
 interface DbRow {
@@ -9,7 +9,9 @@ interface DbRow {
 }
 
 export function camelize(key: string): string {
-  return key.replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+  return key.replace(/_([a-z])/g, (_match, letter: string) =>
+    letter.toUpperCase(),
+  );
 }
 
 function normalize(value: unknown): unknown {
@@ -60,7 +62,10 @@ export abstract class BaseRepository {
     return (result.rows ?? []).map((row) => toCamelRow(row as DbRow)) as T[];
   }
 
-  protected async row<T>(sql: string, params: unknown[] = []): Promise<T | null> {
+  protected async row<T>(
+    sql: string,
+    params: unknown[] = [],
+  ): Promise<T | null> {
     const rows = await this.rows<T>(sql, params);
     return rows[0] ?? null;
   }
@@ -159,7 +164,6 @@ export abstract class BaseRepository {
 
   protected newUuid(): string {
     return uuidv4();
-    
   }
 
   protected now(): string {

@@ -71,7 +71,10 @@ onMounted(async () => {
 
   <Body>
     <UApp>
-        <AppTitlebar v-if="!isAuthRoute || !IS_WEB" :authenticated="authenticated" />
+      <AppTitlebar
+        v-if="!isAuthRoute || !IS_WEB"
+        :authenticated="authenticated"
+      />
     </UApp>
   </Body>
 </template>

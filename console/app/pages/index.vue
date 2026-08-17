@@ -133,7 +133,6 @@ const statPills = computed(() => [
     href: "/todo",
   },
 ]);
-
 </script>
 
 <template>
@@ -488,7 +487,5 @@ const statPills = computed(() => [
         </div>
       </div>
     </template>
-
-
   </NuxtLayout>
 </template>

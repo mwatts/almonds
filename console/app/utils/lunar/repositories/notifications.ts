@@ -8,7 +8,10 @@ import { BaseRepository, type RequestMeta } from "../base";
 export type { CreateNotification };
 
 export class NotificationRepository extends BaseRepository {
-  async create(payload: CreateNotification, meta?: RequestMeta): Promise<Notifications> {
+  async create(
+    payload: CreateNotification,
+    meta?: RequestMeta,
+  ): Promise<Notifications> {
     const m = this.requireMeta(meta);
     const now = this.now();
     return this.mustRow<Notifications>(
@@ -29,7 +32,10 @@ export class NotificationRepository extends BaseRepository {
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<Notifications | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Notifications | null> {
     const m = this.requireMeta(meta);
     return this.row<Notifications>(
       `SELECT * FROM notifications WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -56,7 +62,10 @@ export class NotificationRepository extends BaseRepository {
     );
   }
 
-  async mark_as_read(identifier: string, meta?: RequestMeta): Promise<Notifications> {
+  async mark_as_read(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Notifications> {
     const m = this.requireMeta(meta);
     const row = await this.row<Notifications>(
       `UPDATE notifications SET is_read = TRUE, updated_at = $2

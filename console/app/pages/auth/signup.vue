@@ -100,11 +100,7 @@ async function handleSubmit() {
 
       <p v-if="submitError" class="text-sm text-red-500">{{ submitError }}</p>
 
-      <AppButton
-        type="submit"
-        :loading="loading"
-        :disabled="loading"
-      >
+      <AppButton type="submit" :loading="loading" :disabled="loading">
         Create account
       </AppButton>
     </form>

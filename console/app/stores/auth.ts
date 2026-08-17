@@ -18,11 +18,7 @@ export const useAuthStore = defineStore("auth_store", {
   },
 
   actions: {
-    setSession(
-      accessToken: string,
-      refreshToken: string,
-      tokenExpiry = 0,
-    ) {
+    setSession(accessToken: string, refreshToken: string, tokenExpiry = 0) {
       this.accessToken = accessToken;
       this.refreshToken = refreshToken;
       this.tokenExpiry = tokenExpiry;

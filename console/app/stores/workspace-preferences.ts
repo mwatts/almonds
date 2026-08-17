@@ -82,8 +82,7 @@ export const useUserPreferenceStore = defineStore("user_preference_store", {
       }
     },
 
-    async syncUpstream() {
-    },
+    async syncUpstream() {},
 
     async clearQueue(identifiers: string[]) {
       await invoke("clear_synced_workspace_preferences", { identifiers });

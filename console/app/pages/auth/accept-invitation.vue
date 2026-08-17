@@ -49,7 +49,10 @@ async function handleAccept() {
         <UIcon name="heroicons:user-group" class="size-5 text-accent-500" />
       </div>
       <div class="min-w-0 flex-1">
-        <p v-if="email" class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+        <p
+          v-if="email"
+          class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate"
+        >
           {{ email }}
         </p>
         <p v-else class="text-sm font-medium text-gray-800 dark:text-gray-100">

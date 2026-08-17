@@ -3,7 +3,14 @@ import { BaseRepository, type RequestMeta } from "../base";
 
 export type { CreateBookmark, UpdateBookmark };
 
-const COLUMNS = ["title", "url", "tag", "workspace_identifier", "created_at", "updated_at"];
+const COLUMNS = [
+  "title",
+  "url",
+  "tag",
+  "workspace_identifier",
+  "created_at",
+  "updated_at",
+];
 
 export class BookmarkRepository extends BaseRepository {
   async create(payload: CreateBookmark, meta?: RequestMeta): Promise<Bookmark> {
@@ -14,11 +21,22 @@ export class BookmarkRepository extends BaseRepository {
          (identifier, title, url, tag, created_at, updated_at, workspace_identifier)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [this.newUuid(), payload.title, payload.url, payload.tag, now, now, m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        payload.title,
+        payload.url,
+        payload.tag,
+        now,
+        now,
+        m.workspaceIdentifier,
+      ],
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<Bookmark | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Bookmark | null> {
     const m = this.requireMeta(meta);
     return this.row<Bookmark>(
       `SELECT * FROM bookmark WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -58,7 +76,11 @@ export class BookmarkRepository extends BaseRepository {
     );
   }
 
-  async update(identifier: string, payload: UpdateBookmark, meta?: RequestMeta): Promise<Bookmark> {
+  async update(
+    identifier: string,
+    payload: UpdateBookmark,
+    meta?: RequestMeta,
+  ): Promise<Bookmark> {
     const m = this.requireMeta(meta);
     const sets: string[] = ["updated_at = $2"];
     const params: unknown[] = [identifier, this.now()];
@@ -95,7 +117,13 @@ export class BookmarkRepository extends BaseRepository {
       `INSERT INTO recycle_bin
          (identifier, item_id, item_type, payload, deleted_at, workspace_identifier)
        VALUES ($1, $2, 'bookmark', $3, $4, $5)`,
-      [this.newUuid(), identifier, JSON.stringify(model), this.now(), m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        identifier,
+        JSON.stringify(model),
+        this.now(),
+        m.workspaceIdentifier,
+      ],
     );
 
     await this.run(
@@ -135,6 +163,10 @@ export class BookmarkRepository extends BaseRepository {
     record_identifier: string,
     workspace_identifier: string,
   ): Promise<boolean> {
-    return this.recordExistsInWorkspace("bookmark", record_identifier, workspace_identifier);
+    return this.recordExistsInWorkspace(
+      "bookmark",
+      record_identifier,
+      workspace_identifier,
+    );
   }
 }

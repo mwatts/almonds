@@ -106,11 +106,7 @@ function continueWithoutLogin() {
 
         <p v-if="submitError" class="text-sm text-red-500">{{ submitError }}</p>
 
-        <AppButton
-          type="submit"
-          :loading="loading"
-          :disabled="loading"
-        >
+        <AppButton type="submit" :loading="loading" :disabled="loading">
           Sign in
         </AppButton>
       </form>
@@ -131,15 +127,14 @@ function continueWithoutLogin() {
         <NuxtLink
           type="link"
           color="neutral"
-          class="px-6 py-2.5 rounded-lg text-sm  text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 cursor-pointer"
+          class="px-6 py-2.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 cursor-pointer"
           :disabled="loading"
           @click="continueWithoutLogin"
         >
-            <p class="text-sm text-gray-400 dark:text-gray-500">
-              Continue without account
-            </p>
+          <p class="text-sm text-gray-400 dark:text-gray-500">
+            Continue without account
+          </p>
         </NuxtLink>
-       
       </div>
     </template>
   </NuxtLayout>
