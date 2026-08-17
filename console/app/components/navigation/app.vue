@@ -46,6 +46,13 @@ function isActive(path: string): boolean {
       handle: 'cursor-ew-resize',
     }"
   >
+
+      <template #header>
+        <UDashboardSidebarCollapse
+          class="pl-6"
+        :icon="sidebarStore.collapsed ? 'i-lucide-panel-left-open' : 'i-lucide-panel-left-close'"
+      /></template>
+      
     <template #resize-handle="{ onMouseDown, onTouchStart, onDoubleClick }">
       <UDashboardResizeHandle
         class="after:absolute after:inset-y-0 after:right-0 after:w-px hover:after:bg-(--ui-border-accented) after:transition"
@@ -83,6 +90,9 @@ function isActive(path: string): boolean {
       </div>
     </template>
 
+
+
+
     <template #footer="{ collapsed }">
       <div class="flex flex-col gap-0.5 px-2 pb-4 w-full mb-12">
         <USeparator class="mx-1 mb-2" />
@@ -116,7 +126,11 @@ function isActive(path: string): boolean {
             <span v-if="!collapsed">{{ r.name }}</span>
           </NuxtLink>
         </UTooltip>
+
+
       </div>
+
+      
     </template>
   </UDashboardSidebar>
 </template>
