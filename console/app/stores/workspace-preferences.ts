@@ -36,6 +36,8 @@ export const useUserPreferenceStore = defineStore("user_preference_store", {
             meta: await getWorkspaceMeta(),
           },
         );
+      } catch (error) {
+        console.error("[preferences] failed to fetch", error);
       } finally {
         this.loading = false;
       }

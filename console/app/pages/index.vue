@@ -4,7 +4,7 @@ import { useBookmarkStore } from "~/stores/bookmarks";
 import { useTodoStore } from "~/stores/todo";
 import { useUserPreferenceStore } from "~/stores/workspace-preferences";
 import { useSnippetStore } from "~/stores/snippets";
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { safeOpenUrl as openUrl } from "~/utils/safe-open-url";
 
 definePageMeta({ layout: false });
 

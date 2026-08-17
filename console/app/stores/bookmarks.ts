@@ -43,6 +43,8 @@ export const useBookmarkStore = defineStore("bookmark_store", {
         this.bookmarks = await invoke<Bookmark[]>("get_all_bookmarks", {
           meta: await getWorkspaceMeta(),
         });
+      } catch (error) {
+        console.error("[bookmarks] failed to fetch", error);
       } finally {
         this.loading = false;
       }

@@ -25,23 +25,27 @@ const isAuthRoute = computed(() => route.path.startsWith("/auth"));
 const showWorkspaceLock = ref(false);
 
 onMounted(async () => {
-  initFontSize();
-  initDarkTheme();
-  await checkSetup();
-  await checkWorkspaceSetup();
+  try {
+    initFontSize();
+    initDarkTheme();
+    await checkSetup();
+    await checkWorkspaceSetup();
 
-  const workspaceStore = useWorkspacesStore();
-  await workspaceStore.fetchWorkspaces();
+    const workspaceStore = useWorkspacesStore();
+    await workspaceStore.fetchWorkspaces();
 
-  if (workspaceStore.isCurrentWorkspaceLocked) {
-    showWorkspaceLock.value = true;
-  }
+    if (workspaceStore.isCurrentWorkspaceLocked) {
+      showWorkspaceLock.value = true;
+    }
 
-  let permissionGranted = await isPermissionGranted();
+    let permissionGranted = await isPermissionGranted();
 
-  if (!permissionGranted) {
-    const permission = await requestPermission();
-    permissionGranted = permission === "granted";
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === "granted";
+    }
+  } catch (error) {
+    console.error("[app] initialization failed", error);
   }
 });
 </script>

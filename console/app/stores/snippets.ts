@@ -33,6 +33,8 @@ export const useSnippetStore = defineStore("snippets_store", {
         this.snippets = await invoke<Snippet[]>("get_all_snippets", {
           meta: await getWorkspaceMeta(),
         });
+      } catch (error) {
+        console.error("[snippets] failed to fetch", error);
       } finally {
         this.loading = false;
       }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { safeOpenUrl as openUrl } from "~/utils/safe-open-url";
 import { onClickOutside } from "@vueuse/core";
 
 const emit = defineEmits<{ close: [] }>();
