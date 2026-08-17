@@ -1,14 +1,13 @@
-import type {
-  CreateRecycleBinEntry,
-  ItemType,
-  RecycleBin,
-} from "lunar";
+import type { CreateRecycleBinEntry, ItemType, RecycleBin } from "lunar";
 import { BaseRepository, type RequestMeta } from "../base";
 
 export type { CreateRecycleBinEntry };
 
 export class RecycleBinRepository extends BaseRepository {
-  async store(payload: CreateRecycleBinEntry, meta?: RequestMeta): Promise<RecycleBin> {
+  async store(
+    payload: CreateRecycleBinEntry,
+    meta?: RequestMeta,
+  ): Promise<RecycleBin> {
     const m = this.requireMeta(meta);
     return this.mustRow<RecycleBin>(
       `INSERT INTO recycle_bin
@@ -26,7 +25,10 @@ export class RecycleBinRepository extends BaseRepository {
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<RecycleBin | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<RecycleBin | null> {
     const m = this.requireMeta(meta);
     return this.row<RecycleBin>(
       `SELECT * FROM recycle_bin WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -42,7 +44,10 @@ export class RecycleBinRepository extends BaseRepository {
     );
   }
 
-  async find_by_item_type(item_type: ItemType, meta?: RequestMeta): Promise<RecycleBin[]> {
+  async find_by_item_type(
+    item_type: ItemType,
+    meta?: RequestMeta,
+  ): Promise<RecycleBin[]> {
     const m = this.requireMeta(meta);
     return this.rows<RecycleBin>(
       `SELECT * FROM recycle_bin WHERE item_type = $1 AND workspace_identifier = $2 ORDER BY deleted_at DESC`,

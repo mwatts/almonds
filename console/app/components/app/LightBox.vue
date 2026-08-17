@@ -12,9 +12,7 @@ const search = ref("");
 const filtered = computed(() => {
   const q = search.value.toLowerCase().trim();
   if (!q) return props.images;
-  return props.images.filter((img) =>
-    img.name.toLowerCase().includes(q),
-  );
+  return props.images.filter((img) => img.name.toLowerCase().includes(q));
 });
 
 function toggle(id: string) {
@@ -30,7 +28,7 @@ function toggle(id: string) {
       label="Search"
       placeholder="Search images..."
     />
-{{images}}
+    {{ images }}
     <div
       v-if="filtered.length === 0"
       class="text-sm text-gray-400 dark:text-white/30 text-center py-8"

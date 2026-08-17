@@ -38,17 +38,15 @@ const themeIcon = computed(() =>
 
 const userMenuItems = computed(() => [
   {
-    label: "Account",
-    icon: "heroicons:user-circle",
-    class:
-      "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
-    onSelect: () =>
-      authStore.isGuest
-        ? navigateTo("/auth/login")
-        : navigateTo("/settings?section=profile"),
+    label: authStore.isGuest
+      ? "Guest mode"
+      : useUserPreferenceStore().fullName || "Account",
+    icon: authStore.isGuest ? "heroicons:user" : "heroicons:user-circle",
+    class: "text-gray-500 dark:text-gray-400 pointer-events-none",
+    onSelect: () => {},
   },
   {
-    label: "Logout",
+    label: authStore.isGuest ? "Exit" : "Logout",
     icon: "heroicons:arrow-right-start-on-rectangle",
     class: "text-red-500 dark:text-red-400",
     onSelect: () => {
@@ -196,11 +194,10 @@ useEventListener("keydown", (e: KeyboardEvent) => {
 
     <!-- Search -->
     <div
-
       class="flex-1 min-w-0 flex items-center md:max-w-sm md:mx-auto md:relative"
     >
       <div
-            v-if="!hideAuthGated"
+        v-if="!hideAuthGated"
         class="flex items-center gap-2 h-9 px-3 w-full rounded-md transition-colors bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus-within:border-accent-400 dark:focus-within:border-accent-500"
       >
         <UIcon
@@ -251,7 +248,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     <div class="flex items-center gap-1 ml-auto">
       <UTooltip :text="themeLabel">
         <UButton
-          size="lg"
+          size="sm"
           color="neutral"
           class="cursor-pointer"
           variant="ghost"
@@ -287,9 +284,11 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           <UUser
             size="sm"
             class="cursor-pointer"
-            :avatar="{
-              src: 'https://i.pravatar.cc/150?u=john-doe',
-            }"
+            :avatar="
+              authStore.isGuest || !authStore.isAuthenticated
+                ? { icon: 'heroicons:user' }
+                : { src: 'https://i.pravatar.cc/150?u=john-doe' }
+            "
           />
         </UDropdownMenu>
       </div>

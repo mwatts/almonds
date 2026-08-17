@@ -47,26 +47,11 @@ export async function createLunarConsoleApi(): Promise<LunarConsoleApi> {
 }
 
 export type { RequestMeta } from "./base";
-export type {
-  CreateNote,
-  UpdateNote,
-} from "./repositories/notes";
-export type {
-  CreateTodo,
-  UpdateTodo,
-} from "./repositories/todo";
-export type {
-  CreateBookmark,
-  UpdateBookmark,
-} from "./repositories/bookmarks";
-export type {
-  CreateSnippet,
-  UpdateSnippet,
-} from "./repositories/snippets";
-export type {
-  CreateReminder,
-  UpdateReminder,
-} from "./repositories/reminder";
+export type { CreateNote, UpdateNote } from "./repositories/notes";
+export type { CreateTodo, UpdateTodo } from "./repositories/todo";
+export type { CreateBookmark, UpdateBookmark } from "./repositories/bookmarks";
+export type { CreateSnippet, UpdateSnippet } from "./repositories/snippets";
+export type { CreateReminder, UpdateReminder } from "./repositories/reminder";
 export type { CreateNotification } from "./repositories/notifications";
 export type { CreateRecycleBinEntry } from "./repositories/recycle_bin";
 export type {

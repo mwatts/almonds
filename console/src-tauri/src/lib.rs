@@ -40,7 +40,7 @@ pub async fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
             app.listen(EVENT_NOTIFICATION_RECEIVED, |event| {
-                if let Ok(payload) = serde_json::from_str::<CreateNotification>(&event.payload()) {
+                if let Ok(payload) = serde_json::from_str::<CreateNotification>(event.payload()) {
                     println!("downloading {:#?}", payload);
                 }
             });
@@ -94,10 +94,10 @@ pub async fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            commands::alarm::list_alarm_sounds,
-            commands::alarm::play_alarm_sound,
-            commands::alarm::set_alarm_settings,
-            commands::alarm::stop_alarm_sound,
+            // commands::alarm::list_alarm_sounds,
+            // commands::alarm::play_alarm_sound,
+            // commands::alarm::set_alarm_settings,
+            // commands::alarm::stop_alarm_sound,
             commands::bookmarks::create_bookmark,
             commands::bookmarks::delete_bookmark,
             commands::bookmarks::duplicate_bookmark,

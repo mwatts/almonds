@@ -75,8 +75,7 @@ const COMMANDS: Record<string, CommandHandler> = {
       asString(a, "password"),
     ),
 
-  get_workspace_preference: (api, a) =>
-    api.workspacePreferences.get(asMeta(a)),
+  get_workspace_preference: (api, a) => api.workspacePreferences.get(asMeta(a)),
   create_workspace_preference: (api, a) =>
     api.workspacePreferences.create(
       a.preference as CreateUserPreference,
@@ -93,8 +92,13 @@ const COMMANDS: Record<string, CommandHandler> = {
   get_recently_added_notes: (api, a) => api.notes.recently_added(asMeta(a)),
   create_note: (api, a) => api.notes.create(a.note as CreateNote, asMeta(a)),
   update_note: (api, a) =>
-    api.notes.update(asString(a, "identifier"), a.note as UpdateNote, asMeta(a)),
-  delete_note: (api, a) => api.notes.delete(asString(a, "identifier"), asMeta(a)),
+    api.notes.update(
+      asString(a, "identifier"),
+      a.note as UpdateNote,
+      asMeta(a),
+    ),
+  delete_note: (api, a) =>
+    api.notes.delete(asString(a, "identifier"), asMeta(a)),
   duplicate_note: (api, a) => duplicate(api, a, "notes"),
   transfer_note: (api, a) => transfer(api, a, "notes"),
 
@@ -102,9 +106,17 @@ const COMMANDS: Record<string, CommandHandler> = {
   create_todo: (api, a) =>
     api.todos.create_todo(a.todo as CreateTodo, asMeta(a)),
   update_todo: (api, a) =>
-    api.todos.update(asString(a, "identifier"), a.todo as UpdateTodo, asMeta(a)),
+    api.todos.update(
+      asString(a, "identifier"),
+      a.todo as UpdateTodo,
+      asMeta(a),
+    ),
   mark_todo_done: (api, a) =>
-    api.todos.mark_done(asString(a, "identifier"), a.done as boolean, asMeta(a)),
+    api.todos.mark_done(
+      asString(a, "identifier"),
+      a.done as boolean,
+      asMeta(a),
+    ),
   change_todo_priority: (api, a) =>
     api.todos.change_priority(
       asString(a, "identifier"),
@@ -120,7 +132,8 @@ const COMMANDS: Record<string, CommandHandler> = {
       a.dueDate as string | null,
       asMeta(a),
     ),
-  delete_todo: (api, a) => api.todos.delete(asString(a, "identifier"), asMeta(a)),
+  delete_todo: (api, a) =>
+    api.todos.delete(asString(a, "identifier"), asMeta(a)),
   duplicate_todo: (api, a) => duplicate(api, a, "todos"),
   transfer_todo: (api, a) => transfer(api, a, "todos"),
 
@@ -139,7 +152,8 @@ const COMMANDS: Record<string, CommandHandler> = {
   transfer_bookmark: (api, a) => transfer(api, a, "bookmarks"),
 
   get_all_snippets: (api, a) => api.snippets.find_all(asMeta(a)),
-  get_recently_added_snippet: (api, a) => api.snippets.recently_added(asMeta(a)),
+  get_recently_added_snippet: (api, a) =>
+    api.snippets.recently_added(asMeta(a)),
   create_snippet: (api, a) =>
     api.snippets.create(a.snippet as CreateSnippet, asMeta(a)),
   update_snippet: (api, a) =>
@@ -169,7 +183,10 @@ const COMMANDS: Record<string, CommandHandler> = {
 
   get_all_notifications: (api, a) => api.notifications.find_all(asMeta(a)),
   get_notifications_by_type: (api, a) =>
-    api.notifications.find_by_type(a.notificationType as NotificationType, asMeta(a)),
+    api.notifications.find_by_type(
+      a.notificationType as NotificationType,
+      asMeta(a),
+    ),
   create_notification: (api, a) =>
     api.notifications.create(a.notification as CreateNotification, asMeta(a)),
   mark_notification_as_read: (api, a) =>
@@ -182,7 +199,8 @@ const COMMANDS: Record<string, CommandHandler> = {
     api.recycleBin.store(a.entry as CreateRecycleBinEntry, asMeta(a)),
   purge_recycle_bin_entry: (api, a) =>
     api.recycleBin.purge(asString(a, "identifier"), asMeta(a)),
-  purge_all_recycle_bin_entries: (api, a) => api.recycleBin.purge_all(asMeta(a)),
+  purge_all_recycle_bin_entries: (api, a) =>
+    api.recycleBin.purge_all(asMeta(a)),
 };
 
 const UNSYNCED = new Set([
@@ -256,10 +274,7 @@ async function dispatchBrowser(
  * PGlite layer (`window.lunar`, installed by plugins/lunar.client.ts) in a
  * plain browser.
  */
-export async function invoke<T>(
-  cmd: string,
-  args?: InvokeArgs,
-): Promise<T> {
+export async function invoke<T>(cmd: string, args?: InvokeArgs): Promise<T> {
   if (typeof window !== "undefined" && window.lunar) {
     return (await dispatchBrowser(cmd, args ?? {})) as T;
   }

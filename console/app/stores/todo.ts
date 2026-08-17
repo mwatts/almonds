@@ -33,6 +33,8 @@ export const useTodoStore = defineStore("todo_store", {
         this.todos = await invoke<Todo[]>("get_all_todos", {
           meta: await getWorkspaceMeta(),
         });
+      } catch (error) {
+        console.error("[todos] failed to fetch", error);
       } finally {
         this.loading = false;
       }

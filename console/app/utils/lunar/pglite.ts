@@ -1,9 +1,12 @@
 import { PGlite } from "@electric-sql/pglite";
 
-const migrationModules = import.meta.glob("../../assets/lunar/migrations/*.sql", {
-  eager: true,
-  as: "raw",
-});
+const migrationModules = import.meta.glob(
+  "../../assets/lunar/migrations/*.sql",
+  {
+    eager: true,
+    as: "raw",
+  },
+);
 
 let dbPromise: Promise<PGlite> | null = null;
 
@@ -26,9 +29,11 @@ async function createLunarDb(): Promise<PGlite> {
   );
 
   const applied = new Set<string>(
-    (await db.query<{ version: string }>("SELECT version FROM seaql_migrations")).rows.map(
-      (row) => row.version,
-    ),
+    (
+      await db.query<{ version: string }>(
+        "SELECT version FROM seaql_migrations",
+      )
+    ).rows.map((row) => row.version),
   );
 
   const versions = Object.keys(migrationModules).sort();
@@ -38,7 +43,10 @@ async function createLunarDb(): Promise<PGlite> {
     );
   }
   for (const key of versions) {
-    const version = key.split("/").pop()!.replace(/\.sql$/, "");
+    const version = key
+      .split("/")
+      .pop()!
+      .replace(/\.sql$/, "");
     if (applied.has(version)) continue;
 
     const sql = migrationModules[key]!.trim();

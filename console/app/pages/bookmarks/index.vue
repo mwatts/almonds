@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { safeOpenUrl as openUrl } from "~/utils/safe-open-url";
 import { useBookmarkStore, type BookmarkTag } from "~/stores/bookmarks";
 
 definePageMeta({ layout: false });

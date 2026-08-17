@@ -37,7 +37,10 @@ export class SnippetRepository extends BaseRepository {
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<Snippets | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Snippets | null> {
     const m = this.requireMeta(meta);
     return this.row<Snippets>(
       `SELECT * FROM snippets WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -62,7 +65,11 @@ export class SnippetRepository extends BaseRepository {
     );
   }
 
-  async update(identifier: string, payload: UpdateSnippet, meta?: RequestMeta): Promise<Snippets> {
+  async update(
+    identifier: string,
+    payload: UpdateSnippet,
+    meta?: RequestMeta,
+  ): Promise<Snippets> {
     const m = this.requireMeta(meta);
     const sets: string[] = ["updated_at = $2"];
     const params: unknown[] = [identifier, this.now()];
@@ -107,7 +114,13 @@ export class SnippetRepository extends BaseRepository {
       `INSERT INTO recycle_bin
          (identifier, item_id, item_type, payload, deleted_at, workspace_identifier)
        VALUES ($1, $2, 'snippet', $3, $4, $5)`,
-      [this.newUuid(), identifier, JSON.stringify(model), this.now(), m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        identifier,
+        JSON.stringify(model),
+        this.now(),
+        m.workspaceIdentifier,
+      ],
     );
 
     await this.run(
@@ -147,6 +160,10 @@ export class SnippetRepository extends BaseRepository {
     record_identifier: string,
     workspace_identifier: string,
   ): Promise<boolean> {
-    return this.recordExistsInWorkspace("snippets", record_identifier, workspace_identifier);
+    return this.recordExistsInWorkspace(
+      "snippets",
+      record_identifier,
+      workspace_identifier,
+    );
   }
 }

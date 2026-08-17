@@ -33,7 +33,10 @@ export class NotesRepository extends BaseRepository {
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<Notes | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Notes | null> {
     const m = this.requireMeta(meta);
     return this.row<Notes>(
       `SELECT * FROM notes WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -58,7 +61,13 @@ export class NotesRepository extends BaseRepository {
       `INSERT INTO recycle_bin
          (identifier, item_id, item_type, payload, deleted_at, workspace_identifier)
        VALUES ($1, $2, 'note', $3, $4, $5)`,
-      [this.newUuid(), identifier, JSON.stringify(model), this.now(), m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        identifier,
+        JSON.stringify(model),
+        this.now(),
+        m.workspaceIdentifier,
+      ],
     );
 
     await this.run(
@@ -76,7 +85,11 @@ export class NotesRepository extends BaseRepository {
     );
   }
 
-  async update(identifier: string, payload: UpdateNote, meta?: RequestMeta): Promise<Notes> {
+  async update(
+    identifier: string,
+    payload: UpdateNote,
+    meta?: RequestMeta,
+  ): Promise<Notes> {
     const m = this.requireMeta(meta);
     const sets: string[] = ["updated_at = $2"];
     const params: unknown[] = [identifier, this.now()];
@@ -135,6 +148,10 @@ export class NotesRepository extends BaseRepository {
     record_identifier: string,
     workspace_identifier: string,
   ): Promise<boolean> {
-    return this.recordExistsInWorkspace("notes", record_identifier, workspace_identifier);
+    return this.recordExistsInWorkspace(
+      "notes",
+      record_identifier,
+      workspace_identifier,
+    );
   }
 }

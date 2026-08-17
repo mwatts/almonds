@@ -87,8 +87,7 @@ const activeSection = computed<Section | null>(() =>
   isValidSection(route.query.section) ? (route.query.section as Section) : null,
 );
 
-const goToSection = (key: Section) =>
-  router.push({ query: { section: key } });
+const goToSection = (key: Section) => router.push({ query: { section: key } });
 
 const goToMenu = () => router.push({ query: {} });
 </script>
@@ -110,10 +109,15 @@ const goToMenu = () => router.push({ query: {} });
             <div
               class="size-10 shrink-0 rounded-lg flex items-center justify-center"
             >
-              <UIcon :name="s.icon" class="size-5 text-accent-700 dark:text-accent-300" />
+              <UIcon
+                :name="s.icon"
+                class="size-5 text-accent-700 dark:text-accent-300"
+              />
             </div>
             <div class="min-w-0 flex-1">
-              <h3 class="text-sm font-medium leading-5 text-gray-900 dark:text-white">
+              <h3
+                class="text-sm font-medium leading-5 text-gray-900 dark:text-white"
+              >
                 {{ s.label }}
               </h3>
               <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">
@@ -137,7 +141,9 @@ const goToMenu = () => router.push({ query: {} });
           Back to settings
         </button>
         <SettingsProfileSettings v-if="activeSection === 'profile'" />
-        <SettingsAppearanceSettings v-else-if="activeSection === 'appearance'" />
+        <SettingsAppearanceSettings
+          v-else-if="activeSection === 'appearance'"
+        />
         <SettingsBackupSettings v-else-if="activeSection === 'backup'" />
         <SettingsAiSettings v-else-if="activeSection === 'ai'" />
         <SettingsNotificationsSettings
@@ -148,28 +154,6 @@ const goToMenu = () => router.push({ query: {} });
         <SettingsWorkspaces v-else-if="activeSection === 'workspaces'" />
         <SettingsLocaleSettings v-else-if="activeSection === 'locale'" />
       </template>
-    </template>
-
-    <template #side_content>
-      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-        Preferences
-      </h2>
-      <div class="flex flex-col gap-1">
-        <button
-          v-for="s in navSections"
-          :key="s.key"
-          class="flex items-center gap-3 py-2 px-3 rounded-lg text-sm transition-colors w-full text-left cursor-pointer"
-          :class="
-            activeSection === s.key
-              ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-300 font-medium'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-          "
-          @click="goToSection(s.key)"
-        >
-          <UIcon :name="s.icon" class="size-4 shrink-0" />
-          {{ s.label }}
-        </button>
-      </div>
     </template>
   </NuxtLayout>
 </template>

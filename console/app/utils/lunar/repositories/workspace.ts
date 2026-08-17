@@ -31,7 +31,9 @@ export class WorkspaceRepository extends BaseRepository {
   }
 
   async list_workspaces(): Promise<Workspaces[]> {
-    return this.rows<Workspaces>(`SELECT * FROM workspaces ORDER BY is_default DESC, name`);
+    return this.rows<Workspaces>(
+      `SELECT * FROM workspaces ORDER BY is_default DESC, name`,
+    );
   }
 
   async exists(identifier: string): Promise<boolean> {
@@ -41,20 +43,29 @@ export class WorkspaceRepository extends BaseRepository {
     );
   }
 
-  async delete_workspace(identifier: string, meta?: RequestMeta): Promise<void> {
+  async delete_workspace(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<void> {
     this.requireMeta(meta);
     const model = await this.get_workspace_by_id(identifier);
     if (model.isDefault) {
       throw new Error("Cannot delete the default workspace");
     }
-    await this.run(`DELETE FROM workspaces WHERE identifier = $1`, [identifier]);
+    await this.run(`DELETE FROM workspaces WHERE identifier = $1`, [
+      identifier,
+    ]);
   }
 
-  async update_workspace(identifier: string, payload: UpdateWorkspace): Promise<Workspaces> {
+  async update_workspace(
+    identifier: string,
+    payload: UpdateWorkspace,
+  ): Promise<Workspaces> {
     if (payload.isDefault === true) {
-      await this.run(`UPDATE workspaces SET is_default = FALSE WHERE identifier != $1`, [
-        identifier,
-      ]);
+      await this.run(
+        `UPDATE workspaces SET is_default = FALSE WHERE identifier != $1`,
+        [identifier],
+      );
     }
 
     const sets: string[] = ["updated_at = $2"];
@@ -104,7 +115,10 @@ export class WorkspaceRepository extends BaseRepository {
     return row;
   }
 
-  async verify_workspace_password(identifier: string, password: string): Promise<boolean> {
+  async verify_workspace_password(
+    identifier: string,
+    password: string,
+  ): Promise<boolean> {
     const model = await this.get_workspace_by_id(identifier);
     if (!model.isSecured) return true;
     if (!model.passwordHash) return false;

@@ -7,10 +7,19 @@ import { BaseRepository, type RequestMeta } from "../base";
 
 export type { CreateUserPreference, UpdateUserPreference };
 
-const COLUMNS = ["first_name", "last_name", "workspace_identifier", "created_at", "updated_at"];
+const COLUMNS = [
+  "first_name",
+  "last_name",
+  "workspace_identifier",
+  "created_at",
+  "updated_at",
+];
 
 export class WorkspacePreferenceRepository extends BaseRepository {
-  async create(payload: CreateUserPreference, meta?: RequestMeta): Promise<WorkspacePreferences> {
+  async create(
+    payload: CreateUserPreference,
+    meta?: RequestMeta,
+  ): Promise<WorkspacePreferences> {
     const m = this.requireMeta(meta);
     const now = this.now();
     return this.mustRow<WorkspacePreferences>(
@@ -18,7 +27,14 @@ export class WorkspacePreferenceRepository extends BaseRepository {
          (identifier, first_name, last_name, created_at, updated_at, workspace_identifier)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [this.newUuid(), payload.firstName, payload.lastName, now, now, m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        payload.firstName,
+        payload.lastName,
+        now,
+        now,
+        m.workspaceIdentifier,
+      ],
     );
   }
 

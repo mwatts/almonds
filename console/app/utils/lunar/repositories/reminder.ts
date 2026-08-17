@@ -39,7 +39,10 @@ export class ReminderRepository extends BaseRepository {
     );
   }
 
-  async find_by_id(identifier: string, meta?: RequestMeta): Promise<Reminder | null> {
+  async find_by_id(
+    identifier: string,
+    meta?: RequestMeta,
+  ): Promise<Reminder | null> {
     const m = this.requireMeta(meta);
     return this.row<Reminder>(
       `SELECT * FROM reminder WHERE identifier = $1 AND workspace_identifier = $2`,
@@ -55,7 +58,11 @@ export class ReminderRepository extends BaseRepository {
     );
   }
 
-  async update(identifier: string, payload: UpdateReminder, meta?: RequestMeta): Promise<Reminder> {
+  async update(
+    identifier: string,
+    payload: UpdateReminder,
+    meta?: RequestMeta,
+  ): Promise<Reminder> {
     const m = this.requireMeta(meta);
     const sets: string[] = ["updated_at = $2"];
     const params: unknown[] = [identifier, this.now()];
@@ -104,7 +111,13 @@ export class ReminderRepository extends BaseRepository {
       `INSERT INTO recycle_bin
          (identifier, item_id, item_type, payload, deleted_at, workspace_identifier)
        VALUES ($1, $2, 'reminder', $3, $4, $5)`,
-      [this.newUuid(), identifier, JSON.stringify(model), this.now(), m.workspaceIdentifier],
+      [
+        this.newUuid(),
+        identifier,
+        JSON.stringify(model),
+        this.now(),
+        m.workspaceIdentifier,
+      ],
     );
 
     await this.run(
@@ -144,6 +157,10 @@ export class ReminderRepository extends BaseRepository {
     record_identifier: string,
     workspace_identifier: string,
   ): Promise<boolean> {
-    return this.recordExistsInWorkspace("reminder", record_identifier, workspace_identifier);
+    return this.recordExistsInWorkspace(
+      "reminder",
+      record_identifier,
+      workspace_identifier,
+    );
   }
 }

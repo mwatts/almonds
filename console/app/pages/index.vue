@@ -4,7 +4,7 @@ import { useBookmarkStore } from "~/stores/bookmarks";
 import { useTodoStore } from "~/stores/todo";
 import { useUserPreferenceStore } from "~/stores/workspace-preferences";
 import { useSnippetStore } from "~/stores/snippets";
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { safeOpenUrl as openUrl } from "~/utils/safe-open-url";
 
 definePageMeta({ layout: false });
 
@@ -133,38 +133,6 @@ const statPills = computed(() => [
     href: "/todo",
   },
 ]);
-
-// Quick actions
-const quickActions = [
-  {
-    label: "New note",
-    icon: "heroicons:document-plus",
-    href: "/notes/create-notes",
-    color:
-      "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/60 hover:bg-violet-100 dark:hover:bg-violet-900/60 border-violet-100 dark:border-violet-900",
-  },
-  {
-    label: "Add bookmark",
-    icon: "heroicons:bookmark",
-    href: "/bookmarks",
-    color:
-      "text-accent-600 dark:text-accent-400 bg-accent-50 dark:bg-accent-950/60 hover:bg-accent-100 dark:hover:bg-accent-900/60 border-accent-100 dark:border-accent-900",
-  },
-  {
-    label: "New todo",
-    icon: "heroicons:plus-circle",
-    href: "/todo/create-todo",
-    color:
-      "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border-emerald-100 dark:border-emerald-900",
-  },
-  {
-    label: "New snippet",
-    icon: "heroicons:code-bracket-square",
-    href: "/snippets/create-snippets",
-    color:
-      "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 border-blue-100 dark:border-blue-900",
-  },
-];
 </script>
 
 <template>
@@ -518,47 +486,6 @@ const quickActions = [
           </div>
         </div>
       </div>
-    </template>
-
-    <!-- ── Side panel ──────────────────────────────────────────────── -->
-    <template #side_content>
-      <!-- Quick actions -->
-      <section class="mb-5">
-        <h2
-          class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3"
-        >
-          Quick actions
-        </h2>
-        <div class="flex flex-col gap-1.5">
-          <NuxtLink
-            v-for="action in quickActions"
-            :key="action.label"
-            :to="action.href"
-            :class="action.color"
-            class="flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium transition-colors"
-          >
-            <UIcon
-              :name="action.icon"
-              :color="action.color"
-              class="size-4 shrink-0"
-            />
-            <span
-              class="text-gray-800 dark:text-gray-200"
-              :class="action.color"
-            >
-              {{ action.label }}
-            </span>
-          </NuxtLink>
-        </div>
-      </section>
-
-      <USeparator class="my-4" />
-
-      <section class="mb-5 mt-auto">
-        <div class="flex flex-col items-center py-6 text-center">
-          <AppGreeting />
-        </div>
-      </section>
     </template>
   </NuxtLayout>
 </template>

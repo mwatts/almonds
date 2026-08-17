@@ -33,7 +33,6 @@
   --color-accent-900: var(--app-accent-900);
   --color-accent-950: var(--app-accent-950);
 
-
   --color-primary-50: var(--app-accent-50);
   --color-primary-100: var(--app-accent-100);
   --color-primary-200: var(--app-accent-200);
@@ -88,7 +87,7 @@ body {
 }
 
 * {
-  /*user-select: none;*/
+  user-select: none;
 }
 
 /*
@@ -116,7 +115,7 @@ body {
 }
 
 .titlebar {
-  @apply fixed top-0 left-0 right-0 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 items-center p-2 ;
+  @apply fixed top-0 left-0 right-0 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 items-center p-2;
 }
 
 .scrollbar-config {
@@ -144,6 +143,11 @@ body {
 
 .dark .dm-editor {
   --dm-border-color: var(--color-surface-700);
+}
+
+.notes-editor .dm-editor .ProseMirror {
+  padding-top: 0;
+  min-height: auto;
 }
 
 /* Custom toolbar */
@@ -212,6 +216,3 @@ h6.notes_heading {
 .dm-floating-menu {
   height: 12rem;
 }
-
-
-

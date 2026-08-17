@@ -14,9 +14,7 @@ defineProps<{
       <span class="text-sm text-gray-500 dark:text-white/40 font-medium">{{
         label
       }}</span>
-      <div
-        class="w-8 h-8 rounded-xl  flex items-center justify-center"
-      >
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center">
         <UIcon :name="icon" class="size-4 text-brand" />
       </div>
     </div>

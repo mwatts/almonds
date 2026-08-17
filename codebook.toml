@@ -2,6 +2,8 @@ words = [
     "TAURI",
     "cdylib",
     "creds",
+    "dompurify",
+    "lowlight",
     "rustls",
     "seaography",
     "serde",

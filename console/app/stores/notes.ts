@@ -33,6 +33,8 @@ export const useNoteStore = defineStore("notes_store", {
         this.notes = await invoke<Note[]>("get_all_notes", {
           meta: await getWorkspaceMeta(),
         });
+      } catch (error) {
+        console.error("[notes] failed to fetch", error);
       } finally {
         this.loading = false;
       }

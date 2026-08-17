@@ -51,9 +51,8 @@ const workspaceItems = computed(() => [
 ]);
 </script>
 <template>
-<div>
+  <div>
     <UDropdownMenu
-
       :items="workspaceItems"
       :ui="{
         content:
@@ -81,11 +80,9 @@ const workspaceItems = computed(() => [
         />
       </button>
     </UDropdownMenu>
-  
+
     <WorkspaceCreateModal v-model:open="showCreateModal" />
-</div>
+  </div>
 </template>
 
-<style>
-
-</style>
+<style></style>
