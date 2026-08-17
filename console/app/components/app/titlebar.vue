@@ -38,17 +38,15 @@ const themeIcon = computed(() =>
 
 const userMenuItems = computed(() => [
   {
-    label: "Account",
-    icon: "heroicons:user-circle",
-    class:
-      "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
-    onSelect: () =>
-      authStore.isGuest
-        ? navigateTo("/auth/login")
-        : navigateTo("/settings?section=profile"),
+    label: authStore.isGuest
+      ? "Guest mode"
+      : useUserPreferenceStore().fullName || "Account",
+    icon: authStore.isGuest ? "heroicons:user" : "heroicons:user-circle",
+    class: "text-gray-500 dark:text-gray-400 pointer-events-none",
+    onSelect: () => {},
   },
   {
-    label: "Logout",
+    label: authStore.isGuest ? "Exit" : "Logout",
     icon: "heroicons:arrow-right-start-on-rectangle",
     class: "text-red-500 dark:text-red-400",
     onSelect: () => {
@@ -251,7 +249,7 @@ useEventListener("keydown", (e: KeyboardEvent) => {
     <div class="flex items-center gap-1 ml-auto">
       <UTooltip :text="themeLabel">
         <UButton
-          size="lg"
+          size="sm"
           color="neutral"
           class="cursor-pointer"
           variant="ghost"
@@ -287,9 +285,10 @@ useEventListener("keydown", (e: KeyboardEvent) => {
           <UUser
             size="sm"
             class="cursor-pointer"
-            :avatar="{
-              src: 'https://i.pravatar.cc/150?u=john-doe',
-            }"
+            :avatar="authStore.isGuest || !authStore.isAuthenticated
+              ? { icon: 'heroicons:user' }
+              : { src: 'https://i.pravatar.cc/150?u=john-doe' }
+            "
           />
         </UDropdownMenu>
       </div>

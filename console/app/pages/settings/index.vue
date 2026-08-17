@@ -150,26 +150,5 @@ const goToMenu = () => router.push({ query: {} });
       </template>
     </template>
 
-    <template #side_content>
-      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-        Preferences
-      </h2>
-      <div class="flex flex-col gap-1">
-        <button
-          v-for="s in navSections"
-          :key="s.key"
-          class="flex items-center gap-3 py-2 px-3 rounded-lg text-sm transition-colors w-full text-left cursor-pointer"
-          :class="
-            activeSection === s.key
-              ? 'bg-accent-50 dark:bg-accent-950 text-accent-700 dark:text-accent-300 font-medium'
-              : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-          "
-          @click="goToSection(s.key)"
-        >
-          <UIcon :name="s.icon" class="size-4 shrink-0" />
-          {{ s.label }}
-        </button>
-      </div>
-    </template>
   </NuxtLayout>
 </template>

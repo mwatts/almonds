@@ -117,6 +117,7 @@ const pageTitle = computed(() => {
 
         <!-- Inline aside: always visible on desktop -->
         <aside
+          v-if="$slots.side_content"
           class="hidden md:flex flex-col w-72 shrink-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden"
         >
           <div
